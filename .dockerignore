@@ -1,11 +1,13 @@
-.idea/
 .venv/
+.git/
 __pycache__/
 *.pyc
 *.pyo
-*.pyd
 .env
-staticfiles/
-media/
+*.md
 .pytest_cache/
 .mypy_cache/
+staticfiles/
+media/
+.idea/
+instructions/
