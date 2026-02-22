@@ -1,0 +1,244 @@
+{% extends "base.html" %}
+{% load humanize %}
+
+{% block content %}
+
+{# Page heading + sync button #}
+<div class="flex items-center justify-between">
+    <div>
+        <h1 class="text-2xl font-bold text-forest">Willkommen zurück!</h1>
+        <p class="text-sm text-forest/60 mt-1">Hier ist der aktuelle Stand deiner Overleaf-Projekte.</p>
+    </div>
+    <div x-data="{ syncing: false }">
+        <button
+            @click="syncing = true; setTimeout(() => syncing = false, 1500)"
+            class="flex items-center text-sm font-medium text-forest hover:bg-sage/30 transition-colors bg-white px-3 py-1.5 rounded-md border border-beige shadow-sm">
+            <i data-lucide="refresh-cw"
+               class="w-4 h-4 mr-2"
+               :class="{ 'animate-spin': syncing }"></i>
+            <span x-text="syncing ? 'Synchronisiere...' : 'Jetzt synchronisieren'"></span>
+        </button>
+    </div>
+</div>
+
+{# Stats Row #}
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+    {# Words #}
+    <div class="bg-white p-5 rounded-xl border border-beige shadow-sm flex items-start justify-between hover:border-forest/20 transition-colors">
+        <div>
+            <p class="text-sm font-medium text-forest/60 mb-1">Wörter Gesamt</p>
+            <div class="flex items-baseline gap-2">
+                <h3 class="text-2xl font-bold text-forest">{{ stats.total_words|intcomma }}</h3>
+                <span class="text-xs font-semibold text-forest">+12%</span>
+            </div>
+        </div>
+        <div class="p-3 rounded-lg border bg-sage/40 border-sage text-forest">
+            <i data-lucide="file-text" class="w-5 h-5"></i>
+        </div>
+    </div>
+    {# Pages #}
+    <div class="bg-white p-5 rounded-xl border border-beige shadow-sm flex items-start justify-between hover:border-forest/20 transition-colors">
+        <div>
+            <p class="text-sm font-medium text-forest/60 mb-1">Seiten Gesamt</p>
+            <div class="flex items-baseline gap-2">
+                <h3 class="text-2xl font-bold text-forest">{{ stats.total_pages }}</h3>
+                <span class="text-xs font-semibold text-forest">+8%</span>
+            </div>
+        </div>
+        <div class="p-3 rounded-lg border bg-wheat/50 border-wheat text-forest">
+            <i data-lucide="book-open" class="w-5 h-5"></i>
+        </div>
+    </div>
+    {# Active projects #}
+    <div class="bg-white p-5 rounded-xl border border-beige shadow-sm flex items-start justify-between hover:border-forest/20 transition-colors">
+        <div>
+            <p class="text-sm font-medium text-forest/60 mb-1">Aktive Projekte</p>
+            <div class="flex items-baseline gap-2">
+                <h3 class="text-2xl font-bold text-forest">{{ stats.active_projects }}</h3>
+                <span class="text-xs font-semibold text-forest/60">0</span>
+            </div>
+        </div>
+        <div class="p-3 rounded-lg border bg-beige/50 border-beige text-forest">
+            <i data-lucide="folder-git-2" class="w-5 h-5"></i>
+        </div>
+    </div>
+    {# Next sync #}
+    <div class="bg-white p-5 rounded-xl border border-beige shadow-sm flex items-start justify-between hover:border-forest/20 transition-colors">
+        <div>
+            <p class="text-sm font-medium text-forest/60 mb-1">Nächster Auto-Sync</p>
+            <h3 class="text-2xl font-bold text-forest">{{ stats.next_sync }}</h3>
+        </div>
+        <div class="p-3 rounded-lg border bg-cream border-beige text-forest">
+            <i data-lucide="refresh-cw" class="w-5 h-5"></i>
+        </div>
+    </div>
+</div>
+
+{# Charts Row #}
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+    {# Area Chart #}
+    <div class="lg:col-span-2 bg-white p-6 rounded-xl border border-beige shadow-sm">
+        <div class="flex items-center justify-between mb-6">
+            <h2 class="text-base font-semibold text-forest">Schreibfortschritt (Letzte 7 Tage)</h2>
+            <select class="text-sm border border-beige rounded-md text-forest bg-cream px-2 py-1 outline-none">
+                <option>Alle Projekte</option>
+                <option>Masterarbeit_Physik</option>
+            </select>
+        </div>
+        <div class="h-72 w-full">
+            <canvas id="progressChart"></canvas>
+        </div>
+    </div>
+
+    {# Git Credentials Card #}
+    <div class="bg-white p-6 rounded-xl border border-beige shadow-sm flex flex-col">
+        <h2 class="text-base font-semibold text-forest mb-4">Git Zugangsdaten</h2>
+        <div class="flex-1 space-y-4">
+            <div class="bg-sage/30 border border-sage rounded-lg p-4 flex items-start">
+                <i data-lucide="check-circle-2" class="w-5 h-5 text-forest mt-0.5 mr-3 flex-shrink-0"></i>
+                <div>
+                    <h3 class="text-sm font-medium text-forest">Token aktiv</h3>
+                    <p class="text-xs text-forest/70 mt-1">Dein Overleaf Git-Token ist sicher verschlüsselt gespeichert.</p>
+                </div>
+            </div>
+            <div class="bg-cream border border-beige rounded-lg p-4">
+                <p class="text-xs font-medium text-forest/60 uppercase tracking-wider mb-2">Verknüpfte Email</p>
+                <p class="text-sm text-forest font-medium truncate">{{ request.user.email|default:"—" }}</p>
+            </div>
+        </div>
+        <button class="mt-4 w-full text-center text-sm text-forest font-medium hover:text-forest/70 transition-colors">
+            Credentials aktualisieren &rarr;
+        </button>
+    </div>
+</div>
+
+{# Projects Table #}
+<div class="bg-white rounded-xl border border-beige shadow-sm overflow-hidden">
+    <div class="p-5 border-b border-beige flex items-center justify-between bg-cream/50">
+        <h2 class="text-base font-semibold text-forest">Verknüpfte Projekte</h2>
+        <a href="{% url 'dashboard:projects' %}" class="text-sm text-forest font-medium hover:text-forest/70">Alle ansehen</a>
+    </div>
+    <div class="overflow-x-auto">
+        <table class="w-full text-sm text-left">
+            <thead class="text-xs text-forest/70 bg-cream border-b border-beige uppercase">
+            <tr>
+                <th class="px-6 py-4 font-medium">Projektname</th>
+                <th class="px-6 py-4 font-medium">Status</th>
+                <th class="px-6 py-4 font-medium">Metriken</th>
+                <th class="px-6 py-4 font-medium">Letzter Sync</th>
+                <th class="px-6 py-4 font-medium">Geteilt mit</th>
+                <th class="px-6 py-4 text-right font-medium">Aktion</th>
+            </tr>
+            </thead>
+            <tbody class="divide-y divide-beige/50">
+            {% for project in projects %}
+            <tr class="hover:bg-cream/80 transition-colors group">
+                <td class="px-6 py-4">
+                    <div class="flex items-center">
+                        <i data-lucide="folder-git-2" class="w-4 h-4 text-forest/50 mr-3"></i>
+                        <div>
+                            <p class="font-medium text-forest">{{ project.name }}</p>
+                            <span class="text-xs text-forest/50 truncate w-40 inline-block">{{ project.git_url }}</span>
+                        </div>
+                    </div>
+                </td>
+                <td class="px-6 py-4">
+                    {% if project.status == 'OK' %}
+                    <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-sage/70 text-forest">
+                        <i data-lucide="check-circle-2" class="w-3 h-3 mr-1"></i> Aktiv
+                    </span>
+                    {% else %}
+                    <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-wheat text-forest">
+                        <i data-lucide="alert-circle" class="w-3 h-3 mr-1"></i> Auth Error
+                    </span>
+                    {% endif %}
+                </td>
+                <td class="px-6 py-4">
+                    <div class="flex flex-col gap-1">
+                        <span class="text-forest font-medium">{{ project.words|intcomma }} Wörter</span>
+                        <span class="text-xs text-forest/60">{{ project.pages }} Seiten</span>
+                    </div>
+                </td>
+                <td class="px-6 py-4 text-forest/70">{{ project.last_sync }}</td>
+                <td class="px-6 py-4">
+                    <div class="flex items-center text-forest/70">
+                        <i data-lucide="users" class="w-3.5 h-3.5 mr-1.5 text-forest/50"></i>
+                        <span class="truncate w-32">{{ project.shared_with }}</span>
+                    </div>
+                </td>
+                <td class="px-6 py-4 text-right">
+                    <button class="text-forest/50 hover:text-forest font-medium px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity">
+                        Details
+                    </button>
+                </td>
+            </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block extra_js %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4"></script>
+<script>
+(function () {
+    const raw = {{ chart_data_json|safe }};
+    const labels = raw.map(d => d.date);
+    const words  = raw.map(d => d.words);
+
+    const ctx = document.getElementById('progressChart').getContext('2d');
+
+    const gradient = ctx.createLinearGradient(0, 0, 0, ctx.canvas.parentElement.clientHeight || 288);
+    gradient.addColorStop(0,   'rgba(52,73,69,0.2)');
+    gradient.addColorStop(1,   'rgba(52,73,69,0)');
+
+    new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels,
+            datasets: [{
+                label: 'Wörter',
+                data: words,
+                borderColor: '#344945',
+                borderWidth: 3,
+                tension: 0.4,
+                fill: true,
+                backgroundColor: gradient,
+                pointRadius: 4,
+                pointBackgroundColor: '#344945',
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: { display: false },
+                tooltip: {
+                    backgroundColor: '#ffffff',
+                    titleColor: '#344945',
+                    bodyColor: '#344945',
+                    borderColor: '#E0DCD1',
+                    borderWidth: 1,
+                    padding: 10,
+                    titleFont: { weight: 'bold' },
+                }
+            },
+            scales: {
+                x: {
+                    grid: { display: false },
+                    border: { display: false },
+                    ticks: { color: 'rgba(52,73,69,0.6)', font: { size: 12 } }
+                },
+                y: {
+                    grid: { color: '#E0DCD1', drawBorder: false },
+                    border: { display: false, dash: [3, 3] },
+                    ticks: { color: 'rgba(52,73,69,0.6)', font: { size: 12 } }
+                }
+            }
+        }
+    });
+})();
+</script>
+{% endblock %}

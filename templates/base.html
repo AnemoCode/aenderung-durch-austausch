@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Overlytics</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        forest: '#344945',
+                        cream:  '#F7F5F1',
+                        beige:  '#E0DCD1',
+                        sage:   '#D5E3E8',
+                        wheat:  '#E4E3BC',
+                    }
+                }
+            }
+        }
+    </script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+</head>
+<body class="bg-cream font-sans text-forest">
+
+<div class="flex h-screen overflow-hidden">
+
+    {# Sidebar #}
+    <aside class="w-64 bg-forest text-beige hidden md:flex flex-col flex-shrink-0">
+        <div class="h-16 flex items-center px-6 border-b border-beige/20">
+            <i data-lucide="activity" class="w-6 h-6 text-sage mr-2"></i>
+            <span class="text-xl font-bold text-cream tracking-tight">Overlytics</span>
+        </div>
+
+        <nav class="flex-1 py-6 px-3 space-y-1">
+            <a href="{% url 'dashboard:index' %}"
+               class="w-full flex items-center px-3 py-2.5 rounded-lg text-sm font-medium transition-all duration-200
+                      {% if active_nav == 'index' %}bg-beige/10 text-cream{% else %}text-beige/70 hover:bg-beige/5 hover:text-cream{% endif %}">
+                <i data-lucide="layout-dashboard"
+                   class="w-5 h-5 mr-3 {% if active_nav == 'index' %}text-sage{% else %}text-beige/50{% endif %}"></i>
+                Übersicht
+            </a>
+            <a href="{% url 'dashboard:projects' %}"
+               class="w-full flex items-center px-3 py-2.5 rounded-lg text-sm font-medium transition-all duration-200
+                      {% if active_nav == 'projects' %}bg-beige/10 text-cream{% else %}text-beige/70 hover:bg-beige/5 hover:text-cream{% endif %}">
+                <i data-lucide="folder-git-2"
+                   class="w-5 h-5 mr-3 {% if active_nav == 'projects' %}text-sage{% else %}text-beige/50{% endif %}"></i>
+                Projekte
+            </a>
+            <a href="{% url 'dashboard:groups' %}"
+               class="w-full flex items-center px-3 py-2.5 rounded-lg text-sm font-medium transition-all duration-200
+                      {% if active_nav == 'groups' %}bg-beige/10 text-cream{% else %}text-beige/70 hover:bg-beige/5 hover:text-cream{% endif %}">
+                <i data-lucide="users"
+                   class="w-5 h-5 mr-3 {% if active_nav == 'groups' %}text-sage{% else %}text-beige/50{% endif %}"></i>
+                Gruppen
+            </a>
+            <a href="{% url 'dashboard:settings' %}"
+               class="w-full flex items-center px-3 py-2.5 rounded-lg text-sm font-medium transition-all duration-200
+                      {% if active_nav == 'settings' %}bg-beige/10 text-cream{% else %}text-beige/70 hover:bg-beige/5 hover:text-cream{% endif %}">
+                <i data-lucide="settings"
+                   class="w-5 h-5 mr-3 {% if active_nav == 'settings' %}text-sage{% else %}text-beige/50{% endif %}"></i>
+                Einstellungen
+            </a>
+        </nav>
+
+        <div class="p-4 border-t border-beige/20">
+            <div class="flex items-center gap-3 mb-4 px-2">
+                <div class="w-8 h-8 rounded-full bg-wheat flex items-center justify-center text-forest font-bold text-sm">
+                    {{ request.user.get_initials|default:request.user.username|slice:":2"|upper }}
+                </div>
+                <div class="flex flex-col">
+                    <span class="text-sm font-medium text-cream">{{ request.user.get_full_name|default:request.user.username }}</span>
+                    <span class="text-xs text-beige/70">Free Plan</span>
+                </div>
+            </div>
+            <form method="post" action="{% url 'accounts:logout' %}">
+                {% csrf_token %}
+                <button type="submit"
+                        class="flex items-center w-full px-2 py-2 text-sm font-medium text-beige/70 hover:text-cream rounded-md transition-colors">
+                    <i data-lucide="log-out" class="w-4 h-4 mr-3"></i>
+                    Abmelden
+                </button>
+            </form>
+        </div>
+    </aside>
+
+    {# Main Content #}
+    <main class="flex-1 flex flex-col h-screen overflow-y-auto">
+
+        {# Top Header #}
+        <header class="h-16 bg-white border-b border-beige flex items-center justify-between px-6 sticky top-0 z-10">
+            <div class="flex items-center bg-cream border border-beige/50 rounded-md px-3 py-1.5 w-64 focus-within:border-forest/30 transition-colors">
+                <i data-lucide="search" class="w-4 h-4 text-forest/50 mr-2"></i>
+                <input type="text"
+                       placeholder="Projekte suchen..."
+                       class="bg-transparent border-none outline-none text-sm text-forest placeholder:text-forest/50 w-full">
+            </div>
+
+            <div class="flex items-center space-x-4">
+                <button class="text-forest/60 hover:text-forest transition-colors relative">
+                    <i data-lucide="bell" class="w-5 h-5"></i>
+                    <span class="absolute top-0 right-0 w-2 h-2 bg-rose-500 rounded-full border border-white"></span>
+                </button>
+                <button class="bg-forest hover:bg-forest/90 text-cream px-4 py-2 rounded-md text-sm font-medium flex items-center transition-colors shadow-sm">
+                    <i data-lucide="plus" class="w-4 h-4 mr-2"></i>
+                    Projekt tracken
+                </button>
+            </div>
+        </header>
+
+        {# Page Content #}
+        <div class="p-6 max-w-7xl mx-auto w-full space-y-6">
+            {% block content %}{% endblock %}
+        </div>
+
+    </main>
+</div>
+
+<script>
+    lucide.createIcons();
+</script>
+{% block extra_js %}{% endblock %}
+</body>
+</html>

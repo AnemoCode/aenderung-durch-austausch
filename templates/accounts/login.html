@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Overlytics – Anmelden</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        forest: '#344945',
+                        cream:  '#F7F5F1',
+                        beige:  '#E0DCD1',
+                        sage:   '#D5E3E8',
+                        wheat:  '#E4E3BC',
+                    }
+                }
+            }
+        }
+    </script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body class="min-h-screen bg-cream flex items-center justify-center font-sans text-forest">
+
+    <div class="w-full max-w-sm px-4">
+
+        {# Logo #}
+        <div class="flex items-center justify-center gap-2 mb-8">
+            <i data-lucide="activity" class="w-7 h-7 text-forest"></i>
+            <span class="text-2xl font-bold tracking-tight text-forest">Overlytics</span>
+        </div>
+
+        {# Card #}
+        <div class="bg-white rounded-2xl border border-beige shadow-sm p-8">
+
+            <h1 class="text-lg font-semibold text-forest mb-1">Willkommen zurück</h1>
+            <p class="text-sm text-forest/60 mb-6">Melde dich an, um dein Dashboard zu öffnen.</p>
+
+            {# Credential error #}
+            {% if form.non_field_errors %}
+            <div class="mb-5 rounded-lg bg-wheat/60 border border-wheat px-4 py-3 text-sm text-forest flex items-start gap-2">
+                <i data-lucide="alert-circle" class="w-4 h-4 mt-0.5 flex-shrink-0"></i>
+                <span>{% for e in form.non_field_errors %}{{ e }}{% endfor %}</span>
+            </div>
+            {% endif %}
+
+            <form method="post" action="{% url 'accounts:login' %}" novalidate>
+                {% csrf_token %}
+                <input type="hidden" name="next" value="{{ next }}">
+
+                {# Username #}
+                <div class="mb-4">
+                    <label for="{{ form.username.id_for_label }}"
+                           class="block text-sm font-medium text-forest mb-1.5">Benutzername</label>
+                    <input type="text"
+                           name="{{ form.username.html_name }}"
+                           id="{{ form.username.id_for_label }}"
+                           value="{{ form.username.value|default:'' }}"
+                           autocomplete="username"
+                           autofocus
+                           class="w-full rounded-lg border px-3 py-2.5 text-sm text-forest
+                                  {% if form.username.errors %}border-rose-400 bg-rose-50{% else %}border-beige bg-cream{% endif %}
+                                  focus:outline-none focus:border-forest/40 focus:ring-2 focus:ring-forest/10 transition">
+                    {% for e in form.username.errors %}
+                    <p class="mt-1 text-xs text-rose-500">{{ e }}</p>
+                    {% endfor %}
+                </div>
+
+                {# Password #}
+                <div class="mb-6">
+                    <label for="{{ form.password.id_for_label }}"
+                           class="block text-sm font-medium text-forest mb-1.5">Passwort</label>
+                    <input type="password"
+                           name="{{ form.password.html_name }}"
+                           id="{{ form.password.id_for_label }}"
+                           autocomplete="current-password"
+                           class="w-full rounded-lg border px-3 py-2.5 text-sm text-forest
+                                  {% if form.password.errors %}border-rose-400 bg-rose-50{% else %}border-beige bg-cream{% endif %}
+                                  focus:outline-none focus:border-forest/40 focus:ring-2 focus:ring-forest/10 transition">
+                    {% for e in form.password.errors %}
+                    <p class="mt-1 text-xs text-rose-500">{{ e }}</p>
+                    {% endfor %}
+                </div>
+
+                <button type="submit"
+                        class="w-full bg-forest hover:bg-forest/90 text-cream font-medium text-sm py-2.5 rounded-lg transition-colors shadow-sm">
+                    Anmelden
+                </button>
+            </form>
+        </div>
+
+        {# Register link #}
+        <p class="text-center text-sm text-forest/60 mt-5">
+            Noch kein Konto?
+            <a href="{% url 'accounts:register' %}" class="font-medium text-forest hover:underline">Registrieren</a>
+        </p>
+
+        <p class="text-center text-xs text-forest/30 mt-4">&copy; {% now "Y" %} Overlytics</p>
+    </div>
+
+    <script>lucide.createIcons();</script>
+</body>
+</html>
