@@ -10,6 +10,8 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.2/ref/settings/
 """
 
+import base64
+import hashlib
 from pathlib import Path
 
 import environ
@@ -52,6 +54,18 @@ INSTALLED_APPS = [
 ]
 
 AUTH_USER_MODEL = 'accounts.User'
+
+# --- Token encryption --------------------------------------------------------
+# Fernet key used to encrypt Overleaf tokens at rest.
+# Set FIELD_ENCRYPTION_KEY in .env (see .env.example for generation command).
+# If absent, a key is derived from SECRET_KEY — convenient for development,
+# but a dedicated key is strongly recommended for production.
+_raw_encryption_key = env('FIELD_ENCRYPTION_KEY', default='')
+FIELD_ENCRYPTION_KEY: bytes = (
+    _raw_encryption_key.encode()
+    if _raw_encryption_key
+    else base64.urlsafe_b64encode(hashlib.sha256(SECRET_KEY.encode()).digest())
+)
 
 LOGIN_URL = '/login/'
 LOGIN_REDIRECT_URL = '/'

@@ -2,10 +2,138 @@
 
 {% block content %}
 
-<div class="flex flex-col items-center justify-center py-20 bg-white rounded-xl border border-beige shadow-sm">
-    <i data-lucide="settings" class="w-12 h-12 text-beige mb-4"></i>
-    <h2 class="text-xl font-bold text-forest">Einstellungen</h2>
-    <p class="text-forest/60 mt-2">Globale Profil- und Kontoeinstellungen folgen hier.</p>
+<div class="max-w-2xl space-y-6">
+
+    <h1 class="text-2xl font-bold text-forest">Einstellungen</h1>
+
+    {# ── Overleaf Token ─────────────────────────────────────────────────── #}
+    <div class="bg-white rounded-xl border border-beige shadow-sm">
+
+        <div class="px-6 py-5 border-b border-beige">
+            <div class="flex items-center gap-3">
+                <span class="inline-flex items-center justify-center w-9 h-9 rounded-lg bg-sage/40">
+                    <i data-lucide="key-round" class="w-4 h-4 text-forest"></i>
+                </span>
+                <div>
+                    <h2 class="text-base font-semibold text-forest">Overleaf Git-Token</h2>
+                    <p class="text-xs text-forest/50 mt-0.5">
+                        Wird verschlüsselt gespeichert und zum Klonen deiner Projekte verwendet.
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <div class="px-6 py-5" x-data="{ editing: false }">
+
+            {% if has_token %}
+            {# ── Token is set ───────────────────────────────────────────── #}
+            <div x-show="!editing">
+                <div class="flex items-center justify-between mb-4">
+                    <div>
+                        <p class="text-xs font-medium text-forest/50 uppercase tracking-wide mb-1">Gespeicherter Token</p>
+                        <p class="font-mono text-sm text-forest tracking-widest">{{ masked_token }}</p>
+                    </div>
+                    <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-emerald-50 text-emerald-700 text-xs font-medium">
+                        <i data-lucide="shield-check" class="w-3.5 h-3.5"></i>
+                        Verschlüsselt
+                    </span>
+                </div>
+
+                <div class="flex items-center gap-3">
+                    <button type="button"
+                            @click="editing = true"
+                            class="inline-flex items-center gap-2 bg-forest hover:bg-forest/90 text-cream text-sm font-medium px-4 py-2 rounded-lg transition-colors shadow-sm">
+                        <i data-lucide="pencil" class="w-3.5 h-3.5"></i>
+                        Token ändern
+                    </button>
+
+                    <form method="post" onsubmit="return confirm('Token wirklich entfernen?')">
+                        {% csrf_token %}
+                        <input type="hidden" name="action" value="delete_token">
+                        <button type="submit"
+                                class="inline-flex items-center gap-2 text-sm text-rose-500 hover:text-rose-600 font-medium px-4 py-2 rounded-lg hover:bg-rose-50 transition-colors">
+                            <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
+                            Entfernen
+                        </button>
+                    </form>
+                </div>
+            </div>
+
+            {# ── Edit form (token already set) ──────────────────────────── #}
+            <div x-show="editing" x-cloak>
+                <form method="post" novalidate>
+                    {% csrf_token %}
+                    <input type="hidden" name="action" value="save_token">
+
+                    <label for="id_overleaf_token_edit" class="block text-sm font-medium text-forest mb-1.5">
+                        Neuen Token eingeben
+                    </label>
+                    <input type="password"
+                           name="overleaf_token"
+                           id="id_overleaf_token_edit"
+                           autocomplete="off"
+                           placeholder="Dein Overleaf Git-Token"
+                           class="w-full rounded-lg border border-beige bg-cream px-3 py-2.5 text-sm text-forest
+                                  focus:outline-none focus:border-forest/40 focus:ring-2 focus:ring-forest/10 transition mb-1.5">
+                    <p class="text-xs text-forest/40 mb-4">
+                        Den Token findest du in Overleaf unter
+                        <span class="font-medium text-forest/60">Konto → Token-Zugriff</span>.
+                    </p>
+
+                    <div class="flex items-center gap-3">
+                        <button type="submit"
+                                class="bg-forest hover:bg-forest/90 text-cream text-sm font-medium px-4 py-2 rounded-lg transition-colors shadow-sm">
+                            Speichern
+                        </button>
+                        <button type="button"
+                                @click="editing = false"
+                                class="text-sm text-forest/60 hover:text-forest transition-colors px-4 py-2">
+                            Abbrechen
+                        </button>
+                    </div>
+                </form>
+            </div>
+
+            {% else %}
+            {# ── No token yet ────────────────────────────────────────────── #}
+            <div class="mb-4 flex items-start gap-3 p-4 rounded-lg bg-wheat/30 border border-wheat">
+                <i data-lucide="info" class="w-4 h-4 text-forest/60 mt-0.5 shrink-0"></i>
+                <p class="text-sm text-forest/70">
+                    Noch kein Token hinterlegt. Füge deinen Overleaf Git-Token hinzu, damit deine
+                    Projekte automatisch synchronisiert werden können.
+                </p>
+            </div>
+
+            <form method="post" novalidate>
+                {% csrf_token %}
+                <input type="hidden" name="action" value="save_token">
+
+                <label for="id_overleaf_token" class="block text-sm font-medium text-forest mb-1.5">
+                    Overleaf Git-Token
+                </label>
+                <input type="password"
+                       name="overleaf_token"
+                       id="id_overleaf_token"
+                       autocomplete="off"
+                       placeholder="Dein Overleaf Git-Token"
+                       class="w-full rounded-lg border border-beige bg-cream px-3 py-2.5 text-sm text-forest
+                              focus:outline-none focus:border-forest/40 focus:ring-2 focus:ring-forest/10 transition mb-1.5">
+                <p class="text-xs text-forest/40 mb-4">
+                    Den Token findest du in Overleaf unter
+                    <span class="font-medium text-forest/60">Konto → Token-Zugriff</span>.
+                </p>
+
+                <button type="submit"
+                        class="inline-flex items-center gap-2 bg-forest hover:bg-forest/90 text-cream text-sm font-medium px-4 py-2 rounded-lg transition-colors shadow-sm">
+                    <i data-lucide="save" class="w-3.5 h-3.5"></i>
+                    Token speichern
+                </button>
+            </form>
+            {% endif %}
+
+        </div>
+    </div>
+
 </div>
 
 {% endblock %}
