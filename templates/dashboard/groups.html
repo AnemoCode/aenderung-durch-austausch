@@ -7,19 +7,21 @@
         <h1 class="text-2xl font-bold text-forest">Gruppen &amp; Freigaben</h1>
         <p class="text-sm text-forest/60 mt-1">Verwalte, wer Zugriff auf die Metriken deiner Projekte hat.</p>
     </div>
-    <button class="bg-forest hover:bg-forest/90 text-cream px-4 py-2 rounded-md text-sm font-medium flex items-center transition-colors shadow-sm">
+    <a href="{% url 'dashboard:group_create' %}"
+       class="bg-forest hover:bg-forest/90 text-cream px-4 py-2 rounded-md text-sm font-medium flex items-center transition-colors shadow-sm">
         <i data-lucide="user-plus" class="w-4 h-4 mr-2"></i>
         Neue Gruppe
-    </button>
+    </a>
 </div>
 
+{% if groups %}
 <div class="bg-white rounded-xl border border-beige shadow-sm overflow-hidden">
     <table class="w-full text-sm text-left">
         <thead class="text-xs text-forest/70 bg-cream border-b border-beige uppercase">
         <tr>
             <th class="px-6 py-4 font-medium">Gruppenname</th>
             <th class="px-6 py-4 font-medium">Mitglieder</th>
-            <th class="px-6 py-4 font-medium">Geteilte Projekte</th>
+            <th class="px-6 py-4 font-medium">Projekte</th>
             <th class="px-6 py-4 font-medium">Deine Rolle</th>
             <th class="px-6 py-4 text-right font-medium">Aktion</th>
         </tr>
@@ -29,7 +31,7 @@
         <tr class="hover:bg-cream/80 transition-colors">
             <td class="px-6 py-4">
                 <div class="flex items-center">
-                    <div class="w-8 h-8 rounded-md bg-sage/50 text-forest flex items-center justify-center font-bold mr-3 border border-sage text-sm">
+                    <div class="w-8 h-8 rounded-md bg-sage/50 text-forest flex items-center justify-center font-bold mr-3 border border-sage text-sm flex-shrink-0">
                         {{ group.name|slice:":1" }}
                     </div>
                     <span class="font-medium text-forest">{{ group.name }}</span>
@@ -38,32 +40,43 @@
             <td class="px-6 py-4">
                 <div class="flex items-center text-forest">
                     <i data-lucide="users" class="w-4 h-4 mr-2 text-forest/50"></i>
-                    {{ group.members }}
+                    {{ group.members_count }}
                 </div>
             </td>
             <td class="px-6 py-4">
                 <div class="flex items-center text-forest">
                     <i data-lucide="folder-git-2" class="w-4 h-4 mr-2 text-forest/50"></i>
-                    {{ group.shared_projects }}
+                    {{ group.projects_count }}
                 </div>
             </td>
             <td class="px-6 py-4">
                 <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium
-                    {% if group.role == 'Admin' %}bg-forest text-cream{% else %}bg-beige/50 text-forest{% endif %}">
-                    {{ group.role }}
+                    {% if group.user_role == 'admin' %}bg-forest text-cream{% else %}bg-beige/50 text-forest{% endif %}">
+                    {{ group.user_role|title }}
                 </span>
             </td>
             <td class="px-6 py-4 text-right">
-                <div class="flex justify-end gap-2">
-                    <button class="p-1.5 text-forest/50 hover:text-forest hover:bg-beige/30 rounded transition-colors" title="Einstellungen">
-                        <i data-lucide="settings" class="w-4 h-4"></i>
-                    </button>
-                </div>
+                <a href="{% url 'dashboard:group_detail' group.pk %}"
+                   class="p-1.5 text-forest/50 hover:text-forest hover:bg-beige/30 rounded transition-colors inline-flex"
+                   title="Gruppe öffnen">
+                    <i data-lucide="arrow-right" class="w-4 h-4"></i>
+                </a>
             </td>
         </tr>
         {% endfor %}
         </tbody>
     </table>
 </div>
+{% else %}
+<div class="bg-white rounded-xl border border-beige shadow-sm py-20 flex flex-col items-center justify-center text-center">
+    <i data-lucide="users" class="w-12 h-12 text-beige mb-4"></i>
+    <h2 class="text-lg font-semibold text-forest">Noch keine Gruppen</h2>
+    <p class="text-sm text-forest/60 mt-1 mb-6">Erstelle eine Gruppe, um Projekte mit anderen zu teilen.</p>
+    <a href="{% url 'dashboard:group_create' %}"
+       class="inline-flex items-center gap-2 bg-forest text-cream text-sm font-medium px-4 py-2 rounded-lg hover:bg-forest/90 transition-colors">
+        <i data-lucide="plus" class="w-4 h-4"></i> Erste Gruppe erstellen
+    </a>
+</div>
+{% endif %}
 
 {% endblock %}

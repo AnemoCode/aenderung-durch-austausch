@@ -8,19 +8,34 @@
         <h1 class="text-2xl font-bold text-forest">Projekte verwalten</h1>
         <p class="text-sm text-forest/60 mt-1">Alle deine getrackten Overleaf-Projekte auf einen Blick.</p>
     </div>
+    <a href="{% url 'dashboard:project_create' %}"
+       class="bg-forest hover:bg-forest/90 text-cream px-4 py-2 rounded-md text-sm font-medium flex items-center transition-colors shadow-sm">
+        <i data-lucide="plus" class="w-4 h-4 mr-2"></i>
+        Neues Projekt
+    </a>
 </div>
 
+{% if projects %}
 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
     {% for p in projects %}
     <div class="bg-white rounded-xl border border-beige shadow-sm hover:border-forest/20 transition-all flex flex-col group">
-        <div class="p-5 border-b border-beige/50 flex justify-between items-start">
-            <div class="overflow-hidden">
-                <h3 class="font-bold text-forest text-lg truncate" title="{{ p.name }}">{{ p.name }}</h3>
-                <span class="text-xs text-forest/50 mt-1 block truncate w-full">{{ p.git_url }}</span>
+        <div class="p-5 border-b border-beige/50 flex justify-between items-start gap-3">
+            <div class="min-w-0">
+                <h3 class="font-bold text-forest text-base truncate" title="{{ p.name }}">{{ p.name }}</h3>
+                <span class="text-xs text-forest/50 mt-1 block truncate">{{ p.git_url }}</span>
             </div>
-            <button class="text-beige hover:text-forest transition-colors ml-2 flex-shrink-0">
-                <i data-lucide="more-vertical" class="w-5 h-5"></i>
-            </button>
+            <div class="flex gap-1 flex-shrink-0">
+                <a href="{% url 'dashboard:project_update' p.pk %}"
+                   class="p-1.5 text-forest/40 hover:text-forest hover:bg-cream rounded-md transition-colors"
+                   title="Bearbeiten">
+                    <i data-lucide="edit" class="w-4 h-4"></i>
+                </a>
+                <a href="{% url 'dashboard:project_delete' p.pk %}"
+                   class="p-1.5 text-forest/40 hover:text-rose-600 hover:bg-rose-50 rounded-md transition-colors"
+                   title="Löschen">
+                    <i data-lucide="trash-2" class="w-4 h-4"></i>
+                </a>
+            </div>
         </div>
 
         <div class="p-5 flex-1 flex flex-col gap-4">
@@ -37,31 +52,56 @@
                 {% endif %}
             </div>
 
-            <div class="grid grid-cols-2 gap-4 py-2 border-y border-beige/30">
+            <div class="grid grid-cols-2 gap-4 py-3 border-y border-beige/30">
                 <div>
                     <p class="text-xs text-forest/50 mb-1">Wörter</p>
-                    <p class="font-semibold text-forest">{{ p.words|intcomma }}</p>
+                    <p class="font-semibold text-forest">{{ p.word_count|intcomma }}</p>
                 </div>
                 <div>
                     <p class="text-xs text-forest/50 mb-1">Seiten</p>
-                    <p class="font-semibold text-forest">{{ p.pages }}</p>
+                    <p class="font-semibold text-forest">{{ p.page_count }}</p>
                 </div>
             </div>
 
-            <div class="mt-auto pt-2 flex justify-between items-center">
-                <span class="text-xs text-forest/50">Sync: {{ p.last_sync }}</span>
-                <div class="flex gap-2">
-                    <button class="p-1.5 text-forest/50 hover:text-forest hover:bg-cream rounded-md transition-colors" title="Synchronisieren">
-                        <i data-lucide="refresh-cw" class="w-4 h-4"></i>
-                    </button>
-                    <button class="p-1.5 text-forest/50 hover:text-forest hover:bg-cream rounded-md transition-colors" title="Bearbeiten">
-                        <i data-lucide="edit" class="w-4 h-4"></i>
-                    </button>
+            {# Groups #}
+            <div>
+                <p class="text-xs text-forest/50 mb-2">Gruppen</p>
+                <div class="flex flex-wrap gap-1">
+                    {% for group in p.groups.all %}
+                    <a href="{% url 'dashboard:group_detail' group.pk %}"
+                       class="text-xs px-2 py-0.5 rounded-full bg-sage/30 text-forest hover:bg-sage/60 transition-colors">
+                        {{ group.name }}
+                    </a>
+                    {% empty %}
+                    <span class="text-xs text-forest/40">Keiner Gruppe zugeordnet</span>
+                    {% endfor %}
                 </div>
+            </div>
+
+            <div class="mt-auto pt-1">
+                <span class="text-xs text-forest/50">
+                    Sync:
+                    {% if p.last_synced_at %}
+                        {{ p.last_synced_at|date:"d. M Y, H:i" }} Uhr
+                    {% else %}
+                        Noch nicht synchronisiert
+                    {% endif %}
+                </span>
             </div>
         </div>
     </div>
     {% endfor %}
 </div>
+{% else %}
+<div class="bg-white rounded-xl border border-beige shadow-sm py-20 flex flex-col items-center justify-center text-center">
+    <i data-lucide="folder-git-2" class="w-12 h-12 text-beige mb-4"></i>
+    <h2 class="text-lg font-semibold text-forest">Noch keine Projekte</h2>
+    <p class="text-sm text-forest/60 mt-1 mb-6">Füge dein erstes Overleaf-Projekt hinzu, um es zu tracken.</p>
+    <a href="{% url 'dashboard:project_create' %}"
+       class="inline-flex items-center gap-2 bg-forest text-cream text-sm font-medium px-4 py-2 rounded-lg hover:bg-forest/90 transition-colors">
+        <i data-lucide="plus" class="w-4 h-4"></i> Neues Projekt hinzufügen
+    </a>
+</div>
+{% endif %}
 
 {% endblock %}

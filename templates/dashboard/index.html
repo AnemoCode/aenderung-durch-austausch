@@ -16,108 +16,67 @@
             <i data-lucide="refresh-cw"
                class="w-4 h-4 mr-2"
                :class="{ 'animate-spin': syncing }"></i>
-            <span x-text="syncing ? 'Synchronisiere...' : 'Jetzt synchronisieren'"></span>
+            <span x-text="syncing ? 'Synchronisiere…' : 'Jetzt synchronisieren'"></span>
         </button>
     </div>
 </div>
 
 {# Stats Row #}
-<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-    {# Words #}
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
     <div class="bg-white p-5 rounded-xl border border-beige shadow-sm flex items-start justify-between hover:border-forest/20 transition-colors">
         <div>
             <p class="text-sm font-medium text-forest/60 mb-1">Wörter Gesamt</p>
-            <div class="flex items-baseline gap-2">
-                <h3 class="text-2xl font-bold text-forest">{{ stats.total_words|intcomma }}</h3>
-                <span class="text-xs font-semibold text-forest">+12%</span>
-            </div>
+            <h3 class="text-2xl font-bold text-forest">{{ stats.total_words|intcomma }}</h3>
         </div>
         <div class="p-3 rounded-lg border bg-sage/40 border-sage text-forest">
             <i data-lucide="file-text" class="w-5 h-5"></i>
         </div>
     </div>
-    {# Pages #}
     <div class="bg-white p-5 rounded-xl border border-beige shadow-sm flex items-start justify-between hover:border-forest/20 transition-colors">
         <div>
             <p class="text-sm font-medium text-forest/60 mb-1">Seiten Gesamt</p>
-            <div class="flex items-baseline gap-2">
-                <h3 class="text-2xl font-bold text-forest">{{ stats.total_pages }}</h3>
-                <span class="text-xs font-semibold text-forest">+8%</span>
-            </div>
+            <h3 class="text-2xl font-bold text-forest">{{ stats.total_pages }}</h3>
         </div>
         <div class="p-3 rounded-lg border bg-wheat/50 border-wheat text-forest">
             <i data-lucide="book-open" class="w-5 h-5"></i>
         </div>
     </div>
-    {# Active projects #}
     <div class="bg-white p-5 rounded-xl border border-beige shadow-sm flex items-start justify-between hover:border-forest/20 transition-colors">
         <div>
             <p class="text-sm font-medium text-forest/60 mb-1">Aktive Projekte</p>
-            <div class="flex items-baseline gap-2">
-                <h3 class="text-2xl font-bold text-forest">{{ stats.active_projects }}</h3>
-                <span class="text-xs font-semibold text-forest/60">0</span>
-            </div>
+            <h3 class="text-2xl font-bold text-forest">{{ stats.active_projects }}</h3>
         </div>
         <div class="p-3 rounded-lg border bg-beige/50 border-beige text-forest">
             <i data-lucide="folder-git-2" class="w-5 h-5"></i>
         </div>
     </div>
-    {# Next sync #}
-    <div class="bg-white p-5 rounded-xl border border-beige shadow-sm flex items-start justify-between hover:border-forest/20 transition-colors">
-        <div>
-            <p class="text-sm font-medium text-forest/60 mb-1">Nächster Auto-Sync</p>
-            <h3 class="text-2xl font-bold text-forest">{{ stats.next_sync }}</h3>
-        </div>
-        <div class="p-3 rounded-lg border bg-cream border-beige text-forest">
-            <i data-lucide="refresh-cw" class="w-5 h-5"></i>
-        </div>
-    </div>
 </div>
 
-{# Charts Row #}
-<div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-    {# Area Chart #}
-    <div class="lg:col-span-2 bg-white p-6 rounded-xl border border-beige shadow-sm">
-        <div class="flex items-center justify-between mb-6">
-            <h2 class="text-base font-semibold text-forest">Schreibfortschritt (Letzte 7 Tage)</h2>
-            <select class="text-sm border border-beige rounded-md text-forest bg-cream px-2 py-1 outline-none">
-                <option>Alle Projekte</option>
-                <option>Masterarbeit_Physik</option>
-            </select>
-        </div>
-        <div class="h-72 w-full">
-            <canvas id="progressChart"></canvas>
-        </div>
+{# Chart placeholder #}
+<div class="bg-white p-6 rounded-xl border border-beige shadow-sm">
+    <h2 class="text-base font-semibold text-forest mb-4">Schreibfortschritt</h2>
+    {% if chart_data_json == "[]" %}
+    <div class="h-48 flex flex-col items-center justify-center text-center">
+        <i data-lucide="bar-chart-2" class="w-10 h-10 text-beige mb-3"></i>
+        <p class="text-sm font-medium text-forest/60">Noch keine Verlaufsdaten vorhanden</p>
+        <p class="text-xs text-forest/40 mt-1">Sobald Projekte synchronisiert werden, erscheint hier der Schreibfortschritt.</p>
     </div>
-
-    {# Git Credentials Card #}
-    <div class="bg-white p-6 rounded-xl border border-beige shadow-sm flex flex-col">
-        <h2 class="text-base font-semibold text-forest mb-4">Git Zugangsdaten</h2>
-        <div class="flex-1 space-y-4">
-            <div class="bg-sage/30 border border-sage rounded-lg p-4 flex items-start">
-                <i data-lucide="check-circle-2" class="w-5 h-5 text-forest mt-0.5 mr-3 flex-shrink-0"></i>
-                <div>
-                    <h3 class="text-sm font-medium text-forest">Token aktiv</h3>
-                    <p class="text-xs text-forest/70 mt-1">Dein Overleaf Git-Token ist sicher verschlüsselt gespeichert.</p>
-                </div>
-            </div>
-            <div class="bg-cream border border-beige rounded-lg p-4">
-                <p class="text-xs font-medium text-forest/60 uppercase tracking-wider mb-2">Verknüpfte Email</p>
-                <p class="text-sm text-forest font-medium truncate">{{ request.user.email|default:"—" }}</p>
-            </div>
-        </div>
-        <button class="mt-4 w-full text-center text-sm text-forest font-medium hover:text-forest/70 transition-colors">
-            Credentials aktualisieren &rarr;
-        </button>
-    </div>
+    {% else %}
+    <div class="h-64"><canvas id="progressChart"></canvas></div>
+    {% endif %}
 </div>
 
 {# Projects Table #}
 <div class="bg-white rounded-xl border border-beige shadow-sm overflow-hidden">
     <div class="p-5 border-b border-beige flex items-center justify-between bg-cream/50">
-        <h2 class="text-base font-semibold text-forest">Verknüpfte Projekte</h2>
-        <a href="{% url 'dashboard:projects' %}" class="text-sm text-forest font-medium hover:text-forest/70">Alle ansehen</a>
+        <h2 class="text-base font-semibold text-forest">Meine Projekte</h2>
+        <a href="{% url 'dashboard:project_create' %}"
+           class="text-sm text-forest font-medium hover:text-forest/70 flex items-center gap-1">
+            <i data-lucide="plus" class="w-4 h-4"></i> Neues Projekt
+        </a>
     </div>
+
+    {% if projects %}
     <div class="overflow-x-auto">
         <table class="w-full text-sm text-left">
             <thead class="text-xs text-forest/70 bg-cream border-b border-beige uppercase">
@@ -126,7 +85,7 @@
                 <th class="px-6 py-4 font-medium">Status</th>
                 <th class="px-6 py-4 font-medium">Metriken</th>
                 <th class="px-6 py-4 font-medium">Letzter Sync</th>
-                <th class="px-6 py-4 font-medium">Geteilt mit</th>
+                <th class="px-6 py-4 font-medium">Gruppen</th>
                 <th class="px-6 py-4 text-right font-medium">Aktion</th>
             </tr>
             </thead>
@@ -135,10 +94,10 @@
             <tr class="hover:bg-cream/80 transition-colors group">
                 <td class="px-6 py-4">
                     <div class="flex items-center">
-                        <i data-lucide="folder-git-2" class="w-4 h-4 text-forest/50 mr-3"></i>
-                        <div>
+                        <i data-lucide="folder-git-2" class="w-4 h-4 text-forest/50 mr-3 flex-shrink-0"></i>
+                        <div class="min-w-0">
                             <p class="font-medium text-forest">{{ project.name }}</p>
-                            <span class="text-xs text-forest/50 truncate w-40 inline-block">{{ project.git_url }}</span>
+                            <span class="text-xs text-forest/50 truncate block max-w-xs">{{ project.git_url }}</span>
                         </div>
                     </div>
                 </td>
@@ -154,46 +113,67 @@
                     {% endif %}
                 </td>
                 <td class="px-6 py-4">
-                    <div class="flex flex-col gap-1">
-                        <span class="text-forest font-medium">{{ project.words|intcomma }} Wörter</span>
-                        <span class="text-xs text-forest/60">{{ project.pages }} Seiten</span>
+                    <div class="flex flex-col gap-0.5">
+                        <span class="text-forest font-medium">{{ project.word_count|intcomma }} Wörter</span>
+                        <span class="text-xs text-forest/60">{{ project.page_count }} Seiten</span>
                     </div>
                 </td>
-                <td class="px-6 py-4 text-forest/70">{{ project.last_sync }}</td>
+                <td class="px-6 py-4 text-forest/70 text-xs">
+                    {% if project.last_synced_at %}
+                        {{ project.last_synced_at|date:"d. M Y, H:i" }} Uhr
+                    {% else %}
+                        <span class="text-forest/40">—</span>
+                    {% endif %}
+                </td>
                 <td class="px-6 py-4">
-                    <div class="flex items-center text-forest/70">
-                        <i data-lucide="users" class="w-3.5 h-3.5 mr-1.5 text-forest/50"></i>
-                        <span class="truncate w-32">{{ project.shared_with }}</span>
+                    <div class="flex flex-wrap gap-1">
+                        {% for group in project.groups.all %}
+                        <a href="{% url 'dashboard:group_detail' group.pk %}"
+                           class="text-xs px-2 py-0.5 rounded-full bg-sage/30 text-forest hover:bg-sage/60 transition-colors">
+                            {{ group.name }}
+                        </a>
+                        {% empty %}
+                        <span class="text-xs text-forest/40">—</span>
+                        {% endfor %}
                     </div>
                 </td>
                 <td class="px-6 py-4 text-right">
-                    <button class="text-forest/50 hover:text-forest font-medium px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity">
-                        Details
-                    </button>
+                    <a href="{% url 'dashboard:project_update' project.pk %}"
+                       class="text-forest/50 hover:text-forest font-medium px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity text-xs">
+                        Bearbeiten
+                    </a>
                 </td>
             </tr>
             {% endfor %}
             </tbody>
         </table>
     </div>
+    {% else %}
+    <div class="py-16 flex flex-col items-center justify-center text-center">
+        <i data-lucide="folder-git-2" class="w-10 h-10 text-beige mb-3"></i>
+        <p class="text-sm font-medium text-forest/60">Noch keine Projekte vorhanden</p>
+        <a href="{% url 'dashboard:project_create' %}"
+           class="mt-4 inline-flex items-center gap-2 bg-forest text-cream text-sm font-medium px-4 py-2 rounded-lg hover:bg-forest/90 transition-colors">
+            <i data-lucide="plus" class="w-4 h-4"></i> Erstes Projekt hinzufügen
+        </a>
+    </div>
+    {% endif %}
 </div>
 
 {% endblock %}
 
 {% block extra_js %}
+{% if chart_data_json != "[]" %}
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4"></script>
 <script>
 (function () {
     const raw = {{ chart_data_json|safe }};
     const labels = raw.map(d => d.date);
     const words  = raw.map(d => d.words);
-
     const ctx = document.getElementById('progressChart').getContext('2d');
-
-    const gradient = ctx.createLinearGradient(0, 0, 0, ctx.canvas.parentElement.clientHeight || 288);
-    gradient.addColorStop(0,   'rgba(52,73,69,0.2)');
-    gradient.addColorStop(1,   'rgba(52,73,69,0)');
-
+    const gradient = ctx.createLinearGradient(0, 0, 0, 256);
+    gradient.addColorStop(0, 'rgba(52,73,69,0.2)');
+    gradient.addColorStop(1, 'rgba(52,73,69,0)');
     new Chart(ctx, {
         type: 'line',
         data: {
@@ -216,29 +196,20 @@
             plugins: {
                 legend: { display: false },
                 tooltip: {
-                    backgroundColor: '#ffffff',
+                    backgroundColor: '#fff',
                     titleColor: '#344945',
                     bodyColor: '#344945',
                     borderColor: '#E0DCD1',
                     borderWidth: 1,
-                    padding: 10,
-                    titleFont: { weight: 'bold' },
                 }
             },
             scales: {
-                x: {
-                    grid: { display: false },
-                    border: { display: false },
-                    ticks: { color: 'rgba(52,73,69,0.6)', font: { size: 12 } }
-                },
-                y: {
-                    grid: { color: '#E0DCD1', drawBorder: false },
-                    border: { display: false, dash: [3, 3] },
-                    ticks: { color: 'rgba(52,73,69,0.6)', font: { size: 12 } }
-                }
+                x: { grid: { display: false }, border: { display: false }, ticks: { color: 'rgba(52,73,69,0.6)' } },
+                y: { grid: { color: '#E0DCD1' }, border: { display: false }, ticks: { color: 'rgba(52,73,69,0.6)' } }
             }
         }
     });
 })();
 </script>
+{% endif %}
 {% endblock %}

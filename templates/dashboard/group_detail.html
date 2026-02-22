@@ -1,0 +1,180 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+{# Header #}
+<div class="flex items-start justify-between gap-4">
+    <div>
+        <a href="{% url 'dashboard:groups' %}"
+           class="inline-flex items-center gap-1.5 text-sm text-forest/60 hover:text-forest transition-colors mb-2">
+            <i data-lucide="arrow-left" class="w-4 h-4"></i> Alle Gruppen
+        </a>
+        <h1 class="text-2xl font-bold text-forest">{{ object.name }}</h1>
+        <p class="text-xs text-forest/50 mt-1">
+            Erstellt von {{ object.created_by.username }} · {{ object.created_at|date:"d. M Y" }}
+        </p>
+    </div>
+    {% if is_admin %}
+    <a href="{% url 'dashboard:group_delete' object.pk %}"
+       class="flex items-center gap-1.5 text-sm text-rose-600 hover:text-rose-700 hover:bg-rose-50 px-3 py-1.5 rounded-lg transition-colors border border-rose-200">
+        <i data-lucide="trash-2" class="w-4 h-4"></i> Gruppe löschen
+    </a>
+    {% endif %}
+</div>
+
+<div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+
+    {# ── Projects ───────────────────────────────────────────────── #}
+    <div class="bg-white rounded-xl border border-beige shadow-sm overflow-hidden">
+        <div class="px-5 py-4 border-b border-beige bg-cream/50 flex items-center justify-between">
+            <h2 class="text-base font-semibold text-forest flex items-center gap-2">
+                <i data-lucide="folder-git-2" class="w-4 h-4 text-forest/50"></i>
+                Projekte
+            </h2>
+            <span class="text-xs text-forest/50">{{ group_projects|length }}</span>
+        </div>
+
+        {# Add project form (any member who owns projects not yet in group) #}
+        {% with add_project_form.fields.project.queryset as available %}
+        {% if available.exists %}
+        <div class="px-5 py-4 border-b border-beige/50 bg-sage/10">
+            <form method="post" action="{% url 'dashboard:group_add_project' object.pk %}" class="flex gap-2">
+                {% csrf_token %}
+                <select name="project"
+                        class="flex-1 rounded-lg border border-beige bg-cream text-sm text-forest px-3 py-2
+                               focus:outline-none focus:border-forest/40 focus:ring-2 focus:ring-forest/10 transition">
+                    <option value="">Projekt auswählen…</option>
+                    {% for project in available %}
+                    <option value="{{ project.pk }}">{{ project.name }}</option>
+                    {% endfor %}
+                </select>
+                <button type="submit"
+                        class="flex-shrink-0 bg-forest hover:bg-forest/90 text-cream text-sm font-medium px-4 py-2 rounded-lg transition-colors">
+                    Hinzufügen
+                </button>
+            </form>
+        </div>
+        {% endif %}
+        {% endwith %}
+
+        {% if group_projects %}
+        <table class="w-full text-sm">
+            <tbody class="divide-y divide-beige/50">
+            {% for gp in group_projects %}
+            <tr class="hover:bg-cream/60 transition-colors group">
+                <td class="px-5 py-3">
+                    <p class="font-medium text-forest">{{ gp.project.name }}</p>
+                    <p class="text-xs text-forest/50">{{ gp.project.owner.username }}</p>
+                </td>
+                <td class="px-5 py-3">
+                    {% if gp.project.status == 'OK' %}
+                    <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-sage/70 text-forest">
+                        <i data-lucide="check-circle-2" class="w-3 h-3 mr-1"></i> Aktiv
+                    </span>
+                    {% else %}
+                    <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-wheat text-forest">
+                        <i data-lucide="alert-circle" class="w-3 h-3 mr-1"></i> Auth Error
+                    </span>
+                    {% endif %}
+                </td>
+                <td class="px-5 py-3 text-right">
+                    {% if is_admin or gp.project.owner == request.user %}
+                    <form method="post"
+                          action="{% url 'dashboard:group_remove_project' object.pk gp.project.pk %}"
+                          class="inline">
+                        {% csrf_token %}
+                        <button type="submit"
+                                class="opacity-0 group-hover:opacity-100 text-forest/40 hover:text-rose-600 transition-all p-1 rounded"
+                                title="Aus Gruppe entfernen">
+                            <i data-lucide="x" class="w-4 h-4"></i>
+                        </button>
+                    </form>
+                    {% endif %}
+                </td>
+            </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+        {% else %}
+        <div class="py-10 flex flex-col items-center justify-center text-center px-5">
+            <i data-lucide="folder-git-2" class="w-8 h-8 text-beige mb-2"></i>
+            <p class="text-sm text-forest/50">Noch keine Projekte in dieser Gruppe.</p>
+        </div>
+        {% endif %}
+    </div>
+
+    {# ── Members ────────────────────────────────────────────────── #}
+    <div class="bg-white rounded-xl border border-beige shadow-sm overflow-hidden">
+        <div class="px-5 py-4 border-b border-beige bg-cream/50 flex items-center justify-between">
+            <h2 class="text-base font-semibold text-forest flex items-center gap-2">
+                <i data-lucide="users" class="w-4 h-4 text-forest/50"></i>
+                Mitglieder
+            </h2>
+            <span class="text-xs text-forest/50">{{ memberships|length }}</span>
+        </div>
+
+        {# Add member form (admin only) #}
+        {% if is_admin %}
+        <div class="px-5 py-4 border-b border-beige/50 bg-sage/10">
+            <form method="post" action="{% url 'dashboard:group_add_member' object.pk %}" class="flex gap-2">
+                {% csrf_token %}
+                <input type="text"
+                       name="username"
+                       placeholder="Benutzername eingeben…"
+                       autocomplete="off"
+                       class="flex-1 rounded-lg border border-beige bg-cream text-sm text-forest px-3 py-2
+                              focus:outline-none focus:border-forest/40 focus:ring-2 focus:ring-forest/10 transition">
+                <button type="submit"
+                        class="flex-shrink-0 bg-forest hover:bg-forest/90 text-cream text-sm font-medium px-4 py-2 rounded-lg transition-colors">
+                    Einladen
+                </button>
+            </form>
+        </div>
+        {% endif %}
+
+        <table class="w-full text-sm">
+            <tbody class="divide-y divide-beige/50">
+            {% for membership in memberships %}
+            <tr class="hover:bg-cream/60 transition-colors group">
+                <td class="px-5 py-3">
+                    <div class="flex items-center gap-3">
+                        <div class="w-7 h-7 rounded-full bg-wheat flex items-center justify-center text-forest font-bold text-xs flex-shrink-0">
+                            {{ membership.user.username|slice:":2"|upper }}
+                        </div>
+                        <div>
+                            <p class="font-medium text-forest">{{ membership.user.username }}</p>
+                            {% if membership.user.get_full_name %}
+                            <p class="text-xs text-forest/50">{{ membership.user.get_full_name }}</p>
+                            {% endif %}
+                        </div>
+                    </div>
+                </td>
+                <td class="px-5 py-3">
+                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium
+                        {% if membership.role == 'admin' %}bg-forest text-cream{% else %}bg-beige/60 text-forest{% endif %}">
+                        {{ membership.get_role_display }}
+                    </span>
+                </td>
+                <td class="px-5 py-3 text-right">
+                    {% if is_admin and membership.user != request.user %}
+                    <form method="post"
+                          action="{% url 'dashboard:group_remove_member' object.pk membership.user.pk %}"
+                          class="inline">
+                        {% csrf_token %}
+                        <button type="submit"
+                                class="opacity-0 group-hover:opacity-100 text-forest/40 hover:text-rose-600 transition-all p-1 rounded"
+                                title="Mitglied entfernen">
+                            <i data-lucide="x" class="w-4 h-4"></i>
+                        </button>
+                    </form>
+                    {% endif %}
+                </td>
+            </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+</div>
+
+{% endblock %}
