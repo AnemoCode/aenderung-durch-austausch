@@ -9,16 +9,17 @@
         <h1 class="text-2xl font-bold text-forest">Willkommen zurück!</h1>
         <p class="text-sm text-forest/60 mt-1">Hier ist der aktuelle Stand deiner Overleaf-Projekte.</p>
     </div>
-    <div x-data="{ syncing: false }">
-        <button
-            @click="syncing = true; setTimeout(() => syncing = false, 1500)"
-            class="flex items-center text-sm font-medium text-forest hover:bg-sage/30 transition-colors bg-white px-3 py-1.5 rounded-md border border-beige shadow-sm">
+    <form method="post" action="{% url 'dashboard:sync_all' %}" x-data="{ syncing: false }" @submit="syncing = true">
+        {% csrf_token %}
+        <button type="submit"
+            class="flex items-center text-sm font-medium text-forest hover:bg-sage/30 transition-colors bg-white px-3 py-1.5 rounded-md border border-beige shadow-sm disabled:opacity-60"
+            :disabled="syncing">
             <i data-lucide="refresh-cw"
                class="w-4 h-4 mr-2"
                :class="{ 'animate-spin': syncing }"></i>
             <span x-text="syncing ? 'Synchronisiere…' : 'Jetzt synchronisieren'"></span>
         </button>
-    </div>
+    </form>
 </div>
 
 {# Stats Row #}
@@ -106,9 +107,13 @@
                     <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-sage/70 text-forest">
                         <i data-lucide="check-circle-2" class="w-3 h-3 mr-1"></i> Aktiv
                     </span>
-                    {% else %}
+                    {% elif project.status == 'AUTH_ERROR' %}
                     <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-wheat text-forest">
-                        <i data-lucide="alert-circle" class="w-3 h-3 mr-1"></i> Auth Error
+                        <i data-lucide="key-round" class="w-3 h-3 mr-1"></i> Auth-Fehler
+                    </span>
+                    {% else %}
+                    <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-rose-100 text-rose-700">
+                        <i data-lucide="git-branch-x" class="w-3 h-3 mr-1"></i> Clone-Fehler
                     </span>
                     {% endif %}
                 </td>
@@ -138,10 +143,21 @@
                     </div>
                 </td>
                 <td class="px-6 py-4 text-right">
-                    <a href="{% url 'dashboard:project_update' project.pk %}"
-                       class="text-forest/50 hover:text-forest font-medium px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity text-xs">
-                        Bearbeiten
-                    </a>
+                    <div class="flex items-center justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                        <form method="post" action="{% url 'dashboard:sync_project' project.pk %}"
+                              x-data="{ s: false }" @submit="s = true">
+                            {% csrf_token %}
+                            <button type="submit" :disabled="s"
+                                    title="Projekt synchronisieren"
+                                    class="text-forest/50 hover:text-forest p-1 rounded disabled:opacity-40">
+                                <i data-lucide="refresh-cw" class="w-3.5 h-3.5" :class="{ 'animate-spin': s }"></i>
+                            </button>
+                        </form>
+                        <a href="{% url 'dashboard:project_update' project.pk %}"
+                           class="text-forest/50 hover:text-forest font-medium px-2 py-1 rounded text-xs">
+                            Bearbeiten
+                        </a>
+                    </div>
                 </td>
             </tr>
             {% endfor %}

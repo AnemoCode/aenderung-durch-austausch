@@ -49,6 +49,7 @@ INSTALLED_APPS = [
     'whitenoise.runserver_nostatic',
     'django.contrib.staticfiles',
     'django.contrib.humanize',
+    'django_celery_beat',
     'apps.accounts',
     'apps.dashboard',
 ]
@@ -173,3 +174,14 @@ LOGGING = {
     "handlers": {"console": {"class": "logging.StreamHandler"}},
     "root": {"handlers": ["console"], "level": "INFO"},
 }
+
+# ── Celery ────────────────────────────────────────────────────────────────────
+CELERY_BROKER_URL         = env('REDIS_URL', default='redis://redis:6379/0')
+CELERY_RESULT_BACKEND     = env('REDIS_URL', default='redis://redis:6379/0')
+CELERY_TASK_SERIALIZER    = 'json'
+CELERY_RESULT_SERIALIZER  = 'json'
+CELERY_ACCEPT_CONTENT     = ['json']
+CELERY_TIMEZONE           = TIME_ZONE   # 'UTC'
+CELERY_BEAT_SCHEDULER     = 'django_celery_beat.schedulers:DatabaseScheduler'
+CELERY_WORKER_CONCURRENCY = 1
+CELERY_TASK_REJECT_ON_WORKER_LOST = True

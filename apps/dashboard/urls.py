@@ -8,6 +8,8 @@ urlpatterns = [
     # Overview
     path('', views.DashboardView.as_view(), name='index'),
     path('settings/', views.SettingsView.as_view(), name='settings'),
+    path('sync/', views.SyncAllView.as_view(), name='sync_all'),
+    path('projects/<int:pk>/sync/', views.SyncProjectView.as_view(), name='sync_project'),
 
     # Projects
     path('projects/', views.ProjectListView.as_view(), name='projects'),

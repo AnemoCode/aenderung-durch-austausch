@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from .models import GroupMembership, GroupProject, Project, ProjectGroup
+from .models import GroupMembership, GroupProject, Project, ProjectGroup, ProjectSnapshot
 
 
 @admin.register(Project)
@@ -32,3 +32,17 @@ class GroupMembershipAdmin(admin.ModelAdmin):
 class GroupProjectAdmin(admin.ModelAdmin):
     list_display = ['group', 'project', 'added_by', 'added_at']
     readonly_fields = ['added_at']
+
+
+@admin.register(ProjectSnapshot)
+class ProjectSnapshotAdmin(admin.ModelAdmin):
+    list_display    = ['project', 'word_count', 'page_count', 'taken_at']
+    list_filter     = ['project']
+    readonly_fields = ['project', 'word_count', 'page_count', 'taken_at']
+    ordering        = ['-taken_at']
+
+    def has_add_permission(self, request):
+        return False
+
+    def has_change_permission(self, request, obj=None):
+        return False

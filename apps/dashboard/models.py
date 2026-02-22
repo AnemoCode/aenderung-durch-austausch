@@ -4,8 +4,9 @@ from django.db import models
 
 class Project(models.Model):
     class Status(models.TextChoices):
-        OK = 'OK', 'Aktiv'
-        AUTH_ERROR = 'AUTH_ERROR', 'Auth Error'
+        OK          = 'OK',          'Aktiv'
+        AUTH_ERROR  = 'AUTH_ERROR',  'Auth Error'
+        CLONE_ERROR = 'CLONE_ERROR', 'Clone Error'
 
     owner = models.ForeignKey(
         settings.AUTH_USER_MODEL,
@@ -117,3 +118,18 @@ class GroupProject(models.Model):
 
     def __str__(self):
         return f'{self.project} in {self.group}'
+
+
+class ProjectSnapshot(models.Model):
+    """Immutable hourly record. Always INSERT — never UPDATE."""
+    project    = models.ForeignKey(Project, on_delete=models.CASCADE, related_name='snapshots')
+    word_count = models.PositiveIntegerField()
+    page_count = models.PositiveIntegerField()
+    taken_at   = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ['-taken_at']
+        indexes = [
+            models.Index(fields=['project', 'taken_at'], name='snapshot_project_taken_idx'),
+            models.Index(fields=['taken_at'],             name='snapshot_taken_idx'),
+        ]

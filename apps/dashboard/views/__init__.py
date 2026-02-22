@@ -1,4 +1,4 @@
-from .dashboard import DashboardView, SettingsView
+from .dashboard import DashboardView, SettingsView, SyncAllView, SyncProjectView
 from .groups import (
     AddMemberView,
     AddProjectView,
