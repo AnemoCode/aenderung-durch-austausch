@@ -4,24 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Overlytics</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    colors: {
-                        forest: '#344945',
-                        cream:  '#F7F5F1',
-                        beige:  '#E0DCD1',
-                        sage:   '#D5E3E8',
-                        wheat:  '#E4E3BC',
-                    }
-                }
-            }
-        }
-    </script>
-    <script src="https://unpkg.com/lucide@latest"></script>
-    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    {% include 'includes/head.html' %}
 </head>
 <body class="bg-cream font-sans text-forest">
 
