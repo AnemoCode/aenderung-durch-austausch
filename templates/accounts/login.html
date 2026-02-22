@@ -26,19 +26,16 @@
 
     <div class="w-full max-w-sm px-4">
 
-        {# Logo #}
         <div class="flex items-center justify-center gap-2 mb-8">
             <i data-lucide="activity" class="w-7 h-7 text-forest"></i>
             <span class="text-2xl font-bold tracking-tight text-forest">Overlytics</span>
         </div>
 
-        {# Card #}
         <div class="bg-white rounded-2xl border border-beige shadow-sm p-8">
 
             <h1 class="text-lg font-semibold text-forest mb-1">Willkommen zurück</h1>
             <p class="text-sm text-forest/60 mb-6">Melde dich an, um dein Dashboard zu öffnen.</p>
 
-            {# Credential error #}
             {% if form.non_field_errors %}
             <div class="mb-5 rounded-lg bg-wheat/60 border border-wheat px-4 py-3 text-sm text-forest flex items-start gap-2">
                 <i data-lucide="alert-circle" class="w-4 h-4 mt-0.5 flex-shrink-0"></i>
@@ -50,15 +47,15 @@
                 {% csrf_token %}
                 <input type="hidden" name="next" value="{{ next }}">
 
-                {# Username #}
+                {# Email (the 'username' field in AuthenticationForm holds the email value) #}
                 <div class="mb-4">
                     <label for="{{ form.username.id_for_label }}"
-                           class="block text-sm font-medium text-forest mb-1.5">Benutzername</label>
-                    <input type="text"
+                           class="block text-sm font-medium text-forest mb-1.5">E-Mail-Adresse</label>
+                    <input type="email"
                            name="{{ form.username.html_name }}"
                            id="{{ form.username.id_for_label }}"
                            value="{{ form.username.value|default:'' }}"
-                           autocomplete="username"
+                           autocomplete="email"
                            autofocus
                            class="w-full rounded-lg border px-3 py-2.5 text-sm text-forest
                                   {% if form.username.errors %}border-rose-400 bg-rose-50{% else %}border-beige bg-cream{% endif %}
@@ -91,7 +88,6 @@
             </form>
         </div>
 
-        {# Register link #}
         <p class="text-center text-sm text-forest/60 mt-5">
             Noch kein Konto?
             <a href="{% url 'accounts:register' %}" class="font-medium text-forest hover:underline">Registrieren</a>

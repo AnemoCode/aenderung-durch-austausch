@@ -11,7 +11,7 @@
         </a>
         <h1 class="text-2xl font-bold text-forest">{{ object.name }}</h1>
         <p class="text-xs text-forest/50 mt-1">
-            Erstellt von {{ object.created_by.username }} · {{ object.created_at|date:"d. M Y" }}
+            Erstellt von {{ object.created_by.name }} · {{ object.created_at|date:"d. M Y" }}
         </p>
     </div>
     {% if is_admin %}
@@ -64,7 +64,7 @@
             <tr class="hover:bg-cream/60 transition-colors group">
                 <td class="px-5 py-3">
                     <p class="font-medium text-forest">{{ gp.project.name }}</p>
-                    <p class="text-xs text-forest/50">{{ gp.project.owner.username }}</p>
+                    <p class="text-xs text-forest/50">{{ gp.project.owner.name }}</p>
                 </td>
                 <td class="px-5 py-3">
                     {% if gp.project.status == 'OK' %}
@@ -118,9 +118,9 @@
         <div class="px-5 py-4 border-b border-beige/50 bg-sage/10">
             <form method="post" action="{% url 'dashboard:group_add_member' object.pk %}" class="flex gap-2">
                 {% csrf_token %}
-                <input type="text"
-                       name="username"
-                       placeholder="Benutzername eingeben…"
+                <input type="email"
+                       name="email"
+                       placeholder="E-Mail-Adresse eingeben…"
                        autocomplete="off"
                        class="flex-1 rounded-lg border border-beige bg-cream text-sm text-forest px-3 py-2
                               focus:outline-none focus:border-forest/40 focus:ring-2 focus:ring-forest/10 transition">
@@ -139,13 +139,11 @@
                 <td class="px-5 py-3">
                     <div class="flex items-center gap-3">
                         <div class="w-7 h-7 rounded-full bg-wheat flex items-center justify-center text-forest font-bold text-xs flex-shrink-0">
-                            {{ membership.user.username|slice:":2"|upper }}
+                            {{ membership.user.initials }}
                         </div>
                         <div>
-                            <p class="font-medium text-forest">{{ membership.user.username }}</p>
-                            {% if membership.user.get_full_name %}
-                            <p class="text-xs text-forest/50">{{ membership.user.get_full_name }}</p>
-                            {% endif %}
+                            <p class="font-medium text-forest">{{ membership.user.name }}</p>
+                            <p class="text-xs text-forest/50">{{ membership.user.email }}</p>
                         </div>
                     </div>
                 </td>

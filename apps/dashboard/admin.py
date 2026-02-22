@@ -7,7 +7,7 @@ from .models import GroupMembership, GroupProject, Project, ProjectGroup
 class ProjectAdmin(admin.ModelAdmin):
     list_display = ['name', 'owner', 'status', 'word_count', 'page_count', 'created_at']
     list_filter = ['status']
-    search_fields = ['name', 'owner__username']
+    search_fields = ['name', 'owner__email', 'owner__name']
     readonly_fields = ['created_at', 'updated_at']
 
 

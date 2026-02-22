@@ -19,20 +19,20 @@ class ProjectGroupForm(forms.ModelForm):
 
 
 class AddMemberForm(forms.Form):
-    """Looks up a user by username and validates they're not already a member."""
+    """Looks up a user by email address and validates they're not already a member."""
 
-    username = forms.CharField(max_length=150, label='Benutzername')
+    email = forms.EmailField(label='E-Mail-Adresse')
 
     def __init__(self, group, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.group = group
 
-    def clean_username(self):
-        username = self.cleaned_data['username']
+    def clean_email(self):
+        email = self.cleaned_data['email']
         try:
-            user = User.objects.get(username=username)
+            user = User.objects.get(email=email)
         except User.DoesNotExist:
-            raise forms.ValidationError('Kein Benutzer mit diesem Benutzernamen gefunden.')
+            raise forms.ValidationError('Kein Benutzer mit dieser E-Mail-Adresse gefunden.')
         if self.group.memberships.filter(user=user).exists():
             raise forms.ValidationError('Dieser Benutzer ist bereits Mitglied dieser Gruppe.')
         return user  # Return the resolved User object for the view to use directly

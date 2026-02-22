@@ -122,9 +122,9 @@ class AddMemberView(LoginRequiredMixin, UserPassesTestMixin, View):
     def post(self, request, pk):
         form = AddMemberForm(group=self.group, data=request.POST)
         if form.is_valid():
-            user = form.cleaned_data['username']  # clean_username returns the User object
+            user = form.cleaned_data['email']  # clean_email returns the User object
             GroupMembership.objects.create(group=self.group, user=user)
-            messages.success(request, f'"{user.username}" wurde zur Gruppe hinzugefügt.')
+            messages.success(request, f'"{user.name}" wurde zur Gruppe hinzugefügt.')
         else:
             for field_errors in form.errors.values():
                 for error in field_errors:
@@ -149,9 +149,9 @@ class RemoveMemberView(LoginRequiredMixin, UserPassesTestMixin, View):
         if is_last_admin:
             messages.error(request, 'Die Gruppe braucht mindestens einen Admin.')
         else:
-            username = membership.user.username
+            name = membership.user.name
             membership.delete()
-            messages.success(request, f'"{username}" wurde aus der Gruppe entfernt.')
+            messages.success(request, f'"{name}" wurde aus der Gruppe entfernt.')
         return redirect('dashboard:group_detail', pk=pk)
 
 
