@@ -181,11 +181,11 @@
 {% block extra_js %}
 {% if chart_data_json != "[]" %}
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4"></script>
+<script src="https://cdn.jsdelivr.net/npm/luxon@3"></script>
+<script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-luxon@1"></script>
 <script>
 (function () {
     const raw = {{ chart_data_json|safe }};
-    const labels = raw.map(d => d.date);
-    const words  = raw.map(d => d.words);
     const ctx = document.getElementById('progressChart').getContext('2d');
     const gradient = ctx.createLinearGradient(0, 0, 0, 256);
     gradient.addColorStop(0, 'rgba(52,73,69,0.2)');
@@ -193,10 +193,9 @@
     new Chart(ctx, {
         type: 'line',
         data: {
-            labels,
             datasets: [{
                 label: '{% trans "Wörter" %}',
-                data: words,
+                data: raw.map(d => ({ x: d.x, y: d.words })),
                 borderColor: '#344945',
                 borderWidth: 3,
                 tension: 0.4,
@@ -220,8 +219,18 @@
                 }
             },
             scales: {
-                x: { grid: { display: false }, border: { display: false }, ticks: { color: 'rgba(52,73,69,0.6)' } },
-                y: { grid: { color: '#E0DCD1' }, border: { display: false }, ticks: { color: 'rgba(52,73,69,0.6)' } }
+                x: {
+                    type: 'time',
+                    time: { tooltipFormat: 'dd. MMM yyyy, HH:mm' },
+                    grid: { display: false },
+                    border: { display: false },
+                    ticks: { color: 'rgba(52,73,69,0.6)', maxTicksLimit: 10 },
+                },
+                y: {
+                    grid: { color: '#E0DCD1' },
+                    border: { display: false },
+                    ticks: { color: 'rgba(52,73,69,0.6)' },
+                }
             }
         }
     });

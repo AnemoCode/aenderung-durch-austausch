@@ -5,7 +5,6 @@ from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db.models import Sum
 from django.utils.translation import gettext as _, ngettext
-from django.db.models.functions import TruncDate
 from django.shortcuts import get_object_or_404, redirect, render
 from django.utils import timezone
 from django.views import View
@@ -24,13 +23,11 @@ class DashboardView(LoginRequiredMixin, TemplateView):
         rows = (
             ProjectSnapshot.objects
             .filter(project__owner=user, taken_at__gte=cutoff)
-            .annotate(date=TruncDate('taken_at'))
-            .values('date')
-            .annotate(words=Sum('word_count'), pages=Sum('page_count'))
-            .order_by('date')
+            .order_by('taken_at')
+            .values('taken_at', 'word_count', 'page_count')
         )
         data = [
-            {'date': r['date'].strftime('%Y-%m-%d'), 'words': r['words'], 'pages': r['pages']}
+            {'x': r['taken_at'].isoformat(), 'words': r['word_count'], 'pages': r['page_count']}
             for r in rows
         ]
         return json.dumps(data) if data else '[]'
