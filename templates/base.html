@@ -1,5 +1,7 @@
+{% load i18n %}
+{% get_current_language as CURRENT_LANG %}
 <!DOCTYPE html>
-<html lang="de">
+<html lang="{{ CURRENT_LANG }}">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -23,28 +25,28 @@
                       {% if active_nav == 'index' %}bg-beige/10 text-cream{% else %}text-beige/70 hover:bg-beige/5 hover:text-cream{% endif %}">
                 <i data-lucide="layout-dashboard"
                    class="w-5 h-5 mr-3 {% if active_nav == 'index' %}text-sage{% else %}text-beige/50{% endif %}"></i>
-                Übersicht
+                {% trans "Übersicht" %}
             </a>
             <a href="{% url 'dashboard:projects' %}"
                class="w-full flex items-center px-3 py-2.5 rounded-lg text-sm font-medium transition-all duration-200
                       {% if active_nav == 'projects' %}bg-beige/10 text-cream{% else %}text-beige/70 hover:bg-beige/5 hover:text-cream{% endif %}">
                 <i data-lucide="folder-git-2"
                    class="w-5 h-5 mr-3 {% if active_nav == 'projects' %}text-sage{% else %}text-beige/50{% endif %}"></i>
-                Projekte
+                {% trans "Projekte" %}
             </a>
             <a href="{% url 'dashboard:groups' %}"
                class="w-full flex items-center px-3 py-2.5 rounded-lg text-sm font-medium transition-all duration-200
                       {% if active_nav == 'groups' %}bg-beige/10 text-cream{% else %}text-beige/70 hover:bg-beige/5 hover:text-cream{% endif %}">
                 <i data-lucide="users"
                    class="w-5 h-5 mr-3 {% if active_nav == 'groups' %}text-sage{% else %}text-beige/50{% endif %}"></i>
-                Gruppen
+                {% trans "Gruppen" %}
             </a>
             <a href="{% url 'dashboard:settings' %}"
                class="w-full flex items-center px-3 py-2.5 rounded-lg text-sm font-medium transition-all duration-200
                       {% if active_nav == 'settings' %}bg-beige/10 text-cream{% else %}text-beige/70 hover:bg-beige/5 hover:text-cream{% endif %}">
                 <i data-lucide="settings"
                    class="w-5 h-5 mr-3 {% if active_nav == 'settings' %}text-sage{% else %}text-beige/50{% endif %}"></i>
-                Einstellungen
+                {% trans "Einstellungen" %}
             </a>
         </nav>
 
@@ -63,7 +65,7 @@
                 <button type="submit"
                         class="flex items-center w-full px-2 py-2 text-sm font-medium text-beige/70 hover:text-cream rounded-md transition-colors">
                     <i data-lucide="log-out" class="w-4 h-4 mr-3"></i>
-                    Abmelden
+                    {% trans "Abmelden" %}
                 </button>
             </form>
         </div>
@@ -77,15 +79,26 @@
             <div class="flex items-center bg-cream border border-beige/50 rounded-md px-3 py-1.5 w-64 focus-within:border-forest/30 transition-colors">
                 <i data-lucide="search" class="w-4 h-4 text-forest/50 mr-2"></i>
                 <input type="text"
-                       placeholder="Projekte suchen…"
+                       placeholder="{% trans "Projekte suchen…" %}"
                        class="bg-transparent border-none outline-none text-sm text-forest placeholder:text-forest/50 w-full">
             </div>
 
-            <div class="flex items-center space-x-4">
+            <div class="flex items-center space-x-3">
+                {# Language switcher #}
+                <form action="{% url 'set_language' %}" method="post">
+                    {% csrf_token %}
+                    <input type="hidden" name="next" value="{{ request.path }}">
+                    <input type="hidden" name="language" value="{% if CURRENT_LANG == 'de' %}en{% else %}de{% endif %}">
+                    <button type="submit"
+                            class="text-xs font-semibold tracking-wide text-forest/60 hover:text-forest border border-beige/60 hover:border-forest/30 px-2.5 py-1 rounded-md transition-colors bg-white">
+                        {% if CURRENT_LANG == 'de' %}EN{% else %}DE{% endif %}
+                    </button>
+                </form>
+
                 <a href="{% url 'dashboard:project_create' %}"
                    class="bg-forest hover:bg-forest/90 text-cream px-4 py-2 rounded-md text-sm font-medium flex items-center transition-colors shadow-sm">
                     <i data-lucide="plus" class="w-4 h-4 mr-2"></i>
-                    Projekt tracken
+                    {% trans "Projekt tracken" %}
                 </a>
             </div>
         </header>

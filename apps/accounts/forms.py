@@ -1,6 +1,7 @@
 from django.contrib.auth import get_user_model, password_validation
 from django.contrib.auth.forms import AuthenticationForm
 from django import forms
+from django.utils.translation import gettext_lazy as _
 
 User = get_user_model()
 
@@ -9,19 +10,19 @@ class EmailLoginForm(AuthenticationForm):
     """Replaces the username CharField with an email field."""
 
     username = forms.EmailField(
-        label='E-Mail-Adresse',
+        label=_('E-Mail-Adresse'),
         widget=forms.EmailInput(attrs={'autofocus': True}),
     )
 
 
 class RegistrationForm(forms.ModelForm):
     password1 = forms.CharField(
-        label='Passwort',
+        label=_('Passwort'),
         widget=forms.PasswordInput(attrs={'autocomplete': 'new-password'}),
         strip=False,
     )
     password2 = forms.CharField(
-        label='Passwort bestätigen',
+        label=_('Passwort bestätigen'),
         widget=forms.PasswordInput(attrs={'autocomplete': 'new-password'}),
         strip=False,
     )
@@ -34,7 +35,7 @@ class RegistrationForm(forms.ModelForm):
         p1 = self.cleaned_data.get('password1')
         p2 = self.cleaned_data.get('password2')
         if p1 and p2 and p1 != p2:
-            raise forms.ValidationError('Die Passwörter stimmen nicht überein.')
+            raise forms.ValidationError(_('Die Passwörter stimmen nicht überein.'))
         return p2
 
     def _post_clean(self):

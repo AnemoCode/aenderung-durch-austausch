@@ -1,12 +1,27 @@
+{% load i18n %}
+{% get_current_language as CURRENT_LANG %}
 <!DOCTYPE html>
-<html lang="de">
+<html lang="{{ CURRENT_LANG }}">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Overlytics – Anmelden</title>
+    <title>Overlytics – {% trans "Anmelden" %}</title>
     {% include 'includes/head.html' %}
 </head>
 <body class="min-h-screen bg-cream flex items-center justify-center font-sans text-forest">
+
+    {# Language switcher (top-right) #}
+    <div class="fixed top-4 right-4">
+        <form action="{% url 'set_language' %}" method="post">
+            {% csrf_token %}
+            <input type="hidden" name="next" value="{{ request.path }}">
+            <input type="hidden" name="language" value="{% if CURRENT_LANG == 'de' %}en{% else %}de{% endif %}">
+            <button type="submit"
+                    class="text-xs font-semibold tracking-wide text-forest/60 hover:text-forest border border-beige/60 hover:border-forest/30 px-2.5 py-1 rounded-md transition-colors bg-white">
+                {% if CURRENT_LANG == 'de' %}EN{% else %}DE{% endif %}
+            </button>
+        </form>
+    </div>
 
     <div class="w-full max-w-sm px-4">
 
@@ -19,8 +34,8 @@
         {# Card #}
         <div class="bg-white rounded-2xl border border-beige shadow-sm p-8">
 
-            <h1 class="text-lg font-semibold text-forest mb-1">Admin-Zugang</h1>
-            <p class="text-sm text-forest/60 mb-6">Nur für Administratoren. Normaler Login unter
+            <h1 class="text-lg font-semibold text-forest mb-1">{% trans "Admin-Zugang" %}</h1>
+            <p class="text-sm text-forest/60 mb-6">{% trans "Nur für Administratoren. Normaler Login unter" %}
                 <a href="/login/" class="font-medium text-forest hover:underline">/login/</a>.
             </p>
 
@@ -35,7 +50,7 @@
             {# Already-authenticated-but-not-authorised notice #}
             {% if user.is_authenticated %}
             <div class="mb-4 rounded-lg bg-sage/30 border border-sage px-4 py-3 text-sm text-forest">
-                Du bist als <strong>{{ username }}</strong> angemeldet, hast aber keinen Zugriff auf diese Seite.
+                {% blocktrans with username=username %}Du bist als <strong>{{ username }}</strong> angemeldet, hast aber keinen Zugriff auf diese Seite.{% endblocktrans %}
             </div>
             {% endif %}
 
@@ -47,7 +62,7 @@
                 <div class="mb-4">
                     <label for="{{ form.username.id_for_label }}"
                            class="block text-sm font-medium text-forest mb-1.5">
-                        E-Mail-Adresse
+                        {% trans "E-Mail-Adresse" %}
                     </label>
                     <input type="email"
                            name="{{ form.username.html_name }}"
@@ -67,7 +82,7 @@
                 <div class="mb-6">
                     <label for="{{ form.password.id_for_label }}"
                            class="block text-sm font-medium text-forest mb-1.5">
-                        Passwort
+                        {% trans "Passwort" %}
                     </label>
                     <input type="password"
                            name="{{ form.password.html_name }}"
@@ -83,7 +98,7 @@
 
                 <button type="submit"
                         class="w-full bg-forest hover:bg-forest/90 text-cream font-medium text-sm py-2.5 rounded-lg transition-colors shadow-sm">
-                    Anmelden
+                    {% trans "Anmelden" %}
                 </button>
             </form>
         </div>

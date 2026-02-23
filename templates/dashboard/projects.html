@@ -1,17 +1,17 @@
 {% extends "base.html" %}
-{% load humanize %}
+{% load i18n humanize %}
 
 {% block content %}
 
 <div class="flex items-center justify-between">
     <div>
-        <h1 class="text-2xl font-bold text-forest">Projekte verwalten</h1>
-        <p class="text-sm text-forest/60 mt-1">Alle deine getrackten Overleaf-Projekte auf einen Blick.</p>
+        <h1 class="text-2xl font-bold text-forest">{% trans "Projekte verwalten" %}</h1>
+        <p class="text-sm text-forest/60 mt-1">{% trans "Alle deine getrackten Overleaf-Projekte auf einen Blick." %}</p>
     </div>
     <a href="{% url 'dashboard:project_create' %}"
        class="bg-forest hover:bg-forest/90 text-cream px-4 py-2 rounded-md text-sm font-medium flex items-center transition-colors shadow-sm">
         <i data-lucide="plus" class="w-4 h-4 mr-2"></i>
-        Neues Projekt
+        {% trans "Neues Projekt" %}
     </a>
 </div>
 
@@ -27,12 +27,12 @@
             <div class="flex gap-1 flex-shrink-0">
                 <a href="{% url 'dashboard:project_update' p.pk %}"
                    class="p-1.5 text-forest/40 hover:text-forest hover:bg-cream rounded-md transition-colors"
-                   title="Bearbeiten">
+                   title="{% trans "Bearbeiten" %}">
                     <i data-lucide="edit" class="w-4 h-4"></i>
                 </a>
                 <a href="{% url 'dashboard:project_delete' p.pk %}"
                    class="p-1.5 text-forest/40 hover:text-rose-600 hover:bg-rose-50 rounded-md transition-colors"
-                   title="Löschen">
+                   title="{% trans "Löschen" %}">
                     <i data-lucide="trash-2" class="w-4 h-4"></i>
                 </a>
             </div>
@@ -40,32 +40,36 @@
 
         <div class="p-5 flex-1 flex flex-col gap-4">
             <div class="flex justify-between items-center">
-                <span class="text-xs font-medium text-forest/60 uppercase tracking-wider">Status</span>
+                <span class="text-xs font-medium text-forest/60 uppercase tracking-wider">{% trans "Status" %}</span>
                 {% if p.status == 'OK' %}
                 <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-sage/70 text-forest">
-                    <i data-lucide="check-circle-2" class="w-3 h-3 mr-1"></i> Aktiv
+                    <i data-lucide="check-circle-2" class="w-3 h-3 mr-1"></i> {% trans "Aktiv" %}
+                </span>
+                {% elif p.status == 'AUTH_ERROR' %}
+                <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-wheat text-forest">
+                    <i data-lucide="key-round" class="w-3 h-3 mr-1"></i> {% trans "Auth-Fehler" %}
                 </span>
                 {% else %}
-                <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-wheat text-forest">
-                    <i data-lucide="alert-circle" class="w-3 h-3 mr-1"></i> Auth Error
+                <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-rose-100 text-rose-700">
+                    <i data-lucide="git-branch-x" class="w-3 h-3 mr-1"></i> {% trans "Clone-Fehler" %}
                 </span>
                 {% endif %}
             </div>
 
             <div class="grid grid-cols-2 gap-4 py-3 border-y border-beige/30">
                 <div>
-                    <p class="text-xs text-forest/50 mb-1">Wörter</p>
+                    <p class="text-xs text-forest/50 mb-1">{% trans "Wörter" %}</p>
                     <p class="font-semibold text-forest">{{ p.word_count|intcomma }}</p>
                 </div>
                 <div>
-                    <p class="text-xs text-forest/50 mb-1">Seiten</p>
+                    <p class="text-xs text-forest/50 mb-1">{% trans "Seiten" %}</p>
                     <p class="font-semibold text-forest">{{ p.page_count }}</p>
                 </div>
             </div>
 
             {# Groups #}
             <div>
-                <p class="text-xs text-forest/50 mb-2">Gruppen</p>
+                <p class="text-xs text-forest/50 mb-2">{% trans "Gruppen" %}</p>
                 <div class="flex flex-wrap gap-1">
                     {% for group in p.groups.all %}
                     <a href="{% url 'dashboard:group_detail' group.pk %}"
@@ -73,18 +77,18 @@
                         {{ group.name }}
                     </a>
                     {% empty %}
-                    <span class="text-xs text-forest/40">Keiner Gruppe zugeordnet</span>
+                    <span class="text-xs text-forest/40">{% trans "Keiner Gruppe zugeordnet" %}</span>
                     {% endfor %}
                 </div>
             </div>
 
             <div class="mt-auto pt-1">
                 <span class="text-xs text-forest/50">
-                    Sync:
+                    {% trans "Sync:" %}
                     {% if p.last_synced_at %}
-                        {{ p.last_synced_at|date:"d. M Y, H:i" }} Uhr
+                        {{ p.last_synced_at|date:"d. M Y, H:i" }}
                     {% else %}
-                        Noch nicht synchronisiert
+                        {% trans "Noch nicht synchronisiert" %}
                     {% endif %}
                 </span>
             </div>
@@ -95,11 +99,11 @@
 {% else %}
 <div class="bg-white rounded-xl border border-beige shadow-sm py-20 flex flex-col items-center justify-center text-center">
     <i data-lucide="folder-git-2" class="w-12 h-12 text-beige mb-4"></i>
-    <h2 class="text-lg font-semibold text-forest">Noch keine Projekte</h2>
-    <p class="text-sm text-forest/60 mt-1 mb-6">Füge dein erstes Overleaf-Projekt hinzu, um es zu tracken.</p>
+    <h2 class="text-lg font-semibold text-forest">{% trans "Noch keine Projekte" %}</h2>
+    <p class="text-sm text-forest/60 mt-1 mb-6">{% trans "Füge dein erstes Overleaf-Projekt hinzu, um es zu tracken." %}</p>
     <a href="{% url 'dashboard:project_create' %}"
        class="inline-flex items-center gap-2 bg-forest text-cream text-sm font-medium px-4 py-2 rounded-lg hover:bg-forest/90 transition-colors">
-        <i data-lucide="plus" class="w-4 h-4"></i> Neues Projekt hinzufügen
+        <i data-lucide="plus" class="w-4 h-4"></i> {% trans "Neues Projekt hinzufügen" %}
     </a>
 </div>
 {% endif %}

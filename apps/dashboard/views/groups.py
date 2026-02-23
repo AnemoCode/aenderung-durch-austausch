@@ -1,5 +1,6 @@
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
+from django.utils.translation import gettext as _
 from django.db.models import Count
 from django.shortcuts import get_object_or_404, redirect
 from django.urls import reverse_lazy
@@ -124,7 +125,7 @@ class AddMemberView(LoginRequiredMixin, UserPassesTestMixin, View):
         if form.is_valid():
             user = form.cleaned_data['email']  # clean_email returns the User object
             GroupMembership.objects.create(group=self.group, user=user)
-            messages.success(request, f'"{user.name}" wurde zur Gruppe hinzugefügt.')
+            messages.success(request, _('"{name}" wurde zur Gruppe hinzugefügt.').format(name=user.name))
         else:
             for field_errors in form.errors.values():
                 for error in field_errors:
@@ -147,11 +148,11 @@ class RemoveMemberView(LoginRequiredMixin, UserPassesTestMixin, View):
             and self.group.memberships.filter(role=GroupMembership.Role.ADMIN).count() == 1
         )
         if is_last_admin:
-            messages.error(request, 'Die Gruppe braucht mindestens einen Admin.')
+            messages.error(request, _('Die Gruppe braucht mindestens einen Admin.'))
         else:
             name = membership.user.name
             membership.delete()
-            messages.success(request, f'"{name}" wurde aus der Gruppe entfernt.')
+            messages.success(request, _('"{name}" wurde aus der Gruppe entfernt.').format(name=name))
         return redirect('dashboard:group_detail', pk=pk)
 
 
@@ -168,7 +169,7 @@ class AddProjectView(LoginRequiredMixin, UserPassesTestMixin, View):
         if form.is_valid():
             project = form.cleaned_data['project']
             GroupProject.objects.create(group=self.group, project=project, added_by=request.user)
-            messages.success(request, f'"{project.name}" wurde zur Gruppe hinzugefügt.')
+            messages.success(request, _('"{name}" wurde zur Gruppe hinzugefügt.').format(name=project.name))
         else:
             for field_errors in form.errors.values():
                 for error in field_errors:
@@ -193,5 +194,5 @@ class RemoveProjectView(LoginRequiredMixin, UserPassesTestMixin, View):
     def post(self, request, pk, project_pk):
         project_name = self.group_project.project.name
         self.group_project.delete()
-        messages.success(request, f'"{project_name}" wurde aus der Gruppe entfernt.')
+        messages.success(request, _('"{name}" wurde aus der Gruppe entfernt.').format(name=project_name))
         return redirect('dashboard:group_detail', pk=pk)

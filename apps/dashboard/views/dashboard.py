@@ -4,6 +4,7 @@ import json
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db.models import Sum
+from django.utils.translation import gettext as _, ngettext
 from django.db.models.functions import TruncDate
 from django.shortcuts import get_object_or_404, redirect, render
 from django.utils import timezone
@@ -64,8 +65,8 @@ class SyncAllView(LoginRequiredMixin, View):
         if not request.user.overleaf_token:
             messages.error(
                 request,
-                'Keine Projekte zum Synchronisieren gefunden. '
-                'Bitte hinterlege zuerst einen Overleaf-Token in den Einstellungen.',
+                _('Keine Projekte zum Synchronisieren gefunden. '
+                  'Bitte hinterlege zuerst einen Overleaf-Token in den Einstellungen.'),
             )
             return redirect('dashboard:index')
         projects = Project.objects.filter(owner=request.user)
@@ -76,14 +77,19 @@ class SyncAllView(LoginRequiredMixin, View):
         if count:
             messages.success(
                 request,
-                f'Synchronisation für {count} Projekt{"e" if count != 1 else ""} gestartet – '
-                'Ergebnisse erscheinen in wenigen Sekunden.',
+                ngettext(
+                    'Synchronisation für %(count)d Projekt gestartet – '
+                    'Ergebnisse erscheinen in wenigen Sekunden.',
+                    'Synchronisation für %(count)d Projekte gestartet – '
+                    'Ergebnisse erscheinen in wenigen Sekunden.',
+                    count,
+                ) % {'count': count},
             )
         else:
             messages.error(
                 request,
-                'Keine Projekte zum Synchronisieren gefunden. '
-                'Bitte hinterlege zuerst einen Overleaf-Token in den Einstellungen.',
+                _('Keine Projekte zum Synchronisieren gefunden. '
+                  'Bitte hinterlege zuerst einen Overleaf-Token in den Einstellungen.'),
             )
         return redirect('dashboard:index')
 
@@ -95,14 +101,14 @@ class SyncProjectView(LoginRequiredMixin, View):
         if not request.user.overleaf_token:
             messages.error(
                 request,
-                'Kein Overleaf-Token gespeichert. Bitte hinterlege ihn in den Einstellungen.',
+                _('Kein Overleaf-Token gespeichert. Bitte hinterlege ihn in den Einstellungen.'),
             )
             return redirect('dashboard:index')
         sync_project.delay(project.pk)
         messages.success(
             request,
-            f'Synchronisation für „{project.name}" gestartet – '
-            'Ergebnisse erscheinen in wenigen Sekunden.',
+            _('Synchronisation für „%(name)s" gestartet – '
+              'Ergebnisse erscheinen in wenigen Sekunden.') % {'name': project.name},
         )
         return redirect('dashboard:index')
 
@@ -130,13 +136,13 @@ class SettingsView(LoginRequiredMixin, View):
             if token:
                 request.user.overleaf_token = token
                 request.user.save(update_fields=['overleaf_token'])
-                messages.success(request, 'Overleaf-Token wurde verschlüsselt gespeichert.')
+                messages.success(request, _('Overleaf-Token wurde verschlüsselt gespeichert.'))
             else:
-                messages.error(request, 'Bitte gib einen gültigen Token ein.')
+                messages.error(request, _('Bitte gib einen gültigen Token ein.'))
 
         elif action == 'delete_token':
             request.user.overleaf_token = None
             request.user.save(update_fields=['overleaf_token'])
-            messages.success(request, 'Overleaf-Token wurde entfernt.')
+            messages.success(request, _('Overleaf-Token wurde entfernt.'))
 
         return redirect('dashboard:settings')

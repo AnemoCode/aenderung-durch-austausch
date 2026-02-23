@@ -1,16 +1,17 @@
 {% extends "base.html" %}
+{% load i18n %}
 
 {% block content %}
 
 <div class="flex items-center justify-between">
     <div>
-        <h1 class="text-2xl font-bold text-forest">Gruppen &amp; Freigaben</h1>
-        <p class="text-sm text-forest/60 mt-1">Verwalte, wer Zugriff auf die Metriken deiner Projekte hat.</p>
+        <h1 class="text-2xl font-bold text-forest">{% trans "Gruppen & Freigaben" %}</h1>
+        <p class="text-sm text-forest/60 mt-1">{% trans "Verwalte, wer Zugriff auf die Metriken deiner Projekte hat." %}</p>
     </div>
     <a href="{% url 'dashboard:group_create' %}"
        class="bg-forest hover:bg-forest/90 text-cream px-4 py-2 rounded-md text-sm font-medium flex items-center transition-colors shadow-sm">
         <i data-lucide="user-plus" class="w-4 h-4 mr-2"></i>
-        Neue Gruppe
+        {% trans "Neue Gruppe" %}
     </a>
 </div>
 
@@ -19,11 +20,11 @@
     <table class="w-full text-sm text-left">
         <thead class="text-xs text-forest/70 bg-cream border-b border-beige uppercase">
         <tr>
-            <th class="px-6 py-4 font-medium">Gruppenname</th>
-            <th class="px-6 py-4 font-medium">Mitglieder</th>
-            <th class="px-6 py-4 font-medium">Projekte</th>
-            <th class="px-6 py-4 font-medium">Deine Rolle</th>
-            <th class="px-6 py-4 text-right font-medium">Aktion</th>
+            <th class="px-6 py-4 font-medium">{% trans "Gruppenname" %}</th>
+            <th class="px-6 py-4 font-medium">{% trans "Mitglieder" %}</th>
+            <th class="px-6 py-4 font-medium">{% trans "Projekte" %}</th>
+            <th class="px-6 py-4 font-medium">{% trans "Deine Rolle" %}</th>
+            <th class="px-6 py-4 text-right font-medium">{% trans "Aktion" %}</th>
         </tr>
         </thead>
         <tbody class="divide-y divide-beige/50">
@@ -58,7 +59,7 @@
             <td class="px-6 py-4 text-right">
                 <a href="{% url 'dashboard:group_detail' group.pk %}"
                    class="p-1.5 text-forest/50 hover:text-forest hover:bg-beige/30 rounded transition-colors inline-flex"
-                   title="Gruppe öffnen">
+                   title="{% trans "Gruppe öffnen" %}">
                     <i data-lucide="arrow-right" class="w-4 h-4"></i>
                 </a>
             </td>
@@ -70,11 +71,11 @@
 {% else %}
 <div class="bg-white rounded-xl border border-beige shadow-sm py-20 flex flex-col items-center justify-center text-center">
     <i data-lucide="users" class="w-12 h-12 text-beige mb-4"></i>
-    <h2 class="text-lg font-semibold text-forest">Noch keine Gruppen</h2>
-    <p class="text-sm text-forest/60 mt-1 mb-6">Erstelle eine Gruppe, um Projekte mit anderen zu teilen.</p>
+    <h2 class="text-lg font-semibold text-forest">{% trans "Noch keine Gruppen" %}</h2>
+    <p class="text-sm text-forest/60 mt-1 mb-6">{% trans "Erstelle eine Gruppe, um Projekte mit anderen zu teilen." %}</p>
     <a href="{% url 'dashboard:group_create' %}"
        class="inline-flex items-center gap-2 bg-forest text-cream text-sm font-medium px-4 py-2 rounded-lg hover:bg-forest/90 transition-colors">
-        <i data-lucide="plus" class="w-4 h-4"></i> Erste Gruppe erstellen
+        <i data-lucide="plus" class="w-4 h-4"></i> {% trans "Erste Gruppe erstellen" %}
     </a>
 </div>
 {% endif %}

@@ -1,13 +1,13 @@
 {% extends "base.html" %}
-{% load humanize %}
+{% load i18n humanize %}
 
 {% block content %}
 
 {# Page heading + sync button #}
 <div class="flex items-center justify-between">
     <div>
-        <h1 class="text-2xl font-bold text-forest">Willkommen zurück!</h1>
-        <p class="text-sm text-forest/60 mt-1">Hier ist der aktuelle Stand deiner Overleaf-Projekte.</p>
+        <h1 class="text-2xl font-bold text-forest">{% trans "Willkommen zurück!" %}</h1>
+        <p class="text-sm text-forest/60 mt-1">{% trans "Hier ist der aktuelle Stand deiner Overleaf-Projekte." %}</p>
     </div>
     <form method="post" action="{% url 'dashboard:sync_all' %}" x-data="{ syncing: false }" @submit="syncing = true">
         {% csrf_token %}
@@ -17,7 +17,7 @@
             <i data-lucide="refresh-cw"
                class="w-4 h-4 mr-2"
                :class="{ 'animate-spin': syncing }"></i>
-            <span x-text="syncing ? 'Synchronisiere…' : 'Jetzt synchronisieren'"></span>
+            <span x-text="syncing ? '{% trans "Synchronisiere…" %}' : '{% trans "Jetzt synchronisieren" %}'"></span>
         </button>
     </form>
 </div>
@@ -26,7 +26,7 @@
 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
     <div class="bg-white p-5 rounded-xl border border-beige shadow-sm flex items-start justify-between hover:border-forest/20 transition-colors">
         <div>
-            <p class="text-sm font-medium text-forest/60 mb-1">Wörter Gesamt</p>
+            <p class="text-sm font-medium text-forest/60 mb-1">{% trans "Wörter Gesamt" %}</p>
             <h3 class="text-2xl font-bold text-forest">{{ stats.total_words|intcomma }}</h3>
         </div>
         <div class="p-3 rounded-lg border bg-sage/40 border-sage text-forest">
@@ -35,7 +35,7 @@
     </div>
     <div class="bg-white p-5 rounded-xl border border-beige shadow-sm flex items-start justify-between hover:border-forest/20 transition-colors">
         <div>
-            <p class="text-sm font-medium text-forest/60 mb-1">Seiten Gesamt</p>
+            <p class="text-sm font-medium text-forest/60 mb-1">{% trans "Seiten Gesamt" %}</p>
             <h3 class="text-2xl font-bold text-forest">{{ stats.total_pages }}</h3>
         </div>
         <div class="p-3 rounded-lg border bg-wheat/50 border-wheat text-forest">
@@ -44,7 +44,7 @@
     </div>
     <div class="bg-white p-5 rounded-xl border border-beige shadow-sm flex items-start justify-between hover:border-forest/20 transition-colors">
         <div>
-            <p class="text-sm font-medium text-forest/60 mb-1">Aktive Projekte</p>
+            <p class="text-sm font-medium text-forest/60 mb-1">{% trans "Aktive Projekte" %}</p>
             <h3 class="text-2xl font-bold text-forest">{{ stats.active_projects }}</h3>
         </div>
         <div class="p-3 rounded-lg border bg-beige/50 border-beige text-forest">
@@ -55,12 +55,12 @@
 
 {# Chart placeholder #}
 <div class="bg-white p-6 rounded-xl border border-beige shadow-sm">
-    <h2 class="text-base font-semibold text-forest mb-4">Schreibfortschritt</h2>
+    <h2 class="text-base font-semibold text-forest mb-4">{% trans "Schreibfortschritt" %}</h2>
     {% if chart_data_json == "[]" %}
     <div class="h-48 flex flex-col items-center justify-center text-center">
         <i data-lucide="bar-chart-2" class="w-10 h-10 text-beige mb-3"></i>
-        <p class="text-sm font-medium text-forest/60">Noch keine Verlaufsdaten vorhanden</p>
-        <p class="text-xs text-forest/40 mt-1">Sobald Projekte synchronisiert werden, erscheint hier der Schreibfortschritt.</p>
+        <p class="text-sm font-medium text-forest/60">{% trans "Noch keine Verlaufsdaten vorhanden" %}</p>
+        <p class="text-xs text-forest/40 mt-1">{% trans "Sobald Projekte synchronisiert werden, erscheint hier der Schreibfortschritt." %}</p>
     </div>
     {% else %}
     <div class="h-64"><canvas id="progressChart"></canvas></div>
@@ -70,10 +70,10 @@
 {# Projects Table #}
 <div class="bg-white rounded-xl border border-beige shadow-sm overflow-hidden">
     <div class="p-5 border-b border-beige flex items-center justify-between bg-cream/50">
-        <h2 class="text-base font-semibold text-forest">Meine Projekte</h2>
+        <h2 class="text-base font-semibold text-forest">{% trans "Meine Projekte" %}</h2>
         <a href="{% url 'dashboard:project_create' %}"
            class="text-sm text-forest font-medium hover:text-forest/70 flex items-center gap-1">
-            <i data-lucide="plus" class="w-4 h-4"></i> Neues Projekt
+            <i data-lucide="plus" class="w-4 h-4"></i> {% trans "Neues Projekt" %}
         </a>
     </div>
 
@@ -82,12 +82,12 @@
         <table class="w-full text-sm text-left">
             <thead class="text-xs text-forest/70 bg-cream border-b border-beige uppercase">
             <tr>
-                <th class="px-6 py-4 font-medium">Projektname</th>
-                <th class="px-6 py-4 font-medium">Status</th>
-                <th class="px-6 py-4 font-medium">Metriken</th>
-                <th class="px-6 py-4 font-medium">Letzter Sync</th>
-                <th class="px-6 py-4 font-medium">Gruppen</th>
-                <th class="px-6 py-4 text-right font-medium">Aktion</th>
+                <th class="px-6 py-4 font-medium">{% trans "Projektname" %}</th>
+                <th class="px-6 py-4 font-medium">{% trans "Status" %}</th>
+                <th class="px-6 py-4 font-medium">{% trans "Metriken" %}</th>
+                <th class="px-6 py-4 font-medium">{% trans "Letzter Sync" %}</th>
+                <th class="px-6 py-4 font-medium">{% trans "Gruppen" %}</th>
+                <th class="px-6 py-4 text-right font-medium">{% trans "Aktion" %}</th>
             </tr>
             </thead>
             <tbody class="divide-y divide-beige/50">
@@ -105,27 +105,27 @@
                 <td class="px-6 py-4">
                     {% if project.status == 'OK' %}
                     <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-sage/70 text-forest">
-                        <i data-lucide="check-circle-2" class="w-3 h-3 mr-1"></i> Aktiv
+                        <i data-lucide="check-circle-2" class="w-3 h-3 mr-1"></i> {% trans "Aktiv" %}
                     </span>
                     {% elif project.status == 'AUTH_ERROR' %}
                     <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-wheat text-forest">
-                        <i data-lucide="key-round" class="w-3 h-3 mr-1"></i> Auth-Fehler
+                        <i data-lucide="key-round" class="w-3 h-3 mr-1"></i> {% trans "Auth-Fehler" %}
                     </span>
                     {% else %}
                     <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-rose-100 text-rose-700">
-                        <i data-lucide="git-branch-x" class="w-3 h-3 mr-1"></i> Clone-Fehler
+                        <i data-lucide="git-branch-x" class="w-3 h-3 mr-1"></i> {% trans "Clone-Fehler" %}
                     </span>
                     {% endif %}
                 </td>
                 <td class="px-6 py-4">
                     <div class="flex flex-col gap-0.5">
-                        <span class="text-forest font-medium">{{ project.word_count|intcomma }} Wörter</span>
-                        <span class="text-xs text-forest/60">{{ project.page_count }} Seiten</span>
+                        <span class="text-forest font-medium">{{ project.word_count|intcomma }} {% trans "Wörter" %}</span>
+                        <span class="text-xs text-forest/60">{{ project.page_count }} {% trans "Seiten" %}</span>
                     </div>
                 </td>
                 <td class="px-6 py-4 text-forest/70 text-xs">
                     {% if project.last_synced_at %}
-                        {{ project.last_synced_at|date:"d. M Y, H:i" }} Uhr
+                        {{ project.last_synced_at|date:"d. M Y, H:i" }}
                     {% else %}
                         <span class="text-forest/40">—</span>
                     {% endif %}
@@ -148,14 +148,14 @@
                               x-data="{ s: false }" @submit="s = true">
                             {% csrf_token %}
                             <button type="submit" :disabled="s"
-                                    title="Projekt synchronisieren"
+                                    title="{% trans "Projekt synchronisieren" %}"
                                     class="text-forest/50 hover:text-forest p-1 rounded disabled:opacity-40">
                                 <i data-lucide="refresh-cw" class="w-3.5 h-3.5" :class="{ 'animate-spin': s }"></i>
                             </button>
                         </form>
                         <a href="{% url 'dashboard:project_update' project.pk %}"
                            class="text-forest/50 hover:text-forest font-medium px-2 py-1 rounded text-xs">
-                            Bearbeiten
+                            {% trans "Bearbeiten" %}
                         </a>
                     </div>
                 </td>
@@ -167,10 +167,10 @@
     {% else %}
     <div class="py-16 flex flex-col items-center justify-center text-center">
         <i data-lucide="folder-git-2" class="w-10 h-10 text-beige mb-3"></i>
-        <p class="text-sm font-medium text-forest/60">Noch keine Projekte vorhanden</p>
+        <p class="text-sm font-medium text-forest/60">{% trans "Noch keine Projekte vorhanden" %}</p>
         <a href="{% url 'dashboard:project_create' %}"
            class="mt-4 inline-flex items-center gap-2 bg-forest text-cream text-sm font-medium px-4 py-2 rounded-lg hover:bg-forest/90 transition-colors">
-            <i data-lucide="plus" class="w-4 h-4"></i> Erstes Projekt hinzufügen
+            <i data-lucide="plus" class="w-4 h-4"></i> {% trans "Erstes Projekt hinzufügen" %}
         </a>
     </div>
     {% endif %}
@@ -195,7 +195,7 @@
         data: {
             labels,
             datasets: [{
-                label: 'Wörter',
+                label: '{% trans "Wörter" %}',
                 data: words,
                 borderColor: '#344945',
                 borderWidth: 3,

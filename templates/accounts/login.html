@@ -1,12 +1,27 @@
+{% load i18n %}
+{% get_current_language as CURRENT_LANG %}
 <!DOCTYPE html>
-<html lang="de">
+<html lang="{{ CURRENT_LANG }}">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Overlytics – Anmelden</title>
+    <title>Overlytics – {% trans "Anmelden" %}</title>
     {% include 'includes/head.html' %}
 </head>
 <body class="min-h-screen bg-cream flex items-center justify-center font-sans text-forest">
+
+    {# Language switcher (top-right) #}
+    <div class="fixed top-4 right-4">
+        <form action="{% url 'set_language' %}" method="post">
+            {% csrf_token %}
+            <input type="hidden" name="next" value="{{ request.path }}">
+            <input type="hidden" name="language" value="{% if CURRENT_LANG == 'de' %}en{% else %}de{% endif %}">
+            <button type="submit"
+                    class="text-xs font-semibold tracking-wide text-forest/60 hover:text-forest border border-beige/60 hover:border-forest/30 px-2.5 py-1 rounded-md transition-colors bg-white">
+                {% if CURRENT_LANG == 'de' %}EN{% else %}DE{% endif %}
+            </button>
+        </form>
+    </div>
 
     <div class="w-full max-w-sm px-4">
 
@@ -17,8 +32,8 @@
 
         <div class="bg-white rounded-2xl border border-beige shadow-sm p-8">
 
-            <h1 class="text-lg font-semibold text-forest mb-1">Willkommen zurück</h1>
-            <p class="text-sm text-forest/60 mb-6">Melde dich an, um dein Dashboard zu öffnen.</p>
+            <h1 class="text-lg font-semibold text-forest mb-1">{% trans "Willkommen zurück" %}</h1>
+            <p class="text-sm text-forest/60 mb-6">{% trans "Melde dich an, um dein Dashboard zu öffnen." %}</p>
 
             {% if form.non_field_errors %}
             <div class="mb-5 rounded-lg bg-wheat/60 border border-wheat px-4 py-3 text-sm text-forest flex items-start gap-2">
@@ -31,10 +46,9 @@
                 {% csrf_token %}
                 <input type="hidden" name="next" value="{{ next }}">
 
-                {# Email (the 'username' field in AuthenticationForm holds the email value) #}
                 <div class="mb-4">
                     <label for="{{ form.username.id_for_label }}"
-                           class="block text-sm font-medium text-forest mb-1.5">E-Mail-Adresse</label>
+                           class="block text-sm font-medium text-forest mb-1.5">{% trans "E-Mail-Adresse" %}</label>
                     <input type="email"
                            name="{{ form.username.html_name }}"
                            id="{{ form.username.id_for_label }}"
@@ -49,10 +63,9 @@
                     {% endfor %}
                 </div>
 
-                {# Password #}
                 <div class="mb-6">
                     <label for="{{ form.password.id_for_label }}"
-                           class="block text-sm font-medium text-forest mb-1.5">Passwort</label>
+                           class="block text-sm font-medium text-forest mb-1.5">{% trans "Passwort" %}</label>
                     <input type="password"
                            name="{{ form.password.html_name }}"
                            id="{{ form.password.id_for_label }}"
@@ -67,14 +80,14 @@
 
                 <button type="submit"
                         class="w-full bg-forest hover:bg-forest/90 text-cream font-medium text-sm py-2.5 rounded-lg transition-colors shadow-sm">
-                    Anmelden
+                    {% trans "Anmelden" %}
                 </button>
             </form>
         </div>
 
         <p class="text-center text-sm text-forest/60 mt-5">
-            Noch kein Konto?
-            <a href="{% url 'accounts:register' %}" class="font-medium text-forest hover:underline">Registrieren</a>
+            {% trans "Noch kein Konto?" %}
+            <a href="{% url 'accounts:register' %}" class="font-medium text-forest hover:underline">{% trans "Registrieren" %}</a>
         </p>
 
         <p class="text-center text-xs text-forest/30 mt-4">&copy; {% now "Y" %} Overlytics</p>

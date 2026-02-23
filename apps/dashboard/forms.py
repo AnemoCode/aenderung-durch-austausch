@@ -1,5 +1,6 @@
 from django import forms
 from django.contrib.auth import get_user_model
+from django.utils.translation import gettext_lazy as _
 
 from .models import GroupProject, GroupMembership, Project, ProjectGroup
 
@@ -21,7 +22,7 @@ class ProjectGroupForm(forms.ModelForm):
 class AddMemberForm(forms.Form):
     """Looks up a user by email address and validates they're not already a member."""
 
-    email = forms.EmailField(label='E-Mail-Adresse')
+    email = forms.EmailField(label=_('E-Mail-Adresse'))
 
     def __init__(self, group, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -32,9 +33,9 @@ class AddMemberForm(forms.Form):
         try:
             user = User.objects.get(email=email)
         except User.DoesNotExist:
-            raise forms.ValidationError('Kein Benutzer mit dieser E-Mail-Adresse gefunden.')
+            raise forms.ValidationError(_('Kein Benutzer mit dieser E-Mail-Adresse gefunden.'))
         if self.group.memberships.filter(user=user).exists():
-            raise forms.ValidationError('Dieser Benutzer ist bereits Mitglied dieser Gruppe.')
+            raise forms.ValidationError(_('Dieser Benutzer ist bereits Mitglied dieser Gruppe.'))
         return user  # Return the resolved User object for the view to use directly
 
 
@@ -43,8 +44,8 @@ class AddProjectToGroupForm(forms.Form):
 
     project = forms.ModelChoiceField(
         queryset=Project.objects.none(),
-        empty_label='Projekt auswählen…',
-        label='Projekt',
+        empty_label=_('Projekt auswählen…'),
+        label=_('Projekt'),
     )
 
     def __init__(self, group, user, *args, **kwargs):

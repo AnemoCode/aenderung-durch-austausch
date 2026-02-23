@@ -1,12 +1,13 @@
 from django.conf import settings
 from django.db import models
+from django.utils.translation import gettext_lazy as _
 
 
 class Project(models.Model):
     class Status(models.TextChoices):
-        OK          = 'OK',          'Aktiv'
-        AUTH_ERROR  = 'AUTH_ERROR',  'Auth Error'
-        CLONE_ERROR = 'CLONE_ERROR', 'Clone Error'
+        OK          = 'OK',          _('Aktiv')
+        AUTH_ERROR  = 'AUTH_ERROR',  _('Auth Error')
+        CLONE_ERROR = 'CLONE_ERROR', _('Clone Error')
 
     owner = models.ForeignKey(
         settings.AUTH_USER_MODEL,
@@ -51,8 +52,8 @@ class ProjectGroup(models.Model):
 
     class Meta:
         ordering = ['name']
-        verbose_name = 'Gruppe'
-        verbose_name_plural = 'Gruppen'
+        verbose_name = _('Gruppe')
+        verbose_name_plural = _('Gruppen')
 
     def __str__(self):
         return self.name
@@ -69,8 +70,8 @@ class ProjectGroup(models.Model):
 
 class GroupMembership(models.Model):
     class Role(models.TextChoices):
-        ADMIN = 'admin', 'Admin'
-        MEMBER = 'member', 'Mitglied'
+        ADMIN  = 'admin',  _('Admin')
+        MEMBER = 'member', _('Mitglied')
 
     group = models.ForeignKey(
         ProjectGroup,
