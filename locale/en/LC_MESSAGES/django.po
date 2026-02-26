@@ -50,6 +50,18 @@ msgstr "Total Pages"
 msgid "Aktive Projekte"
 msgstr "Active Projects"
 
+msgid "Quellen"
+msgstr "Sources"
+
+msgid "Floats"
+msgstr "Floats"
+
+msgid "Abb. & Tab."
+msgstr "Fig. & Tab."
+
+msgid "Formeln"
+msgstr "Formulas"
+
 msgid "Schreibfortschritt"
 msgstr "Writing Progress"
 
