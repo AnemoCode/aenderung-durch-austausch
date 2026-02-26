@@ -17,8 +17,11 @@ class Project(models.Model):
     name = models.CharField(max_length=255)
     git_url = models.URLField()
     status = models.CharField(max_length=20, choices=Status.choices, default=Status.OK)
-    word_count = models.PositiveIntegerField(default=0)
-    page_count = models.PositiveIntegerField(default=0)
+    word_count     = models.PositiveIntegerField(default=0)
+    page_count     = models.PositiveIntegerField(default=0)
+    citation_count = models.PositiveIntegerField(default=0)
+    float_count    = models.PositiveIntegerField(default=0)
+    math_count     = models.PositiveIntegerField(default=0)
     last_synced_at = models.DateTimeField(null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
@@ -123,10 +126,13 @@ class GroupProject(models.Model):
 
 class ProjectSnapshot(models.Model):
     """Immutable hourly record. Always INSERT — never UPDATE."""
-    project    = models.ForeignKey(Project, on_delete=models.CASCADE, related_name='snapshots')
-    word_count = models.PositiveIntegerField()
-    page_count = models.PositiveIntegerField()
-    taken_at   = models.DateTimeField(auto_now_add=True)
+    project        = models.ForeignKey(Project, on_delete=models.CASCADE, related_name='snapshots')
+    word_count     = models.PositiveIntegerField()
+    page_count     = models.PositiveIntegerField()
+    citation_count = models.PositiveIntegerField(default=0)
+    float_count    = models.PositiveIntegerField(default=0)
+    math_count     = models.PositiveIntegerField(default=0)
+    taken_at       = models.DateTimeField(auto_now_add=True)
 
     class Meta:
         ordering = ['-taken_at']

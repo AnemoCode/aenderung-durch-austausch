@@ -70,17 +70,35 @@ def sync_project(project_id: int):
             _save_error(project, Project.Status.CLONE_ERROR)
             return
 
-        word_count = _count_words(main_tex)
-        page_count = math.ceil(word_count / 300)
+        tc             = _run_texcount(main_tex)
+        word_count     = tc['words']
+        page_count     = math.ceil(word_count / 300)
+        float_count    = tc['floats']
+        math_count     = tc['math']
+        citation_count = _count_citations(clone_dir)
 
-        ProjectSnapshot.objects.create(project=project, word_count=word_count, page_count=page_count)
+        ProjectSnapshot.objects.create(
+            project=project,
+            word_count=word_count, page_count=page_count,
+            float_count=float_count, math_count=math_count,
+            citation_count=citation_count,
+        )
         project.word_count     = word_count
         project.page_count     = page_count
+        project.float_count    = float_count
+        project.math_count     = math_count
+        project.citation_count = citation_count
         project.status         = Project.Status.OK
         project.last_synced_at = timezone.now()
-        project.save(update_fields=['word_count', 'page_count', 'status', 'last_synced_at'])
+        project.save(update_fields=[
+            'word_count', 'page_count', 'float_count', 'math_count',
+            'citation_count', 'status', 'last_synced_at',
+        ])
 
-        logger.info('sync_project %d: %d words, %d pages', project_id, word_count, page_count)
+        logger.info(
+            'sync_project %d: %d words, %d pages, %d floats, %d math, %d citations',
+            project_id, word_count, page_count, float_count, math_count, citation_count,
+        )
 
     except git.exc.GitCommandError as exc:
         err = str(exc).lower()
@@ -104,11 +122,22 @@ def _build_auth_url(git_url: str, token: str) -> str:
 
 
 def _find_main_tex(clone_dir: str) -> str | None:
+    # 1. Candidate names in root first (fast path)
     for name in _CANDIDATE_NAMES:
         c = os.path.join(clone_dir, name)
         if os.path.isfile(c):
             return c
-    for tex in _glob.glob(os.path.join(clone_dir, '*.tex')):
+    # 2. Candidate names anywhere in the tree (depth-first by path length)
+    all_tex = sorted(
+        _glob.glob(os.path.join(clone_dir, '**', '*.tex'), recursive=True),
+        key=lambda p: p.count(os.sep),
+    )
+    for name in _CANDIDATE_NAMES:
+        for tex in all_tex:
+            if os.path.basename(tex) == name:
+                return tex
+    # 3. Any .tex file with \documentclass, shallowest first
+    for tex in all_tex:
         try:
             with open(tex, errors='ignore') as fh:
                 if any(re.search(r'\\documentclass', ln) for ln in fh):
@@ -118,21 +147,45 @@ def _find_main_tex(clone_dir: str) -> str | None:
     return None
 
 
-def _count_words(main_tex_path: str) -> int:
-    """`texcount -total -inc` counts across \\input/\\include files."""
+def _run_texcount(main_tex_path: str) -> dict:
+    """Run texcount once, return words, floats, and math counts."""
+    result = {'words': 0, 'floats': 0, 'math': 0}
     try:
         r = subprocess.run(
-            ['texcount', '-total', '-inc', main_tex_path],
+            ['texcount', '-total', '-inc', os.path.basename(main_tex_path)],
             capture_output=True, text=True, timeout=60,
+            cwd=os.path.dirname(main_tex_path),
         )
         if r.returncode != 0:
             logger.warning('texcount exited %d: %s', r.returncode, r.stderr.strip())
         for line in r.stdout.splitlines():
             if line.startswith('Words in text:'):
-                return int(line.split(':')[1].strip())
+                result['words'] = int(line.split(':')[1].strip())
+            elif line.startswith('Number of floats/tables/figures:'):
+                result['floats'] = int(line.split(':')[1].strip())
+            elif line.startswith('Number of math inlines:'):
+                result['math'] += int(line.split(':')[1].strip())
+            elif line.startswith('Number of math displayed:'):
+                result['math'] += int(line.split(':')[1].strip())
     except Exception as exc:
         logger.warning('texcount failed: %s', exc)
-    return 0
+    return result
+
+
+_CITE_RE = re.compile(r'\\cite\w*\s*(?:\[[^\]]*\])?\s*\{([^}]+)\}')
+
+
+def _count_citations(clone_dir: str) -> int:
+    """Count unique bibliography keys cited across all .tex files."""
+    keys: set[str] = set()
+    for tex in _glob.glob(os.path.join(clone_dir, '**', '*.tex'), recursive=True):
+        try:
+            with open(tex, errors='ignore') as fh:
+                for m in _CITE_RE.finditer(fh.read()):
+                    keys.update(k.strip() for k in m.group(1).split(','))
+        except OSError:
+            continue
+    return len(keys)
 
 
 def _save_error(project: Project, status: Project.Status) -> None:

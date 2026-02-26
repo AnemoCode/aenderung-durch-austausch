@@ -56,7 +56,7 @@
                 {% endif %}
             </div>
 
-            <div class="grid grid-cols-2 gap-4 py-3 border-y border-beige/30">
+            <div class="grid grid-cols-3 gap-3 py-3 border-y border-beige/30">
                 <div>
                     <p class="text-xs text-forest/50 mb-1">{% trans "Wörter" %}</p>
                     <p class="font-semibold text-forest">{{ p.word_count|intcomma }}</p>
@@ -64,6 +64,18 @@
                 <div>
                     <p class="text-xs text-forest/50 mb-1">{% trans "Seiten" %}</p>
                     <p class="font-semibold text-forest">{{ p.page_count }}</p>
+                </div>
+                <div>
+                    <p class="text-xs text-forest/50 mb-1">{% trans "Quellen" %}</p>
+                    <p class="font-semibold text-forest">{{ p.citation_count }}</p>
+                </div>
+                <div>
+                    <p class="text-xs text-forest/50 mb-1">{% trans "Floats" %}</p>
+                    <p class="font-semibold text-forest">{{ p.float_count }}</p>
+                </div>
+                <div>
+                    <p class="text-xs text-forest/50 mb-1">{% trans "Formeln" %}</p>
+                    <p class="font-semibold text-forest">{{ p.math_count }}</p>
                 </div>
             </div>
 

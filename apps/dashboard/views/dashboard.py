@@ -3,7 +3,7 @@ import json
 
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.db.models import Sum
+from django.db.models import OuterRef, Subquery, Sum
 from django.utils.translation import gettext as _, ngettext
 from django.shortcuts import get_object_or_404, redirect, render
 from django.utils import timezone
@@ -42,15 +42,44 @@ class DashboardView(LoginRequiredMixin, TemplateView):
         totals = projects.aggregate(
             total_words=Sum('word_count'),
             total_pages=Sum('page_count'),
+            total_citations=Sum('citation_count'),
+            total_floats=Sum('float_count'),
+            total_math=Sum('math_count'),
         )
+
+        week_ago = timezone.now() - datetime.timedelta(days=7)
+
+        def _prev_sub(field):
+            return Subquery(
+                ProjectSnapshot.objects
+                .filter(project=OuterRef('pk'), taken_at__lte=week_ago)
+                .order_by('-taken_at').values(field)[:1]
+            )
+
+        baseline = projects.annotate(
+            base_cit=_prev_sub('citation_count'),
+            base_flt=_prev_sub('float_count'),
+            base_mth=_prev_sub('math_count'),
+        ).aggregate(
+            base_citations=Sum('base_cit'),
+            base_floats=Sum('base_flt'),
+            base_math=Sum('base_mth'),
+        )
+
         ctx.update({
             'active_nav': 'index',
             'projects': projects,
             'chart_data_json': self._build_chart_data(self.request.user),
             'stats': {
-                'total_words': totals['total_words'] or 0,
-                'total_pages': totals['total_pages'] or 0,
+                'total_words':     totals['total_words']     or 0,
+                'total_pages':     totals['total_pages']     or 0,
                 'active_projects': projects.count(),
+                'total_citations': totals['total_citations'] or 0,
+                'total_floats':    totals['total_floats']    or 0,
+                'total_math':      totals['total_math']      or 0,
+                'citation_delta':  (totals['total_citations'] or 0) - (baseline['base_citations'] or 0),
+                'float_delta':     (totals['total_floats']    or 0) - (baseline['base_floats']    or 0),
+                'math_delta':      (totals['total_math']      or 0) - (baseline['base_math']      or 0),
             },
         })
         return ctx
