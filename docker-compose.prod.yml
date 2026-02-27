@@ -30,7 +30,7 @@ services:
     image: ghcr.io/${GHCR_OWNER}/overlytics:${IMAGE_TAG:-latest}
     env_file: .env
     ports:
-      - "8000:8000"
+      - "8500:8000"
     depends_on:
       db:
         condition: service_healthy

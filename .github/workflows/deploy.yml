@@ -143,6 +143,6 @@ jobs:
       - name: Verify deployment
         run: |
           sleep 15
-          curl -sf "http://${{ secrets.SERVER_HOST }}:8000/health/" \
+          curl -sf "http://${{ secrets.SERVER_HOST }}:8500/health/" \
             && echo "Health check passed" \
             || { echo "Health check failed"; exit 1; }
