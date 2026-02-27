@@ -16,9 +16,11 @@ Including another URLconf
 """
 from django.conf.urls.i18n import i18n_patterns
 from django.contrib import admin
+from django.http import HttpResponse
 from django.urls import path, include
 
 urlpatterns = [
+    path('health/', lambda request: HttpResponse('ok'), name='health'),
     path('i18n/', include('django.conf.urls.i18n')),
     path('admin/', admin.site.urls),
     path('', include('apps.accounts.urls', namespace='accounts')),
