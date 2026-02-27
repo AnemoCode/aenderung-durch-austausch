@@ -23,13 +23,20 @@ class DashboardView(LoginRequiredMixin, TemplateView):
         rows = (
             ProjectSnapshot.objects
             .filter(project__owner=user, taken_at__gte=cutoff)
-            .order_by('taken_at')
-            .values('taken_at', 'word_count', 'page_count')
+            .order_by('project__name', 'taken_at')
+            .values('project_id', 'project__name', 'taken_at', 'word_count', 'page_count')
         )
-        data = [
-            {'x': r['taken_at'].isoformat(), 'words': r['word_count'], 'pages': r['page_count']}
-            for r in rows
-        ]
+        projects: dict = {}
+        for r in rows:
+            pid = r['project_id']
+            if pid not in projects:
+                projects[pid] = {'id': pid, 'name': r['project__name'], 'data': []}
+            projects[pid]['data'].append({
+                'x': r['taken_at'].isoformat(),
+                'words': r['word_count'],
+                'pages': r['page_count'],
+            })
+        data = list(projects.values())
         return json.dumps(data) if data else '[]'
 
     def get_context_data(self, **kwargs):
