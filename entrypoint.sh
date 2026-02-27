@@ -17,7 +17,7 @@ fi
 # applied — avoiding concurrent CREATE TABLE races.
 if [ "$1" != "celery" ]; then
     python manage.py migrate --no-input
-    python manage.py collectstatic --no-input --quiet
+    python manage.py collectstatic --no-input -v 0
 fi
 
 exec "$@"
