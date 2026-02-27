@@ -2,7 +2,7 @@ services:
   db:
     image: postgres:17-alpine
     volumes:
-      - postgres_data:/var/lib/postgresql/data
+      - ${POSTGRES_DATA_PATH:-./data/postgres}:/var/lib/postgresql/data
     environment:
       POSTGRES_DB: ${POSTGRES_DB:-overlytics}
       POSTGRES_USER: ${POSTGRES_USER:-overlytics}
@@ -86,5 +86,4 @@ services:
       web:   { condition: service_healthy }
 
 volumes:
-  postgres_data:
   venv:

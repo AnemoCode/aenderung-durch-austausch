@@ -245,29 +245,45 @@
 (function () {
     const raw = {{ chart_data_json|safe }};
     const ctx = document.getElementById('progressChart').getContext('2d');
-    const gradient = ctx.createLinearGradient(0, 0, 0, 256);
-    gradient.addColorStop(0, 'rgba(52,73,69,0.2)');
-    gradient.addColorStop(1, 'rgba(52,73,69,0)');
+
+    const PALETTE = [
+        '#344945', '#7B9E8C', '#C4A882', '#8B7355',
+        '#5B7FA6', '#A67B8B', '#6B8F71', '#9B7B6B',
+    ];
+
+    const datasets = raw.map((project, i) => {
+        const color = PALETTE[i % PALETTE.length];
+        return {
+            label: project.name,
+            data: project.data.map(d => ({ x: d.x, y: d.words })),
+            borderColor: color,
+            borderWidth: 2,
+            tension: 0.4,
+            fill: false,
+            pointRadius: 3,
+            pointBackgroundColor: color,
+        };
+    });
+
+    if (datasets.length === 1) {
+        const gradient = ctx.createLinearGradient(0, 0, 0, 256);
+        gradient.addColorStop(0, 'rgba(52,73,69,0.2)');
+        gradient.addColorStop(1, 'rgba(52,73,69,0)');
+        datasets[0].fill = true;
+        datasets[0].backgroundColor = gradient;
+    }
+
     new Chart(ctx, {
         type: 'line',
-        data: {
-            datasets: [{
-                label: '{% trans "Wörter" %}',
-                data: raw.map(d => ({ x: d.x, y: d.words })),
-                borderColor: '#344945',
-                borderWidth: 3,
-                tension: 0.4,
-                fill: true,
-                backgroundColor: gradient,
-                pointRadius: 4,
-                pointBackgroundColor: '#344945',
-            }]
-        },
+        data: { datasets },
         options: {
             responsive: true,
             maintainAspectRatio: false,
             plugins: {
-                legend: { display: false },
+                legend: {
+                    display: raw.length > 1,
+                    labels: { color: '#344945', boxWidth: 12, font: { size: 12 } },
+                },
                 tooltip: {
                     backgroundColor: '#fff',
                     titleColor: '#344945',
