@@ -120,16 +120,19 @@ jobs:
             ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_HOST }}:/opt/overlytics/docker-compose.prod.yml
 
       - name: Deploy
+        env:
+          IMAGE_TAG: ${{ needs.build.outputs.image-tag }}
+          GHCR_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GHCR_USER: ${{ github.actor }}
+          GHCR_OWNER: ${{ github.repository_owner }}
         run: |
           ssh ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_HOST }} << EOF
             set -e
             cd /opt/overlytics
-            echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u "${{ github.actor }}" --password-stdin
-            IMAGE_TAG="${{ needs.build.outputs.image-tag }}" \
-            GHCR_OWNER="${{ github.repository_owner }}" \
+            echo "$GHCR_TOKEN" | docker login ghcr.io -u "$GHCR_USER" --password-stdin
+            IMAGE_TAG="$IMAGE_TAG" GHCR_OWNER="$GHCR_OWNER" \
             docker compose -f docker-compose.prod.yml pull
-            IMAGE_TAG="${{ needs.build.outputs.image-tag }}" \
-            GHCR_OWNER="${{ github.repository_owner }}" \
+            IMAGE_TAG="$IMAGE_TAG" GHCR_OWNER="$GHCR_OWNER" \
             docker compose -f docker-compose.prod.yml up -d --force-recreate --remove-orphans
             docker image prune -f
           EOF
