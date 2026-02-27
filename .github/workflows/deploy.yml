@@ -54,6 +54,7 @@ jobs:
       packages: write
     outputs:
       image-tag: ${{ steps.image-tag.outputs.tag }}
+      ghcr-owner: ${{ steps.image-tag.outputs.owner }}
 
     steps:
       - uses: actions/checkout@v4
@@ -68,7 +69,9 @@ jobs:
 
       - name: Generate image tag
         id: image-tag
-        run: echo "tag=sha-$(git rev-parse --short HEAD)" >> "$GITHUB_OUTPUT"
+        run: |
+          echo "tag=sha-$(git rev-parse --short HEAD)" >> "$GITHUB_OUTPUT"
+          echo "owner=$(echo '${{ github.repository_owner }}' | tr '[:upper:]' '[:lower:]')" >> "$GITHUB_OUTPUT"
 
       - name: Build and push web image
         uses: docker/build-push-action@v6
@@ -77,8 +80,8 @@ jobs:
           target: runtime
           push: true
           tags: |
-            ghcr.io/${{ github.repository_owner }}/overlytics:${{ steps.image-tag.outputs.tag }}
-            ghcr.io/${{ github.repository_owner }}/overlytics:latest
+            ghcr.io/${{ steps.image-tag.outputs.owner }}/overlytics:${{ steps.image-tag.outputs.tag }}
+            ghcr.io/${{ steps.image-tag.outputs.owner }}/overlytics:latest
           cache-from: type=gha,scope=web
           cache-to: type=gha,mode=max,scope=web
 
@@ -89,8 +92,8 @@ jobs:
           target: worker
           push: true
           tags: |
-            ghcr.io/${{ github.repository_owner }}/overlytics-worker:${{ steps.image-tag.outputs.tag }}
-            ghcr.io/${{ github.repository_owner }}/overlytics-worker:latest
+            ghcr.io/${{ steps.image-tag.outputs.owner }}/overlytics-worker:${{ steps.image-tag.outputs.tag }}
+            ghcr.io/${{ steps.image-tag.outputs.owner }}/overlytics-worker:latest
           cache-from: type=gha,scope=worker
           cache-to: type=gha,mode=max,scope=worker
 
@@ -124,7 +127,7 @@ jobs:
           IMAGE_TAG: ${{ needs.build.outputs.image-tag }}
           GHCR_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           GHCR_USER: ${{ github.actor }}
-          GHCR_OWNER: ${{ github.repository_owner }}
+          GHCR_OWNER: ${{ needs.build.outputs.ghcr-owner }}
         run: |
           ssh ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_HOST }} << EOF
             set -e
