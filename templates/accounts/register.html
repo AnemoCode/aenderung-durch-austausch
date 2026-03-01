@@ -33,7 +33,7 @@
         <div class="bg-white rounded-2xl border border-beige shadow-sm p-8">
 
             <h1 class="text-lg font-semibold text-forest mb-1">{% trans "Konto erstellen" %}</h1>
-            <p class="text-sm text-forest/60 mb-6">{% trans "Starte kostenlos und tracke deine Overleaf-Projekte." %}</p>
+            <p class="text-sm text-forest/60 mb-6">{% trans "Tracke deine Overleaf-Projekte." %}</p>
 
             <form method="post" action="{% url 'accounts:register' %}" novalidate>
                 {% csrf_token %}

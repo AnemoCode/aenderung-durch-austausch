@@ -407,8 +407,8 @@ msgstr "Register"
 msgid "Konto erstellen"
 msgstr "Create Account"
 
-msgid "Starte kostenlos und tracke deine Overleaf-Projekte."
-msgstr "Start for free and track your Overleaf projects."
+msgid "Tracke deine Overleaf-Projekte."
+msgstr "Start now and track your Overleaf projects."
 
 msgid "Name"
 msgstr "Name"
