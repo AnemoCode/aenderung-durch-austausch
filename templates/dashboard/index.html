@@ -3,24 +3,122 @@
 
 {% block content %}
 
-{# Page heading + sync button #}
-<div class="flex items-center justify-between">
-    <div>
+{# Page heading + filter + sync button #}
+<div class="flex items-center justify-between gap-3">
+    <div class="min-w-0">
         <h1 class="text-2xl font-bold text-forest">{% trans "Willkommen zurück!" %}</h1>
         <p class="text-sm text-forest/60 mt-1">{% trans "Hier ist der aktuelle Stand deiner Overleaf-Projekte." %}</p>
     </div>
-    <form method="post" action="{% url 'dashboard:sync_all' %}" x-data="{ syncing: false }" @submit="syncing = true">
-        {% csrf_token %}
-        <button type="submit"
-            class="flex items-center text-sm font-medium text-forest hover:bg-sage/30 transition-colors bg-white px-3 py-1.5 rounded-md border border-beige shadow-sm disabled:opacity-60"
-            :disabled="syncing">
-            <i data-lucide="refresh-cw"
-               class="w-4 h-4 mr-2"
-               :class="{ 'animate-spin': syncing }"></i>
-            <span x-text="syncing ? '{% trans "Synchronisiere…" %}' : '{% trans "Jetzt synchronisieren" %}'"></span>
-        </button>
-    </form>
+
+    <div class="flex items-center gap-2 flex-shrink-0">
+
+        {# Filter dropdown #}
+        <div x-data="{ open: false }" class="relative">
+            <button @click="open = !open" type="button"
+                    class="flex items-center text-sm font-medium px-3 py-1.5 rounded-md border shadow-sm transition-colors"
+                    :class="{ 'bg-forest text-cream border-forest': {{ is_filtered|yesno:'true,false' }},
+                              'bg-white text-forest border-beige hover:bg-sage/30': !{{ is_filtered|yesno:'true,false' }} }">
+                <i data-lucide="filter" class="w-4 h-4 mr-2"></i>
+                {% trans "Filter" %}
+                {% if is_filtered %}
+                <span class="ml-1.5 bg-cream/20 text-xs rounded-full px-1.5 py-0.5">
+                    {{ selected_project_ids|length|add:selected_group_ids|length }}
+                </span>
+                {% endif %}
+            </button>
+
+            <div x-show="open" @click.outside="open = false" x-cloak
+                 class="absolute right-0 top-full mt-1 w-72 bg-white border border-beige rounded-xl shadow-lg z-10 p-4">
+                <form method="get" action="{% url 'dashboard:index' %}">
+
+                    {% if user_groups %}
+                    <p class="text-xs font-semibold text-forest/50 uppercase tracking-wide mb-2">{% trans "Gruppen" %}</p>
+                    {% for group in user_groups %}
+                    <label class="flex items-center gap-2 py-1 cursor-pointer hover:text-forest">
+                        <input type="checkbox" name="groups" value="{{ group.pk }}"
+                               {% if group.pk in selected_group_ids %}checked{% endif %}
+                               class="rounded border-beige accent-forest">
+                        <span class="text-sm text-forest">{{ group.name }}</span>
+                    </label>
+                    {% endfor %}
+                    <div class="my-3 border-t border-beige"></div>
+                    {% endif %}
+
+                    <p class="text-xs font-semibold text-forest/50 uppercase tracking-wide mb-2">{% trans "Projekte" %}</p>
+                    {% for project in all_projects %}
+                    <label class="flex items-center gap-2 py-1 cursor-pointer">
+                        <input type="checkbox" name="projects" value="{{ project.pk }}"
+                               {% if project.pk in selected_project_ids %}checked{% endif %}
+                               class="rounded border-beige accent-forest">
+                        <span class="text-sm text-forest truncate">{{ project.name }}</span>
+                    </label>
+                    {% endfor %}
+
+                    <div class="mt-3 pt-3 border-t border-beige flex gap-2">
+                        <button type="submit"
+                                class="flex-1 bg-forest text-cream text-sm py-1.5 rounded-lg hover:bg-forest/90 transition-colors">
+                            {% trans "Anwenden" %}
+                        </button>
+                        {% if is_filtered %}
+                        <a href="{% url 'dashboard:index' %}"
+                           class="flex-1 text-center text-sm text-forest/60 py-1.5 rounded-lg border border-beige hover:bg-cream transition-colors">
+                            {% trans "Zurücksetzen" %}
+                        </a>
+                        {% endif %}
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        {# Sync button — carries current filter state as hidden inputs #}
+        <form method="post" action="{% url 'dashboard:sync_all' %}" x-data="{ syncing: false }" @submit="syncing = true">
+            {% csrf_token %}
+            {% for pid in selected_project_ids %}
+            <input type="hidden" name="projects" value="{{ pid }}">
+            {% endfor %}
+            {% for gid in selected_group_ids %}
+            <input type="hidden" name="groups" value="{{ gid }}">
+            {% endfor %}
+            <button type="submit"
+                class="flex items-center text-sm font-medium text-forest hover:bg-sage/30 transition-colors bg-white px-3 py-1.5 rounded-md border border-beige shadow-sm disabled:opacity-60"
+                :disabled="syncing">
+                <i data-lucide="refresh-cw"
+                   class="w-4 h-4 mr-2"
+                   :class="{ 'animate-spin': syncing }"></i>
+                <span x-text="syncing ? '{% trans "Synchronisiere…" %}' : '{% trans "Jetzt synchronisieren" %}'"></span>
+            </button>
+        </form>
+
+    </div>
 </div>
+
+{# Active filter chips #}
+{% if is_filtered %}
+<div class="flex items-center flex-wrap gap-2 text-sm text-forest/60">
+    <span class="font-medium text-forest/50">{% trans "Gefiltert nach:" %}</span>
+    {% for group in user_groups %}
+    {% if group.pk in selected_group_ids %}
+    <a href="{% url 'dashboard:index' %}?{% for pid in selected_project_ids %}projects={{ pid }}&{% endfor %}{% for gid in selected_group_ids %}{% if gid != group.pk %}groups={{ gid }}&{% endif %}{% endfor %}"
+       class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-forest/10 text-forest text-xs font-medium hover:bg-forest/20 transition-colors">
+        <i data-lucide="layers" class="w-3 h-3"></i>
+        {{ group.name }}
+        <i data-lucide="x" class="w-3 h-3 ml-0.5"></i>
+    </a>
+    {% endif %}
+    {% endfor %}
+    {% for project in all_projects %}
+    {% if project.pk in selected_project_ids %}
+    <a href="{% url 'dashboard:index' %}?{% for pid in selected_project_ids %}{% if pid != project.pk %}projects={{ pid }}&{% endif %}{% endfor %}{% for gid in selected_group_ids %}groups={{ gid }}&{% endfor %}"
+       class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-sage/30 text-forest text-xs font-medium hover:bg-sage/60 transition-colors">
+        <i data-lucide="file-text" class="w-3 h-3"></i>
+        {{ project.name }}
+        <i data-lucide="x" class="w-3 h-3 ml-0.5"></i>
+    </a>
+    {% endif %}
+    {% endfor %}
+    <a href="{% url 'dashboard:index' %}" class="text-xs text-forest/40 hover:text-forest/60 underline ml-1">{% trans "Alle anzeigen" %}</a>
+</div>
+{% endif %}
 
 {# Stats Row #}
 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">

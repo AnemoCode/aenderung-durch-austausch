@@ -3,14 +3,14 @@ import json
 
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.db.models import OuterRef, Subquery, Sum
+from django.db.models import OuterRef, Q, Subquery, Sum
 from django.utils.translation import gettext as _, ngettext
 from django.shortcuts import get_object_or_404, redirect, render
 from django.utils import timezone
 from django.views import View
 from django.views.generic import TemplateView
 
-from ..models import Project, ProjectSnapshot
+from ..models import Project, ProjectGroup, ProjectSnapshot
 from ..tasks import sync_project
 
 
@@ -18,11 +18,13 @@ class DashboardView(LoginRequiredMixin, TemplateView):
     template_name = 'dashboard/index.html'
 
     @staticmethod
-    def _build_chart_data(user) -> str:
+    def _build_chart_data(user, project_ids=None) -> str:
         cutoff = timezone.now() - datetime.timedelta(days=30)
+        qs = ProjectSnapshot.objects.filter(project__owner=user, taken_at__gte=cutoff)
+        if project_ids is not None:
+            qs = qs.filter(project_id__in=project_ids)
         rows = (
-            ProjectSnapshot.objects
-            .filter(project__owner=user, taken_at__gte=cutoff)
+            qs
             .order_by('project__name', 'taken_at')
             .values('project_id', 'project__name', 'taken_at', 'word_count', 'page_count')
         )
@@ -41,11 +43,36 @@ class DashboardView(LoginRequiredMixin, TemplateView):
 
     def get_context_data(self, **kwargs):
         ctx = super().get_context_data(**kwargs)
-        projects = (
+        user = self.request.user
+        request = self.request
+
+        # Parse filter params
+        selected_project_ids = [int(x) for x in request.GET.getlist('projects') if x.isdigit()]
+        selected_group_ids   = [int(x) for x in request.GET.getlist('groups')   if x.isdigit()]
+
+        # All user data for filter UI
+        all_projects = (
             Project.objects
-            .filter(owner=self.request.user)
+            .filter(owner=user)
             .prefetch_related('groups')
+            .order_by('name')
         )
+        user_groups = ProjectGroup.objects.filter(members=user).order_by('name')
+
+        # Filtered queryset for stats / chart
+        if selected_project_ids or selected_group_ids:
+            q = Q()
+            if selected_project_ids:
+                q |= Q(id__in=selected_project_ids)
+            if selected_group_ids:
+                q |= Q(groups__id__in=selected_group_ids)
+            projects = all_projects.filter(q).distinct()
+        else:
+            projects = all_projects
+
+        filtered_ids = list(projects.values_list('id', flat=True))
+        is_filtered = bool(selected_project_ids or selected_group_ids)
+
         totals = projects.aggregate(
             total_words=Sum('word_count'),
             total_pages=Sum('page_count'),
@@ -76,7 +103,12 @@ class DashboardView(LoginRequiredMixin, TemplateView):
         ctx.update({
             'active_nav': 'index',
             'projects': projects,
-            'chart_data_json': self._build_chart_data(self.request.user),
+            'all_projects': all_projects,
+            'user_groups': user_groups,
+            'selected_project_ids': selected_project_ids,
+            'selected_group_ids': selected_group_ids,
+            'is_filtered': is_filtered,
+            'chart_data_json': self._build_chart_data(user, filtered_ids if is_filtered else None),
             'stats': {
                 'total_words':     totals['total_words']     or 0,
                 'total_pages':     totals['total_pages']     or 0,
@@ -93,7 +125,7 @@ class DashboardView(LoginRequiredMixin, TemplateView):
 
 
 class SyncAllView(LoginRequiredMixin, View):
-    """Enqueue a sync for every project belonging to this user."""
+    """Enqueue a sync for every project belonging to this user (or the filtered subset)."""
     def post(self, request):
         if not request.user.overleaf_token:
             messages.error(
@@ -102,7 +134,20 @@ class SyncAllView(LoginRequiredMixin, View):
                   'Bitte hinterlege zuerst einen Overleaf-Token in den Einstellungen.'),
             )
             return redirect('dashboard:index')
-        projects = Project.objects.filter(owner=request.user)
+
+        selected_project_ids = [int(x) for x in request.POST.getlist('projects') if x.isdigit()]
+        selected_group_ids   = [int(x) for x in request.POST.getlist('groups')   if x.isdigit()]
+
+        if selected_project_ids or selected_group_ids:
+            q = Q()
+            if selected_project_ids:
+                q |= Q(id__in=selected_project_ids)
+            if selected_group_ids:
+                q |= Q(groups__id__in=selected_group_ids)
+            projects = Project.objects.filter(owner=request.user).filter(q).distinct()
+        else:
+            projects = Project.objects.filter(owner=request.user)
+
         count = 0
         for p in projects:
             sync_project.delay(p.pk)
@@ -124,7 +169,19 @@ class SyncAllView(LoginRequiredMixin, View):
                 _('Keine Projekte zum Synchronisieren gefunden. '
                   'Bitte hinterlege zuerst einen Overleaf-Token in den Einstellungen.'),
             )
-        return redirect('dashboard:index')
+
+        # Redirect back preserving filter state
+        from urllib.parse import urlencode
+        from django.urls import reverse
+        params = {}
+        if selected_project_ids:
+            params['projects'] = selected_project_ids
+        if selected_group_ids:
+            params['groups'] = selected_group_ids
+        url = reverse('dashboard:index')
+        if params:
+            url += '?' + urlencode(params, doseq=True)
+        return redirect(url)
 
 
 class SyncProjectView(LoginRequiredMixin, View):
