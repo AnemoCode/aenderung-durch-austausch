@@ -157,7 +157,7 @@ msgstr "e.g. Masters_Thesis_Physics"
 msgid "Overleaf Git-URL"
 msgstr "Overleaf Git URL"
 
-msgid "Die Git-URL findest du in Overleaf unter Menü → Git."
+msgid "Die Git-URL findest du in Overleaf unter Menü → Integration → Git."
 msgstr "Find the Git URL in Overleaf under Menu → Git."
 
 msgid "Speichern"
@@ -309,8 +309,8 @@ msgstr "Your Overleaf Git Token"
 msgid "Den Token findest du in Overleaf unter"
 msgstr "Find the token in Overleaf under"
 
-msgid "Konto → Token-Zugriff"
-msgstr "Account → Token access"
+msgid "Konto → Git-Integration"
+msgstr "Account Settings → Git Integration"
 
 msgid "Token speichern"
 msgstr "Save token"
@@ -321,6 +321,65 @@ msgid ""
 msgstr ""
 "No token set yet. Add your Overleaf Git token so your projects can be "
 "synced automatically."
+
+# ── Onboarding banner ─────────────────────────────────────────────────────────
+msgid "Schritt 1/2: Hinterlege deinen Overleaf-Token, damit deine Projekte synchronisiert werden können."
+msgstr "Step 1/2: Add your Overleaf token so your projects can be synced."
+
+msgid "Schritt 2/2: Lege dein erstes Projekt an, um mit dem Tracking zu beginnen."
+msgstr "Step 2/2: Create your first project to start tracking."
+
+msgid "Einrichten →"
+msgstr "Set up →"
+
+msgid "Jetzt anlegen →"
+msgstr "Create now →"
+
+# ── Onboarding wizard ─────────────────────────────────────────────────────────
+msgid "Willkommen"
+msgstr "Welcome"
+
+msgid "Willkommen bei Overlytics!"
+msgstr "Welcome to Overlytics!"
+
+msgid "Richte in zwei Schritten deinen Account ein – dauert weniger als eine Minute."
+msgstr "Set up your account in two steps – it takes less than a minute."
+
+msgid "Token"
+msgstr "Token"
+
+msgid "Git-Integration einrichten"
+msgstr "Set up Git Integration"
+
+msgid "Zu den Overleaf-Einstellungen →"
+msgstr "Go to Overleaf settings →"
+
+msgid "Git-Integration-Token"
+msgstr "Git-Integration Token"
+
+msgid "Token einfügen…"
+msgstr "Paste token…"
+
+msgid "Weiter →"
+msgstr "Continue →"
+
+msgid "Überspringen"
+msgstr "Skip"
+
+msgid "Erstes Projekt anlegen"
+msgstr "Create First Project"
+
+msgid "Die Git-URL deines Projekts findest du in Overleaf unter"
+msgstr "Find the Git URL for your project in Overleaf under"
+
+msgid "Menü → Integration → Git"
+msgstr "Menu → Integration → Git"
+
+msgid "Projekt anlegen →"
+msgstr "Create project →"
+
+msgid "Weiter zum Dashboard →"
+msgstr "Continue to Dashboard →"
 
 # ── Login ─────────────────────────────────────────────────────────────────────
 msgid "Anmelden"
@@ -409,6 +468,9 @@ msgstr "Please enter a valid token."
 
 msgid "Overleaf-Token wurde entfernt."
 msgstr "Overleaf token removed."
+
+msgid "Projekt „%(name)s” wurde angelegt."
+msgstr "Project \"%(name)s\" was created."
 
 msgid "\"{name}\" wurde zur Gruppe hinzugefügt."
 msgstr "\"{name}\" was added to the group."

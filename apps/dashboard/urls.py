@@ -5,6 +5,9 @@ from . import views
 app_name = 'dashboard'
 
 urlpatterns = [
+    # Onboarding
+    path('welcome/', views.OnboardingView.as_view(), name='onboarding'),
+
     # Overview
     path('', views.DashboardView.as_view(), name='index'),
     path('settings/', views.SettingsView.as_view(), name='settings'),

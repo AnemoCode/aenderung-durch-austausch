@@ -6,10 +6,12 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db.models import OuterRef, Q, Subquery, Sum
 from django.utils.translation import gettext as _, ngettext
 from django.shortcuts import get_object_or_404, redirect, render
+from django.urls import reverse
 from django.utils import timezone
 from django.views import View
 from django.views.generic import TemplateView
 
+from ..forms import ProjectForm
 from ..models import Project, ProjectGroup, ProjectSnapshot
 from ..tasks import sync_project
 
@@ -172,7 +174,6 @@ class SyncAllView(LoginRequiredMixin, View):
 
         # Redirect back preserving filter state
         from urllib.parse import urlencode
-        from django.urls import reverse
         params = {}
         if selected_project_ids:
             params['projects'] = selected_project_ids
@@ -201,6 +202,61 @@ class SyncProjectView(LoginRequiredMixin, View):
               'Ergebnisse erscheinen in wenigen Sekunden.') % {'name': project.name},
         )
         return redirect('dashboard:index')
+
+
+class OnboardingView(LoginRequiredMixin, View):
+    template_name = 'dashboard/onboarding.html'
+
+    def get(self, request):
+        has_token   = bool(request.user.overleaf_token)
+        has_project = Project.objects.filter(owner=request.user).exists()
+
+        if has_token and has_project:
+            return redirect('dashboard:index')
+
+        force_step2  = request.GET.get('step') == '2'
+        current_step = 2 if (force_step2 or has_token) else 1
+
+        return render(request, self.template_name, {
+            'current_step': current_step,
+            'has_token':    has_token,
+            'form':         ProjectForm() if current_step == 2 else None,
+        })
+
+    def post(self, request):
+        step = request.POST.get('step')
+
+        if step == '1':
+            token = request.POST.get('overleaf_token', '').strip()
+            if token:
+                request.user.overleaf_token = token
+                request.user.save(update_fields=['overleaf_token'])
+                return redirect(reverse('dashboard:onboarding') + '?step=2')
+            return render(request, self.template_name, {
+                'current_step': 1,
+                'has_token':    False,
+                'form':         None,
+                'token_error':  _('Bitte gib einen gültigen Token ein.'),
+            })
+
+        if step == '2':
+            form = ProjectForm(request.POST)
+            if form.is_valid():
+                project = form.save(commit=False)
+                project.owner = request.user
+                project.save()
+                messages.success(
+                    request,
+                    _('Projekt „%(name)s" wurde angelegt.') % {'name': project.name},
+                )
+                return redirect('dashboard:index')
+            return render(request, self.template_name, {
+                'current_step': 2,
+                'has_token':    True,
+                'form':         form,
+            })
+
+        return redirect('dashboard:onboarding')
 
 
 class SettingsView(LoginRequiredMixin, View):
