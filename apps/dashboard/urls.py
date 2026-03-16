@@ -20,6 +20,11 @@ urlpatterns = [
     path('projects/<int:pk>/edit/', views.ProjectUpdateView.as_view(), name='project_update'),
     path('projects/<int:pk>/delete/', views.ProjectDeleteView.as_view(), name='project_delete'),
 
+    # Staff admin
+    path('staff/', views.StaffOverviewView.as_view(), name='staff_overview'),
+    path('staff/users/', views.StaffUserListView.as_view(), name='staff_user_list'),
+    path('staff/users/<int:pk>/', views.StaffUserDetailView.as_view(), name='staff_user_detail'),
+
     # Groups
     path('groups/', views.GroupListView.as_view(), name='groups'),
     path('groups/new/', views.GroupCreateView.as_view(), name='group_create'),

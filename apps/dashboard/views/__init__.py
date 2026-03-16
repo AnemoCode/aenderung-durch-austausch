@@ -15,3 +15,4 @@ from .projects import (
     ProjectListView,
     ProjectUpdateView,
 )
+from .staff import StaffOverviewView, StaffUserDetailView, StaffUserListView
