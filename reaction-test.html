@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Reaction Time Test</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      background: #1a1a2e;
+      color: #eee;
+    }
+
+    .container {
+      text-align: center;
+      max-width: 500px;
+      width: 90%;
+    }
+
+    h1 {
+      font-size: 2rem;
+      margin-bottom: 0.5rem;
+      color: #e94560;
+    }
+
+    p.subtitle {
+      font-size: 1rem;
+      color: #aaa;
+      margin-bottom: 2rem;
+    }
+
+    #game-area {
+      background: #16213e;
+      border-radius: 16px;
+      padding: 2.5rem 2rem;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.4);
+    }
+
+    #countdown-display {
+      font-size: 5rem;
+      font-weight: bold;
+      color: #e94560;
+      min-height: 7rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      letter-spacing: 0.05em;
+      transition: color 0.2s;
+    }
+
+    #countdown-display.go {
+      color: #0f3460;
+      animation: pulse 0.3s ease-out;
+    }
+
+    @keyframes pulse {
+      0%   { transform: scale(1.3); }
+      100% { transform: scale(1); }
+    }
+
+    #message {
+      font-size: 1.1rem;
+      color: #aaa;
+      min-height: 1.8rem;
+      margin-top: 0.5rem;
+      margin-bottom: 1.5rem;
+    }
+
+    #result {
+      font-size: 1.4rem;
+      font-weight: bold;
+      color: #4ecca3;
+      min-height: 2rem;
+      margin-bottom: 1.5rem;
+    }
+
+    #react-btn {
+      padding: 1rem 2.5rem;
+      font-size: 1.1rem;
+      font-weight: bold;
+      border: none;
+      border-radius: 50px;
+      cursor: pointer;
+      background: #e94560;
+      color: #fff;
+      transition: background 0.2s, transform 0.1s;
+      letter-spacing: 0.05em;
+    }
+
+    #react-btn:hover:not(:disabled) {
+      background: #c73652;
+      transform: scale(1.04);
+    }
+
+    #react-btn:disabled {
+      background: #555;
+      cursor: not-allowed;
+    }
+
+    #react-btn.go-btn {
+      background: #4ecca3;
+      color: #1a1a2e;
+    }
+
+    #react-btn.go-btn:hover {
+      background: #3db08a;
+    }
+
+    .history {
+      margin-top: 1.5rem;
+      text-align: left;
+    }
+
+    .history h3 {
+      font-size: 0.9rem;
+      color: #888;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      margin-bottom: 0.5rem;
+    }
+
+    #history-list {
+      list-style: none;
+      display: flex;
+      gap: 0.5rem;
+      flex-wrap: wrap;
+    }
+
+    #history-list li {
+      background: #0f3460;
+      padding: 0.3rem 0.7rem;
+      border-radius: 8px;
+      font-size: 0.85rem;
+      color: #4ecca3;
+    }
+
+    #best {
+      margin-top: 0.8rem;
+      font-size: 0.9rem;
+      color: #e94560;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Reaction Test</h1>
+    <p class="subtitle">How fast are your reflexes?</p>
+
+    <div id="game-area">
+      <div id="countdown-display">—</div>
+      <div id="message">Press <strong>Start</strong> to begin the countdown.</div>
+      <div id="result"></div>
+      <button id="react-btn" onclick="handleButton()">Start</button>
+
+      <div class="history">
+        <h3>Last attempts</h3>
+        <ul id="history-list"></ul>
+        <div id="best"></div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const STATE = { IDLE: 0, COUNTDOWN: 1, WAITING: 2, REACT: 3 };
+
+    let state = STATE.IDLE;
+    let countdownTimer = null;
+    let waitTimer = null;
+    let reactStart = null;
+    let count = 3;
+    const history = [];
+
+    const display  = document.getElementById('countdown-display');
+    const message  = document.getElementById('message');
+    const result   = document.getElementById('result');
+    const btn      = document.getElementById('react-btn');
+    const histList = document.getElementById('history-list');
+    const bestEl   = document.getElementById('best');
+
+    function handleButton() {
+      if (state === STATE.IDLE)      startCountdown();
+      else if (state === STATE.REACT) recordReaction();
+    }
+
+    function startCountdown() {
+      state = STATE.COUNTDOWN;
+      count = 3;
+      result.textContent = '';
+      display.classList.remove('go');
+      display.textContent = count;
+      message.textContent = 'Get ready…';
+      btn.disabled = true;
+      btn.classList.remove('go-btn');
+
+      countdownTimer = setInterval(() => {
+        count--;
+        if (count > 0) {
+          display.textContent = count;
+        } else {
+          clearInterval(countdownTimer);
+          startWait();
+        }
+      }, 1000);
+    }
+
+    function startWait() {
+      display.textContent = '…';
+      message.textContent = 'Wait for it…';
+
+      // Random delay 1–4 seconds before GO
+      const delay = 1000 + Math.random() * 3000;
+      waitTimer = setTimeout(showGo, delay);
+    }
+
+    function showGo() {
+      state = STATE.REACT;
+      reactStart = performance.now();
+      display.classList.add('go');
+      display.textContent = 'GO!';
+      message.textContent = 'Click NOW!';
+      btn.textContent = 'Click!';
+      btn.classList.add('go-btn');
+      btn.disabled = false;
+    }
+
+    function recordReaction() {
+      const elapsed = performance.now() - reactStart;
+      const ms = Math.round(elapsed);
+
+      history.push(ms);
+      state = STATE.IDLE;
+
+      display.classList.remove('go');
+      display.textContent = ms + 'ms';
+      message.textContent = getRating(ms);
+      result.textContent = '';
+
+      btn.textContent = 'Try Again';
+      btn.classList.remove('go-btn');
+      btn.disabled = false;
+
+      updateHistory();
+    }
+
+    function getRating(ms) {
+      if (ms < 150) return '⚡ Incredible! Lightning reflexes!';
+      if (ms < 200) return '🔥 Excellent reaction time!';
+      if (ms < 250) return '👍 Great job!';
+      if (ms < 350) return '😊 Average reaction time.';
+      return '🐢 Keep practicing!';
+    }
+
+    function updateHistory() {
+      histList.innerHTML = '';
+      history.slice(-8).forEach(t => {
+        const li = document.createElement('li');
+        li.textContent = t + 'ms';
+        histList.appendChild(li);
+      });
+
+      if (history.length > 0) {
+        const best = Math.min(...history);
+        bestEl.textContent = `Best: ${best}ms`;
+      }
+    }
+
+    // Allow keyboard: Space or Enter to interact
+    document.addEventListener('keydown', e => {
+      if (e.code === 'Space' || e.code === 'Enter') {
+        e.preventDefault();
+        if (!btn.disabled) handleButton();
+      }
+    });
+  </script>
+</body>
+</html>
