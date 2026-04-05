@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Reaction Test</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: #1a1a2e;
+      color: #eee;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      user-select: none;
+    }
+
+    h1 {
+      margin-bottom: 12px;
+      font-size: 2rem;
+      letter-spacing: 2px;
+      color: #e2b96f;
+    }
+
+    p.subtitle {
+      margin-bottom: 40px;
+      color: #aaa;
+      font-size: 0.95rem;
+    }
+
+    #game-area {
+      width: 340px;
+      height: 340px;
+      border-radius: 50%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: background 0.3s, transform 0.1s;
+      background: #16213e;
+      border: 4px solid #0f3460;
+      box-shadow: 0 0 40px rgba(15, 52, 96, 0.5);
+      outline: none;
+    }
+
+    #game-area:focus {
+      box-shadow: 0 0 0 3px #e2b96f, 0 0 40px rgba(15, 52, 96, 0.5);
+    }
+
+    #game-area.countdown {
+      background: #16213e;
+      border-color: #0f3460;
+    }
+
+    #game-area.waiting {
+      background: #1a1a2e;
+      border-color: #444;
+      cursor: default;
+    }
+
+    #game-area.go {
+      background: #155724;
+      border-color: #28a745;
+      box-shadow: 0 0 60px rgba(40, 167, 69, 0.6);
+      animation: pulse 0.5s ease-out;
+    }
+
+    #game-area.result {
+      background: #16213e;
+      border-color: #e2b96f;
+    }
+
+    #game-area.too-early {
+      background: #5c1a1a;
+      border-color: #dc3545;
+      box-shadow: 0 0 60px rgba(220, 53, 69, 0.6);
+    }
+
+    @keyframes pulse {
+      0% { transform: scale(0.95); }
+      50% { transform: scale(1.03); }
+      100% { transform: scale(1); }
+    }
+
+    #main-text {
+      font-size: 5rem;
+      font-weight: 700;
+      line-height: 1;
+    }
+
+    #sub-text {
+      font-size: 1rem;
+      color: #aaa;
+      margin-top: 10px;
+      text-align: center;
+      padding: 0 20px;
+    }
+
+    #stats {
+      margin-top: 32px;
+      text-align: center;
+    }
+
+    #stats h3 {
+      font-size: 0.85rem;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: #888;
+      margin-bottom: 16px;
+    }
+
+    #history-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      justify-content: center;
+      max-width: 340px;
+    }
+
+    .history-item {
+      background: #16213e;
+      border: 1px solid #0f3460;
+      border-radius: 8px;
+      padding: 6px 12px;
+      font-size: 0.85rem;
+      color: #ccc;
+    }
+
+    .history-item.best {
+      border-color: #e2b96f;
+      color: #e2b96f;
+    }
+
+    #best-display {
+      margin-top: 16px;
+      font-size: 0.9rem;
+      color: #888;
+    }
+
+    #best-display span {
+      color: #e2b96f;
+      font-weight: 600;
+    }
+
+    .rating {
+      font-size: 1rem;
+      margin-top: 6px;
+    }
+
+    .rating.great { color: #28a745; }
+    .rating.good  { color: #e2b96f; }
+    .rating.ok    { color: #fd7e14; }
+    .rating.slow  { color: #dc3545; }
+  </style>
+</head>
+<body>
+  <h1>Reaction Test</h1>
+  <p class="subtitle">Click (or press Space / Enter) when the circle turns green</p>
+
+  <div id="game-area" tabindex="0" role="button" aria-label="Reaction test area">
+    <div id="main-text">?</div>
+    <div id="sub-text">Click to start</div>
+  </div>
+
+  <div id="stats">
+    <h3>Recent Results</h3>
+    <div id="history-list"></div>
+    <div id="best-display"></div>
+  </div>
+
+  <script>
+    const area     = document.getElementById('game-area');
+    const mainText = document.getElementById('main-text');
+    const subText  = document.getElementById('sub-text');
+    const histList = document.getElementById('history-list');
+    const bestDisp = document.getElementById('best-display');
+
+    const MAX_HISTORY = 8;
+    const history = [];
+    let bestTime = Infinity;
+    let state = 'idle'; // idle | countdown | waiting | go | result | tooearly
+    let countdownTimer = null;
+    let waitTimer = null;
+    let goTime = null;
+
+    function getRating(ms) {
+      if (ms < 200) return { text: 'Incredible!', cls: 'great' };
+      if (ms < 280) return { text: 'Great!',      cls: 'great' };
+      if (ms < 360) return { text: 'Good',         cls: 'good'  };
+      if (ms < 500) return { text: 'Average',      cls: 'ok'    };
+      return             { text: 'Slow',            cls: 'slow'  };
+    }
+
+    function clearTimers() {
+      clearTimeout(countdownTimer);
+      clearTimeout(waitTimer);
+    }
+
+    function startCountdown() {
+      clearTimers();
+      state = 'countdown';
+      area.className = 'countdown';
+      area.setAttribute('aria-label', 'Countdown in progress');
+
+      const steps = ['3', '2', '1', 'Ready…'];
+      const delays = [0, 800, 1600, 2400];
+
+      steps.forEach((step, i) => {
+        countdownTimer = setTimeout(() => {
+          mainText.textContent = step;
+          subText.textContent = '';
+        }, delays[i]);
+      });
+
+      // After countdown, wait a random delay then show GO
+      countdownTimer = setTimeout(() => {
+        state = 'waiting';
+        area.className = 'waiting';
+        mainText.textContent = '';
+        subText.textContent = 'Wait for it…';
+
+        const delay = 1000 + Math.random() * 3000; // 1–4 s
+        waitTimer = setTimeout(() => {
+          state = 'go';
+          area.className = 'go';
+          area.setAttribute('aria-label', 'GO! Click now!');
+          mainText.textContent = 'GO!';
+          subText.textContent = '';
+          goTime = performance.now();
+        }, delay);
+      }, 3200);
+    }
+
+    function recordResult(ms) {
+      history.unshift(ms);
+      if (history.length > MAX_HISTORY) history.pop();
+      if (ms < bestTime) bestTime = ms;
+
+      // Rebuild history display
+      histList.innerHTML = '';
+      history.forEach((t, i) => {
+        const el = document.createElement('div');
+        el.className = 'history-item' + (t === bestTime ? ' best' : '');
+        el.textContent = t + ' ms';
+        histList.appendChild(el);
+      });
+
+      bestDisp.innerHTML = bestTime < Infinity
+        ? 'Personal best: <span>' + bestTime + ' ms</span>'
+        : '';
+    }
+
+    function handleClick() {
+      if (state === 'idle' || state === 'result' || state === 'tooearly') {
+        startCountdown();
+        return;
+      }
+
+      if (state === 'countdown' || state === 'waiting') {
+        // Clicked too early
+        clearTimers();
+        state = 'tooearly';
+        area.className = 'too-early';
+        area.setAttribute('aria-label', 'Too early! Click to try again.');
+        mainText.textContent = '✗';
+        subText.textContent = 'Too early! Click to try again.';
+        return;
+      }
+
+      if (state === 'go') {
+        const reaction = Math.round(performance.now() - goTime);
+        state = 'result';
+        area.className = 'result';
+
+        const rating = getRating(reaction);
+        mainText.textContent = reaction + ' ms';
+        subText.innerHTML = '<span class="rating ' + rating.cls + '">' + rating.text + '</span><br>Click to try again';
+
+        recordResult(reaction);
+        area.setAttribute('aria-label', reaction + ' ms — ' + rating.text + '. Click to try again.');
+      }
+    }
+
+    area.addEventListener('click', handleClick);
+    area.addEventListener('keydown', (e) => {
+      if (e.key === ' ' || e.key === 'Enter') {
+        e.preventDefault();
+        handleClick();
+      }
+    });
+
+    // Initial state
+    mainText.textContent = '▶';
+    subText.textContent = 'Click to start';
+    area.setAttribute('aria-label', 'Click to start reaction test');
+  </script>
+</body>
+</html>
