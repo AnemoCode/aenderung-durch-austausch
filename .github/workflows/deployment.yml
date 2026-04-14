@@ -58,6 +58,36 @@ jobs:
           cache-from: type=gha,scope=worker
           cache-to: type=gha,mode=max,scope=worker
 
+      - name: Build and push postgres image
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: ./compose/production/postgres/Dockerfile
+          push: true
+          tags: |
+            ghcr.io/${{ steps.image-tag.outputs.owner }}/aenderung-durch-austausch-postgres:${{ steps.image-tag.outputs.tag }}
+            ghcr.io/${{ steps.image-tag.outputs.owner }}/aenderung-durch-austausch-postgres:latest
+
+      - name: Build and push traefik image
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: ./compose/production/traefik/Dockerfile
+          push: true
+          tags: |
+            ghcr.io/${{ steps.image-tag.outputs.owner }}/aenderung-durch-austausch-traefik:${{ steps.image-tag.outputs.tag }}
+            ghcr.io/${{ steps.image-tag.outputs.owner }}/aenderung-durch-austausch-traefik:latest
+
+      - name: Build and push nginx image
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: ./compose/production/nginx/Dockerfile
+          push: true
+          tags: |
+            ghcr.io/${{ steps.image-tag.outputs.owner }}/aenderung-durch-austausch-nginx:${{ steps.image-tag.outputs.tag }}
+            ghcr.io/${{ steps.image-tag.outputs.owner }}/aenderung-durch-austausch-nginx:latest
+
   # ── Deploy ───────────────────────────────────────────────────────────────────
   deploy:
     runs-on: ubuntu-24.04-arm
