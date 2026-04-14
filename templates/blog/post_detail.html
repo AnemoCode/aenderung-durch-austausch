@@ -26,7 +26,9 @@
                 </div>
                 <div>
                     <p class="text-sm font-medium text-forest">{{ post.author.name }}</p>
-                    <p class="text-xs text-forest/40">{{ post.created_at|date:"d. F Y, H:i" }} {% trans "Uhr" %}</p>
+                    {% with date=post.created_at|date:"d. F Y" time=post.created_at|date:"H:i" %}
+                    <p class="text-xs text-forest/40">{% blocktrans %}{{ date }}, {{ time }} Uhr{% endblocktrans %}</p>
+                    {% endwith %}
                 </div>
             </div>
 
@@ -60,7 +62,7 @@
 
                 <span class="flex items-center gap-1.5 text-sm text-forest/40">
                     <i data-lucide="message-circle" class="w-4 h-4"></i>
-                    {{ post.comments.count }} {% trans "Kommentare" %}
+                    {% blocktrans count count=post.comments.count %}{{ count }} Kommentar{% plural %}{{ count }} Kommentare{% endblocktrans %}
                 </span>
             </div>
         </div>

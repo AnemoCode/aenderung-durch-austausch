@@ -1,12 +1,13 @@
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, PermissionsMixin
 from django.db import models
 from django.utils import timezone
+from django.utils.translation import gettext_lazy as _
 
 
 class UserManager(BaseUserManager):
     def create_user(self, email, name, password=None, **extra_fields):
         if not email:
-            raise ValueError('Eine E-Mail-Adresse ist erforderlich.')
+            raise ValueError(_('Eine E-Mail-Adresse ist erforderlich.'))
         email = self.normalize_email(email)
         user = self.model(email=email, name=name, **extra_fields)
         user.set_password(password)
@@ -20,8 +21,8 @@ class UserManager(BaseUserManager):
 
 
 class User(AbstractBaseUser, PermissionsMixin):
-    email = models.EmailField(unique=True, verbose_name='E-Mail-Adresse')
-    name = models.CharField(max_length=255, verbose_name='Name')
+    email = models.EmailField(unique=True, verbose_name=_('E-Mail-Adresse'))
+    name = models.CharField(max_length=255, verbose_name=_('Name'))
     is_active = models.BooleanField(default=True)
     is_staff = models.BooleanField(default=False)
     date_joined = models.DateTimeField(default=timezone.now)
@@ -32,8 +33,8 @@ class User(AbstractBaseUser, PermissionsMixin):
     objects = UserManager()
 
     class Meta:
-        verbose_name = 'Benutzer'
-        verbose_name_plural = 'Benutzer'
+        verbose_name = _('Benutzer')
+        verbose_name_plural = _('Benutzer')
 
     def __str__(self):
         return self.email

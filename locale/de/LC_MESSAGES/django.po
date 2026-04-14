@@ -1,0 +1,204 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-04-14 18:07+0000\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+msgid "Persönliche Daten"
+msgstr ""
+
+msgid "Berechtigungen"
+msgstr ""
+
+msgid "Wichtige Daten"
+msgstr ""
+
+msgid "E-Mail-Adresse"
+msgstr ""
+
+msgid "Passwort"
+msgstr ""
+
+msgid "Passwort bestätigen"
+msgstr ""
+
+msgid "Die Passwörter stimmen nicht überein."
+msgstr ""
+
+msgid "Eine E-Mail-Adresse ist erforderlich."
+msgstr ""
+
+msgid "Name"
+msgstr ""
+
+msgid "Benutzer"
+msgstr ""
+
+msgid "Titel"
+msgstr ""
+
+msgid "Untertitel"
+msgstr ""
+
+msgid "Inhalt"
+msgstr ""
+
+msgid "Dein Kommentar"
+msgstr ""
+
+msgid "Schreibe einen Kommentar…"
+msgstr ""
+
+msgid "Veröffentlicht"
+msgstr ""
+
+msgid "Beitrag"
+msgstr ""
+
+msgid "Beiträge"
+msgstr ""
+
+msgid "Kommentar"
+msgstr ""
+
+msgid "Kommentare"
+msgstr ""
+
+msgid "Gefällt mir"
+msgstr ""
+
+msgid "Kommentar hinzugefügt."
+msgstr ""
+
+msgid "Beitrag veröffentlicht."
+msgstr ""
+
+msgid "Anmelden"
+msgstr ""
+
+msgid "Willkommen zurück"
+msgstr ""
+
+msgid "Melde dich an, um die Beiträge zu lesen."
+msgstr ""
+
+msgid "Noch kein Konto?"
+msgstr ""
+
+msgid "Registrieren"
+msgstr ""
+
+msgid "Konto erstellen"
+msgstr ""
+
+msgid "Lies und kommentiere Beiträge."
+msgstr ""
+
+msgid "z. B. Jane Doe oder ein Alias"
+msgstr ""
+
+msgid "Mindestens 8 Zeichen, nicht nur Ziffern."
+msgstr ""
+
+msgid "Bereits ein Konto?"
+msgstr ""
+
+msgid "Admin-Zugang"
+msgstr ""
+
+msgid "Nur für Administratoren. Normaler Login unter"
+msgstr ""
+
+#, python-format
+msgid "Du bist als <strong>%(username)s</strong> angemeldet, hast aber keinen Zugriff auf diese Seite."
+msgstr ""
+
+msgid "Admin"
+msgstr ""
+
+msgid "Abmelden"
+msgstr ""
+
+msgid "Neuer Beitrag"
+msgstr ""
+
+#, python-format
+msgid "%(count)s Beitrag"
+msgid_plural "%(count)s Beiträge"
+msgstr[0] ""
+msgstr[1] ""
+
+msgid "Weiterlesen"
+msgstr ""
+
+msgid "Noch keine Beiträge"
+msgstr ""
+
+msgid "Erstelle den ersten Beitrag über den Button oben rechts."
+msgstr ""
+
+msgid "Noch wurden keine Beiträge veröffentlicht."
+msgstr ""
+
+msgid "Alle Beiträge"
+msgstr ""
+
+#, python-format
+msgid "%(date)s, %(time)s Uhr"
+msgstr ""
+
+#, python-format
+msgid "%(count)s Kommentar"
+msgid_plural "%(count)s Kommentare"
+msgstr[0] ""
+msgstr[1] ""
+
+msgid "Noch keine Kommentare. Sei der Erste!"
+msgstr ""
+
+msgid "Kommentar schreiben"
+msgstr ""
+
+msgid "Kommentar absenden"
+msgstr ""
+
+msgid "Zurück"
+msgstr ""
+
+msgid "Veröffentliche einen neuen Beitrag für alle Leser."
+msgstr ""
+
+msgid "Worum geht es in diesem Beitrag?"
+msgstr ""
+
+msgid "optional"
+msgstr ""
+
+msgid "Ein ergänzender Satz oder Kontext"
+msgstr ""
+
+msgid "Schreibe deinen Beitrag in einfacher Sprache…"
+msgstr ""
+
+msgid "Schreibe klar und verständlich. Zeilenumbrüche werden übernommen."
+msgstr ""
+
+msgid "Beitrag veröffentlichen"
+msgstr ""
+
+msgid "Abbrechen"
+msgstr ""

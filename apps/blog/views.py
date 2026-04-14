@@ -4,6 +4,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import JsonResponse
 from django.shortcuts import get_object_or_404, redirect
 from django.urls import reverse, reverse_lazy
+from django.utils.translation import gettext_lazy as _
 from django.views.generic import CreateView, DetailView, ListView
 
 from .forms import CommentForm, PostForm
@@ -58,7 +59,7 @@ class PostDetailView(LoginRequiredMixin, DetailView):
             comment.post = self.object
             comment.author = request.user
             comment.save()
-            messages.success(request, 'Kommentar hinzugefügt.')
+            messages.success(request, _('Kommentar hinzugefügt.'))
             return redirect(reverse('blog:post_detail', kwargs={'pk': self.object.pk}))
         ctx = self.get_context_data()
         ctx['comment_form'] = form
@@ -78,7 +79,7 @@ class PostCreateView(LoginRequiredMixin, CreateView):
 
     def form_valid(self, form):
         form.instance.author = self.request.user
-        messages.success(self.request, 'Beitrag veröffentlicht.')
+        messages.success(self.request, _('Beitrag veröffentlicht.'))
         return super().form_valid(form)
 
     def get_context_data(self, **kwargs):

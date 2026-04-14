@@ -7,7 +7,7 @@
     <div>
         <h1 class="text-2xl font-bold text-forest">{% trans "Beiträge" %}</h1>
         <p class="text-sm text-forest/50 mt-0.5">
-            {{ posts|length }} {% if posts|length == 1 %}Beitrag{% else %}Beiträge{% endif %}
+            {% blocktrans count count=posts|length %}{{ count }} Beitrag{% plural %}{{ count }} Beiträge{% endblocktrans %}
         </p>
     </div>
 </div>
