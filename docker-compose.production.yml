@@ -11,7 +11,6 @@ services:
       - production_django_media:/app/aenderung_durch_austausch/media
     depends_on:
       - postgres
-      - redis
     env_file:
       - ./.envs/.production/.django
       - ./.envs/.production/.postgres
