@@ -1,5 +1,5 @@
 [project]
-name = "aenderung_durch_austausch"
+name = "aenderung-durch-austausch"
 version = "0.1.0"
 description = "Digitales Handbuch zum analogen Umgang mit rechtsextremen Meinungen und Verschwörungstheorien"
 readme = "README.md"
@@ -36,8 +36,8 @@ dependencies = [
   "python-slugify==8.0.4",
   "redis==7.4.0",
   "sentry-sdk==2.57.0",
-  "uvicorn-worker==0.4.0",
   "uvicorn[standard]==0.44.0",
+  "uvicorn-worker==0.4.0",
   "whitenoise==6.12.0",
 ]
 
@@ -71,7 +71,6 @@ extend-exclude = [
   "*/migrations/*.py",
   "staticfiles/*",
 ]
-
 lint.select = [
   "A",
   "ASYNC",
