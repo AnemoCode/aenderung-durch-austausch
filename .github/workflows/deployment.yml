@@ -1,0 +1,102 @@
+name: Deploy
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  # ── Build & push images ──────────────────────────────────────────────────────
+  build:
+    runs-on: ubuntu-24.04-arm
+    name: Build and push Docker images
+    permissions:
+      contents: read
+      packages: write
+    outputs:
+      image-tag: ${{ steps.image-tag.outputs.tag }}
+      ghcr-owner: ${{ steps.image-tag.outputs.owner }}
+
+    steps:
+      - uses: actions/checkout@v4
+      - uses: docker/setup-buildx-action@v3
+      - uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Generate image tag
+        id: image-tag
+        run: |
+          echo "tag=sha-$(git rev-parse --short HEAD)" >> "$GITHUB_OUTPUT"
+          echo "owner=$(echo '${{ github.repository_owner }}' | tr '[:upper:]' '[:lower:]')" >> "$GITHUB_OUTPUT"
+
+      - name: Build and push web image
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: ./compose/production/django/Dockerfile
+          target: runtime
+          push: true
+          tags: |
+            ghcr.io/${{ steps.image-tag.outputs.owner }}/aenderung-durch-austausch:${{ steps.image-tag.outputs.tag }}
+            ghcr.io/${{ steps.image-tag.outputs.owner }}/aenderung-durch-austausch:latest
+          cache-from: type=gha,scope=web
+          cache-to: type=gha,mode=max,scope=web
+
+      - name: Build and push worker image
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: ./compose/production/django/Dockerfile
+          target: worker
+          push: true
+          tags: |
+            ghcr.io/${{ steps.image-tag.outputs.owner }}/aenderung-durch-austausch-worker:${{ steps.image-tag.outputs.tag }}
+            ghcr.io/${{ steps.image-tag.outputs.owner }}/aenderung-durch-austausch-worker:latest
+          cache-from: type=gha,scope=worker
+          cache-to: type=gha,mode=max,scope=worker
+
+  # ── Deploy ───────────────────────────────────────────────────────────────────
+  deploy:
+    runs-on: ubuntu-24.04-arm
+    needs: build
+    permissions:
+      contents: read
+      packages: read
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: webfactory/ssh-agent@v0.9.0
+        with:
+          ssh-private-key: ${{ secrets.DEPLOY_SSH_KEY }}
+
+      - name: Add server to known hosts
+        run: |
+          mkdir -p ~/.ssh
+          ssh-keyscan -H ${{ secrets.SERVER_HOST }} >> ~/.ssh/known_hosts
+
+      - name: Copy compose file to server
+        run: |
+          scp docker-compose.production.yml \
+            ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_HOST }}:/opt/aenderung-durch-austausch/docker-compose.production.yml
+
+      - name: Deploy
+        env:
+          IMAGE_TAG: ${{ needs.build.outputs.image-tag }}
+          GHCR_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GHCR_USER: ${{ github.actor }}
+          GHCR_OWNER: ${{ needs.build.outputs.ghcr-owner }}
+        run: |
+          ssh ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_HOST }} << EOF
+            set -e
+            cd /opt/aenderung-durch-austausch
+            echo "$GHCR_TOKEN" | docker login ghcr.io -u "$GHCR_USER" --password-stdin
+            IMAGE_TAG="$IMAGE_TAG" GHCR_OWNER="$GHCR_OWNER" \
+            docker compose -f docker-compose.production.yml pull
+            IMAGE_TAG="$IMAGE_TAG" GHCR_OWNER="$GHCR_OWNER" \
+            docker compose -f docker-compose.production.yml up -d --force-recreate --remove-orphans
+            docker image prune -f
+          EOF
