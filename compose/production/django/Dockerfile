@@ -29,7 +29,7 @@ RUN --mount=type=cache,target=/root/.cache/uv \
     uv sync --locked --no-dev
 
 # Python 'run' stage
-FROM python:3.14-slim-bookworm AS python-run-stage
+FROM python:3.14-slim-bookworm AS runtime
 
 ARG APP_HOME=/app
 
@@ -90,5 +90,7 @@ USER django
 RUN DATABASE_URL="" \
   DJANGO_SETTINGS_MODULE="config.settings.test" \
   python manage.py compilemessages
+
+FROM runtime AS worker
 
 ENTRYPOINT ["/entrypoint"]
