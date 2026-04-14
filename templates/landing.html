@@ -1,0 +1,389 @@
+{% load i18n %}
+{% get_current_language as CURRENT_LANG %}
+<!DOCTYPE html>
+<html lang="{{ CURRENT_LANG }}">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ÄdA — Ändern durch Austausch</title>
+    {% include 'includes/head.html' %}
+
+    {# Editorial typography: Playfair Display (display) + Lora (body) #}
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400;1,700&display=swap" rel="stylesheet">
+
+    <style>
+        {# Lilac background base — replaces cream #F7F5F1 on landing only #}
+        body.landing-body { background-color: #F2EEF9; }
+
+        .font-display { font-family: 'Playfair Display', 'Times New Roman', serif; }
+        .font-serif   { font-family: 'Lora', Georgia, 'Times New Roman', serif; }
+
+        .numeral {
+            font-family: 'Playfair Display', serif;
+            font-weight: 900;
+            font-style: italic;
+            line-height: 0.85;
+        }
+
+        .meta-label {
+            letter-spacing: 0.28em;
+            text-transform: uppercase;
+            font-size: 0.72rem;
+            font-weight: 600;
+        }
+
+        {# Hero veil: soft lilac wash over the pastel mesh + fade into the next section #}
+        .hero-veil {
+            background:
+              linear-gradient(to bottom,
+                rgba(242, 238, 249, 0.18) 0%,
+                rgba(242, 238, 249, 0.04) 30%,
+                rgba(242, 238, 249, 0.04) 70%,
+                rgba(242, 238, 249, 0.6) 92%,
+                #F2EEF9 100%);
+        }
+
+        {# Mesh gradient canvas fades in softly after init #}
+        #mesh-gradient { opacity: 0; animation: shader-in 1.4s ease-out 0.1s forwards; }
+        #mesh-gradient canvas { display: block; width: 100% !important; height: 100% !important; }
+        @keyframes shader-in { to { opacity: 1; } }
+
+        {# Staggered hero reveal #}
+        .reveal { opacity: 0; animation: reveal 1.1s cubic-bezier(0.2, 0.6, 0.2, 1) forwards; }
+        .reveal-1 { animation-delay: 0.6s; }
+        .reveal-2 { animation-delay: 0.9s; }
+        .reveal-3 { animation-delay: 1.25s; }
+        .reveal-4 { animation-delay: 1.6s; }
+        .reveal-5 { animation-delay: 2.1s; }
+        @keyframes reveal {
+            from { opacity: 0; transform: translateY(14px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes soft-bounce {
+            0%, 100% { transform: translateY(0); opacity: 0.5; }
+            50%      { transform: translateY(6px); opacity: 1; }
+        }
+        .soft-bounce { animation: soft-bounce 2.4s ease-in-out infinite; }
+
+        {# Chapter cards — soft lilac surface, thin border, rounded corners #}
+        .chapter-card {
+            background-color: #EDE9F8;
+            border: 1px solid rgba(52, 73, 69, 0.12);
+            border-radius: 1rem;
+            transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
+        }
+        .chapter-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 18px 40px -20px rgba(76, 55, 120, 0.25);
+            border-color: rgba(52, 73, 69, 0.25);
+        }
+
+        {# Ensure Tailwind CDN doesn't override the serif body inside editorial regions #}
+        .prose-body p { font-family: 'Lora', Georgia, serif; }
+    </style>
+</head>
+<body class="landing-body font-sans text-forest min-h-screen antialiased selection:bg-forest selection:text-cream">
+
+    {# ─── HERO ─────────────────────────────────────────────────────────── #}
+    <section class="relative min-h-screen w-full overflow-hidden flex items-center justify-center" style="background-color: #F2EEF9;">
+
+        {# Animated mesh-gradient backdrop #}
+        <div id="mesh-gradient" class="absolute inset-0"></div>
+
+        {# Soft veil + bottom fade into the next section #}
+        <div class="absolute inset-0 hero-veil pointer-events-none"></div>
+
+        {# Header — floats over the gradient #}
+        <header class="absolute top-0 left-0 right-0 z-20">
+            <div class="max-w-7xl mx-auto px-6 py-7 flex items-center justify-between">
+                <a href="{% url 'landing' %}" class="flex items-center gap-3 group">
+                    <i data-lucide="pen-line" class="w-6 h-6 text-forest/90 group-hover:text-forest transition"></i>
+                    <span class="font-display text-lg font-bold tracking-tight text-forest leading-[1.05]">
+                        ÄdA
+                    </span>
+                </a>
+                <div class="flex items-center gap-3">
+                    <form action="{% url 'set_language' %}" method="post">
+                        {% csrf_token %}
+                        <input type="hidden" name="next" value="{{ request.path }}">
+                        <input type="hidden" name="language" value="{% if CURRENT_LANG == 'de' %}en{% else %}de{% endif %}">
+                        <button type="submit"
+                                class="meta-label text-forest/70 hover:text-forest border border-forest/25 hover:border-forest/60 px-3 py-1.5 rounded-md transition-colors bg-white/40 backdrop-blur-sm">
+                            {% if CURRENT_LANG == 'de' %}EN{% else %}DE{% endif %}
+                        </button>
+                    </form>
+                    <a href="{% url 'accounts:login' %}"
+                       class="bg-forest text-cream px-5 py-2 rounded-md text-sm font-semibold hover:bg-forest-700 transition-colors shadow-sm">
+                        {% trans "Anmelden" %}
+                    </a>
+                </div>
+            </div>
+        </header>
+
+        {# Hero content #}
+        <div class="relative z-10 max-w-5xl mx-auto px-6 w-full">
+            <div class="text-center">
+                <div class="reveal reveal-1 meta-label text-forest/55 mb-7">
+                    {% trans "Community Projekt" %}
+                </div>
+
+                <h1 class="reveal reveal-2 font-display font-bold text-forest text-balance tracking-[-0.03em]
+                           text-7xl sm:text-8xl md:text-9xl lg:text-[10rem] xl:text-[12rem]
+                           leading-[0.95] mb-4">
+                    ÄdA
+                </h1>
+
+                <div class="reveal reveal-2 font-display italic text-forest/75 text-2xl sm:text-3xl md:text-4xl mb-8">
+                    Ändern <span class="not-italic">durch</span> Austausch
+                </div>
+
+                <p class="reveal reveal-3 font-serif text-lg sm:text-xl md:text-2xl text-forest/80 text-pretty
+                          max-w-2xl mx-auto leading-relaxed mb-10 px-4">
+                    {% trans "Ein digitales Handbuch zum analogen Umgang mit rechtsextremen Meinungen und Verschwörungstheorien." %}
+                </p>
+
+                <div class="reveal reveal-4 flex flex-col sm:flex-row gap-3 justify-center items-center">
+                    <a href="#mitmachen"
+                       class="inline-flex items-center gap-2 px-7 py-4 rounded-full border-4 border-white/70
+                              bg-forest text-cream text-sm sm:text-base font-semibold
+                              hover:bg-forest-700 hover:border-white transition-colors shadow-lg">
+                        {% trans "Mitmachen" %}
+                        <i data-lucide="arrow-right" class="w-4 h-4"></i>
+                    </a>
+                    <a href="#problem"
+                       class="meta-label text-forest/70 hover:text-forest px-4 py-2 transition-colors">
+                        {% trans "Mehr erfahren" %}
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        {# Scroll cue #}
+        <div class="reveal reveal-5 absolute bottom-8 left-0 right-0 z-10 flex flex-col items-center text-forest/45">
+            <span class="meta-label mb-2 text-[0.65rem]">{% trans "Weiterlesen" %}</span>
+            <i data-lucide="chevron-down" class="w-4 h-4 soft-bounce"></i>
+        </div>
+    </section>
+
+    {# ─── PROBLEM ──────────────────────────────────────────────────────── #}
+    <section id="problem" class="max-w-3xl mx-auto px-6 pt-24 md:pt-32 pb-20 scroll-mt-8">
+        <div class="meta-label text-forest/50 mb-8">
+            {% trans "Problem" %}
+        </div>
+        <div class="prose-body space-y-6">
+            <p class="font-serif text-xl md:text-2xl leading-[1.6] text-forest/85">
+                Wir kennen alle mindestens eine Person, mit der wir nicht mehr diskutieren wollen.
+                Weil es anstrengend ist. Weil es sich sinnlos anfühlt. Weil man am Ende genervt abbricht.
+            </p>
+            <p class="font-serif text-xl md:text-2xl leading-[1.6] text-forest/85">
+                Aber diese Meinungen verschwinden nicht, wenn wir schweigen.
+                Ohne Austausch werden sie zur Überzeugung.
+            </p>
+        </div>
+
+        <p class="mt-14 font-display text-3xl md:text-4xl lg:text-5xl text-forest leading-[1.2] tracking-tight text-balance">
+            Wir begegnen Hass mit <span class="italic font-normal text-forest/75">Empathie</span> und <span class="italic font-normal text-forest/75">Wissen</span>.
+        </p>
+    </section>
+
+    {# ─── DIE FÜNF KAPITEL ─────────────────────────────────────────────── #}
+    <section id="kapitel" class="max-w-6xl mx-auto px-6 pt-12 md:pt-20 pb-20 md:pb-28 border-t border-forest/10">
+        <div class="mb-14 md:mb-20 max-w-2xl">
+            <div class="meta-label text-forest/50 mb-6">{% trans "Das Handbuch" %}</div>
+            <h2 class="font-display text-4xl md:text-5xl lg:text-6xl text-forest tracking-tight leading-[1.05]">
+                Fünf Kapitel,
+                <span class="italic font-normal text-forest/75">ein Ziel.</span>
+            </h2>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 md:gap-6 prose-body">
+
+            {# 01 — Definitionen #}
+            <article class="chapter-card p-7 md:p-8 flex flex-col h-full">
+                <div class="numeral text-6xl text-forest/25 mb-5 select-none">01</div>
+                <h3 class="font-display text-2xl md:text-[1.75rem] text-forest tracking-tight mb-4">Definitionen</h3>
+                <p class="font-serif text-base md:text-lg leading-[1.65] text-forest/80">
+                    Was bedeutet Rechtsextremismus? Was ist Rechtspopulismus? Was ist
+                    die freiheitlich-demokratische Grundordnung? Die wichtigsten
+                    Begriffe — erklärt in einfacher und formaler Sprache.
+                </p>
+            </article>
+
+            {# 02 — Argumentationsweisen & Gegenargumente #}
+            <article class="chapter-card p-7 md:p-8 flex flex-col h-full">
+                <div class="numeral text-6xl text-forest/25 mb-5 select-none">02</div>
+                <h3 class="font-display text-2xl md:text-[1.75rem] text-forest tracking-tight mb-4">Argumentationsweisen &amp; Gegenargumente</h3>
+                <p class="font-serif text-base md:text-lg leading-[1.65] text-forest/80">
+                    Woher kommen rechte Argumentationsmuster? Welche inneren Widersprüche
+                    haben sie? Wir zeigen die kausalen Herleitungen — und wie man ihnen
+                    fundiert begegnet.
+                </p>
+            </article>
+
+            {# 03 — Digitale Medienkompetenz #}
+            <article class="chapter-card p-7 md:p-8 flex flex-col h-full">
+                <div class="numeral text-6xl text-forest/25 mb-5 select-none">03</div>
+                <h3 class="font-display text-2xl md:text-[1.75rem] text-forest tracking-tight mb-4">Digitale Medienkompetenz</h3>
+                <p class="font-serif text-base md:text-lg leading-[1.65] text-forest/80">
+                    Wie erkenne ich KI-generierte Inhalte, Bot-Accounts oder manipulative
+                    Kommentare? Wie finde ich verlässliche Quellen? Was ist Framing,
+                    was ist Nudging?
+                </p>
+            </article>
+
+            {# 04 — Kommunikationstechniken #}
+            <article class="chapter-card p-7 md:p-8 flex flex-col h-full">
+                <div class="numeral text-6xl text-forest/25 mb-5 select-none">04</div>
+                <h3 class="font-display text-2xl md:text-[1.75rem] text-forest tracking-tight mb-4">Kommunikationstechniken</h3>
+                <p class="font-serif text-base md:text-lg leading-[1.65] text-forest/80">
+                    Wie überzeugt man Menschen — oder bringt sie zumindest zum
+                    Hinterfragen? Wir vermitteln rhetorische Stilmittel und
+                    Gesprächstechniken für den Diskurs mit rechtem Gedankengut.
+                </p>
+            </article>
+
+            {# 05 — Blog #}
+            <article class="chapter-card p-7 md:p-8 flex flex-col h-full">
+                <div class="numeral text-6xl text-forest/25 mb-5 select-none">05</div>
+                <h3 class="font-display text-2xl md:text-[1.75rem] text-forest tracking-tight mb-4">Blog</h3>
+                <p class="font-serif text-base md:text-lg leading-[1.65] text-forest/80">
+                    Mindestens einmal im Monat: ein Artikel, Kommentar oder Essay von
+                    externen Autor:innen — akademisch fundiert, tagespolitisch
+                    relevant, persönlich und direkt.
+                </p>
+            </article>
+        </div>
+    </section>
+
+    {# ─── MITMACHEN — DARK BAND ────────────────────────────────────────── #}
+    <section id="mitmachen-einfuehrung" class="bg-forest text-cream py-24 md:py-32 relative overflow-hidden">
+        {# Decorative quote mark #}
+        <div class="absolute -top-4 left-6 md:left-1/2 md:-translate-x-[34rem] text-[14rem] md:text-[20rem] font-display font-black text-cream/5 leading-none pointer-events-none select-none">
+            „
+        </div>
+
+        <div class="max-w-5xl mx-auto px-6 relative">
+            <div class="meta-label text-wheat/80 mb-8">
+                {% trans "Community" %}
+            </div>
+            <p class="font-serif italic text-xl md:text-[1.6rem] leading-[1.55] text-cream/85 max-w-3xl">
+                ÄdA ist ein Community-Projekt. Es lebt davon, dass Menschen
+                mitmachen — als Autor:innen, als Multiplikator:innen, als Menschen,
+                die einfach das nächste schwierige Gespräch besser führen wollen.
+            </p>
+
+            <div class="mt-16 pt-12 border-t border-cream/15 grid grid-cols-1 md:grid-cols-3 gap-10 md:gap-12">
+                <div class="space-y-3">
+                    <i data-lucide="pen-line" class="w-6 h-6 text-wheat/90"></i>
+                    <h4 class="font-display text-xl md:text-2xl text-cream tracking-tight">Schreiben</h4>
+                    <p class="font-serif text-base leading-relaxed text-cream/70">
+                        Einen Blog-Beitrag verfassen und eigene Perspektiven teilen.
+                    </p>
+                </div>
+                <div class="space-y-3">
+                    <i data-lucide="share-2" class="w-6 h-6 text-wheat/90"></i>
+                    <h4 class="font-display text-xl md:text-2xl text-cream tracking-tight">Teilen</h4>
+                    <p class="font-serif text-base leading-relaxed text-cream/70">
+                        Das Handbuch in die eigene Community bringen.
+                    </p>
+                </div>
+                <div class="space-y-3">
+                    <i data-lucide="message-square" class="w-6 h-6 text-wheat/90"></i>
+                    <h4 class="font-display text-xl md:text-2xl text-cream tracking-tight">Feedback geben</h4>
+                    <p class="font-serif text-base leading-relaxed text-cream/70">
+                        Inhalte kommentieren und weiterentwickeln.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    {# ─── CTA ──────────────────────────────────────────────────────────── #}
+    <section id="mitmachen" class="max-w-4xl mx-auto px-6 py-24 md:py-32 text-center scroll-mt-8">
+        <div class="meta-label text-forest/45 mb-6">{% trans "Mitmachen" %}</div>
+        <h3 class="font-display text-4xl md:text-5xl text-forest tracking-tight">
+            {% trans "Melde dich an." %}
+        </h3>
+        <p class="font-serif text-lg md:text-xl text-forest/70 mt-5 max-w-xl mx-auto leading-relaxed">
+            {% trans "Werd ein Teil von ÄdA – als Autor:in, Multiplikator:in oder einfach als Mensch, der das nächste schwierige Gespräch besser führen will." %}
+        </p>
+        <div class="mt-10 flex flex-col sm:flex-row gap-3 justify-center">
+            <a href="{% url 'accounts:register' %}"
+               class="bg-forest text-cream px-8 py-3.5 rounded-md font-semibold hover:bg-forest-700 transition shadow-sm inline-flex items-center justify-center gap-2">
+                {% trans "Registrieren" %}
+                <i data-lucide="arrow-right" class="w-4 h-4"></i>
+            </a>
+            <a href="{% url 'accounts:login' %}"
+               class="bg-white text-forest border border-forest/15 px-8 py-3.5 rounded-md font-semibold hover:bg-[#EDE9F8] hover:border-forest/30 transition">
+                {% trans "Anmelden" %}
+            </a>
+        </div>
+    </section>
+
+    <footer class="border-t border-forest/10 py-10 text-center text-sm text-forest/45 font-serif">
+        <p>&copy; {% now "Y" %} ÄdA — Ändern durch Austausch</p>
+    </footer>
+
+    {# ─── Paper Design mesh-gradient (vanilla ShaderMount) ─────────────── #}
+    <script type="module">
+      import {
+        ShaderMount,
+        meshGradientFragmentShader,
+        getShaderColorFromString,
+        ShaderFitOptions,
+      } from 'https://esm.sh/@paper-design/shaders@0.0.75';
+
+      const parent = document.getElementById('mesh-gradient');
+      if (parent) {
+        // Lilac palette — replaces the previous yellow-green/teal mix.
+        // Teal kept (harmonises with lilac); yellow replaced by warm violet shades.
+        const colors = [
+          '#9BAED4', // blue-lilac (was forest.400)
+          '#C4B0E8', // soft lilac (was sage)
+          '#E8E0F5', // light lilac-cream (was wheat)
+          '#F2EEF9', // lilac base (was cream)
+          '#B8A8E0', // medium lilac (was forest.200)
+          '#8BB8B0', // teal — retained for harmony
+        ];
+
+        const uniforms = {
+          u_colors: colors.map((c) => getShaderColorFromString(c)),
+          u_colorsCount: colors.length,
+          u_distortion: 1.2,
+          u_swirl: 0.6,
+          u_grainMixer: 0,
+          u_grainOverlay: 0,
+          // sizing
+          u_fit: ShaderFitOptions.cover,
+          u_scale: 1,
+          u_rotation: 0,
+          u_originX: 0.5,
+          u_originY: 0.5,
+          u_offsetX: 0.08,
+          u_offsetY: 0,
+          u_worldWidth: 0,
+          u_worldHeight: 0,
+        };
+
+        const mount = new ShaderMount(
+          parent,
+          meshGradientFragmentShader,
+          uniforms,
+          {},      // webGlContextAttributes
+          0.8,     // speed
+        );
+
+        // Pause rendering when hero is off-screen to save GPU
+        const observer = new IntersectionObserver(([entry]) => {
+          mount.setSpeed(entry.isIntersecting ? 0.8 : 0);
+        }, { threshold: 0 });
+        observer.observe(parent);
+      }
+    </script>
+
+    <script>lucide.createIcons();</script>
+</body>
+</html>

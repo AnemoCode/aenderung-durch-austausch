@@ -14,10 +14,10 @@
 
     {# Sidebar #}
     <aside class="w-64 bg-forest text-beige hidden md:flex flex-col flex-shrink-0">
-        <div class="h-16 flex items-center px-6 border-b border-beige/20">
+        <a href="{% url 'landing' %}" class="h-16 flex items-center px-6 border-b border-beige/20 hover:bg-beige/5 transition-colors">
             <i data-lucide="pen-line" class="w-5 h-5 text-sage mr-3 flex-shrink-0"></i>
             <span class="text-sm font-bold text-cream leading-tight tracking-tight">Änderung<br>durch Austausch</span>
-        </div>
+        </a>
 
         <nav class="flex-1 py-6 px-3 space-y-1">
             <a href="{% url 'blog:index' %}"
