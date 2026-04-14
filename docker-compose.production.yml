@@ -7,6 +7,7 @@ volumes:
 services:
   django: &django
     image: ghcr.io/${GHCR_OWNER}/aenderung-durch-austausch:${IMAGE_TAG:-latest}
+    entrypoint: /entrypoint
     volumes:
       - production_django_media:/app/aenderung_durch_austausch/media
     depends_on:

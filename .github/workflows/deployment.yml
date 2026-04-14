@@ -110,8 +110,16 @@ jobs:
 
       - name: Copy compose file to server
         run: |
+          ssh ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_HOST }} "mkdir -p /opt/aenderung-durch-austausch/.envs/.production"
           scp docker-compose.production.yml \
             ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_HOST }}:/opt/aenderung-durch-austausch/docker-compose.production.yml
+
+      - name: Create and copy env files
+        run: |
+          echo "${{ secrets.PRODUCTION_DJANGO_ENV }}" > .django
+          echo "${{ secrets.PRODUCTION_POSTGRES_ENV }}" > .postgres
+          scp .django ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_HOST }}:/opt/aenderung-durch-austausch/.envs/.production/.django
+          scp .postgres ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_HOST }}:/opt/aenderung-durch-austausch/.envs/.production/.postgres
 
       - name: Deploy
         env:
