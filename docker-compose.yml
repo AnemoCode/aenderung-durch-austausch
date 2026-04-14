@@ -4,11 +4,11 @@ services:
     volumes:
       - ${POSTGRES_DATA_PATH:-./data/postgres}:/var/lib/postgresql/data
     environment:
-      POSTGRES_DB: ${POSTGRES_DB:-overlytics}
-      POSTGRES_USER: ${POSTGRES_USER:-overlytics}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-overlytics}
+      POSTGRES_DB: ${POSTGRES_DB:-aenderung-durch-austausch}
+      POSTGRES_USER: ${POSTGRES_USER:-aenderung-durch-austausch}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-aenderung-durch-austausch}
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-overlytics}"]
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-aenderung-durch-austausch}"]
       interval: 10s
       timeout: 5s
       retries: 5
@@ -31,59 +31,12 @@ services:
     depends_on:
       db:
         condition: service_healthy
-      redis:
-        condition: service_healthy
     healthcheck:
-      # Passes (exit 0) only after all migrations are applied.
-      # Celery containers depend on this so they never start before the
-      # schema is ready — preventing concurrent CREATE TABLE races.
       test: ["CMD", "python", "manage.py", "migrate", "--check"]
       interval: 10s
       timeout: 10s
       retries: 10
       start_period: 30s
-
-  redis:
-    image: redis:7-alpine
-    command: redis-server --save "" --appendonly no
-    healthcheck:
-      test: ["CMD", "redis-cli", "ping"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
-      start_period: 5s
-    ports:
-      - "6379:6379"
-
-  celery_worker:
-    build:
-      context: .
-      target: worker
-    command: celery -A overlytics worker --loglevel=info --concurrency=1
-    volumes:
-      - .:/app
-      - venv:/app/.venv
-    env_file: [.env]
-    depends_on:
-      db:    { condition: service_healthy }
-      redis: { condition: service_healthy }
-      web:   { condition: service_healthy }
-
-  celery_beat:
-    build:
-      context: .
-      target: worker
-    command: >
-      celery -A overlytics beat --loglevel=info
-        --scheduler django_celery_beat.schedulers:DatabaseScheduler
-    volumes:
-      - .:/app
-      - venv:/app/.venv
-    env_file: [.env]
-    depends_on:
-      db:    { condition: service_healthy }
-      redis: { condition: service_healthy }
-      web:   { condition: service_healthy }
 
 volumes:
   venv:

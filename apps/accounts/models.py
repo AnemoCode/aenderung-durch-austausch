@@ -2,8 +2,6 @@ from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, Permis
 from django.db import models
 from django.utils import timezone
 
-from .fields import EncryptedTextField
-
 
 class UserManager(BaseUserManager):
     def create_user(self, email, name, password=None, **extra_fields):
@@ -27,12 +25,6 @@ class User(AbstractBaseUser, PermissionsMixin):
     is_active = models.BooleanField(default=True)
     is_staff = models.BooleanField(default=False)
     date_joined = models.DateTimeField(default=timezone.now)
-    overleaf_token = EncryptedTextField(
-        null=True,
-        blank=True,
-        verbose_name='Overleaf Git-Token',
-        help_text='Verschlüsselt gespeicherter Overleaf Git-Token.',
-    )
 
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = ['name']

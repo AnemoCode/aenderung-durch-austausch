@@ -48,16 +48,4 @@ RUN chmod +x /entrypoint.sh
 EXPOSE 8000
 
 ENTRYPOINT ["/entrypoint.sh"]
-CMD ["gunicorn", "overlytics.wsgi:application", "--bind", "0.0.0.0:8000"]
-
-# ── Worker stage (Celery worker + beat) ──────────────────────────────────────
-FROM builder AS worker
-
-# git:      GitPython delegates Repo.clone_from to the system git binary
-# texcount: Perl script for LaTeX word counting; Debian package 'texcount'
-#           requires only Perl — no full TeX installation needed
-RUN apt-get update && apt-get install -y --no-install-recommends \
-    git \
-    texlive-extra-utils \
-    && rm -rf /var/lib/apt/lists/*
-# No CMD — overridden per service in docker-compose.yml
+CMD ["gunicorn", "aenderung_durch_austausch.wsgi:application", "--bind", "0.0.0.0:8000"]

@@ -13,9 +13,9 @@ jobs:
       postgres:
         image: postgres:17-alpine
         env:
-          POSTGRES_DB: overlytics
-          POSTGRES_USER: overlytics
-          POSTGRES_PASSWORD: overlytics
+          POSTGRES_DB: aenderung-durch-austausch
+          POSTGRES_USER: aenderung-durch-austausch
+          POSTGRES_PASSWORD: aenderung-durch-austausch
         ports: ["5432:5432"]
         options: >-
           --health-cmd pg_isready
@@ -36,17 +36,14 @@ jobs:
         env:
           DJANGO_SECRET_KEY: ci-placeholder-not-used-in-production
           DEBUG: "True"
-          POSTGRES_DB: overlytics
-          POSTGRES_USER: overlytics
-          POSTGRES_PASSWORD: overlytics
+          POSTGRES_DB: aenderung-durch-austausch
+          POSTGRES_USER: aenderung-durch-austausch
+          POSTGRES_PASSWORD: aenderung-durch-austausch
           POSTGRES_HOST: localhost
           POSTGRES_PORT: "5432"
-          REDIS_URL: redis://localhost:6379/0
-          # Valid 32-byte Fernet key (all-zeros) — CI only, never used in prod.
-          FIELD_ENCRYPTION_KEY: "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA="
         run: uv run python manage.py check
 
-  # ── Build & push images ──────────────────────────────────────────────────────
+  # ── Build & push image ───────────────────────────────────────────────────────
   build:
     runs-on: ubuntu-24.04-arm
     needs: ci
@@ -81,22 +78,10 @@ jobs:
           target: runtime
           push: true
           tags: |
-            ghcr.io/${{ steps.image-tag.outputs.owner }}/overlytics:${{ steps.image-tag.outputs.tag }}
-            ghcr.io/${{ steps.image-tag.outputs.owner }}/overlytics:latest
+            ghcr.io/${{ steps.image-tag.outputs.owner }}/aenderung-durch-austausch:${{ steps.image-tag.outputs.tag }}
+            ghcr.io/${{ steps.image-tag.outputs.owner }}/aenderung-durch-austausch:latest
           cache-from: type=gha,scope=web
           cache-to: type=gha,mode=max,scope=web
-
-      - name: Build and push worker image
-        uses: docker/build-push-action@v6
-        with:
-          context: .
-          target: worker
-          push: true
-          tags: |
-            ghcr.io/${{ steps.image-tag.outputs.owner }}/overlytics-worker:${{ steps.image-tag.outputs.tag }}
-            ghcr.io/${{ steps.image-tag.outputs.owner }}/overlytics-worker:latest
-          cache-from: type=gha,scope=worker
-          cache-to: type=gha,mode=max,scope=worker
 
   # ── Deploy ───────────────────────────────────────────────────────────────────
   deploy:
@@ -121,7 +106,7 @@ jobs:
       - name: Copy compose file to server
         run: |
           scp docker-compose.prod.yml \
-            ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_HOST }}:/opt/overlytics/docker-compose.prod.yml
+            ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_HOST }}:/opt/aenderung-durch-austausch/docker-compose.prod.yml
 
       - name: Deploy
         env:
@@ -132,7 +117,7 @@ jobs:
         run: |
           ssh ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_HOST }} << EOF
             set -e
-            cd /opt/overlytics
+            cd /opt/aenderung-durch-austausch
             echo "$GHCR_TOKEN" | docker login ghcr.io -u "$GHCR_USER" --password-stdin
             IMAGE_TAG="$IMAGE_TAG" GHCR_OWNER="$GHCR_OWNER" \
             docker compose -f docker-compose.prod.yml pull

@@ -1,0 +1,833 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Overlytics — Understand Your Research Velocity</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400;1,600&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+
+    <style>
+        :root {
+            --forest: #344945;
+            --cream: #F7F5F1;
+            --beige: #E0DCD1;
+            --sage: #D5E3E8;
+            --wheat: #E4E3BC;
+            --green-up: #4a9e72;
+        }
+
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+        html { scroll-behavior: smooth; }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--cream);
+            color: var(--forest);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        /* ─── NAV ─────────────────────────────────────────── */
+        nav {
+            position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+            padding: 18px 48px;
+            display: flex; align-items: center; justify-content: space-between;
+            background: rgba(247, 245, 241, 0.90);
+            backdrop-filter: blur(14px);
+            border-bottom: 1px solid transparent;
+            transition: border-color 0.3s;
+        }
+        nav.scrolled { border-bottom-color: var(--beige); }
+
+        .nav-logo {
+            display: flex; align-items: center; gap: 8px;
+            font-weight: 600; font-size: 15px; letter-spacing: -0.02em;
+            color: var(--forest); text-decoration: none;
+        }
+        .nav-logo-icon {
+            width: 28px; height: 28px;
+            background: var(--forest); border-radius: 7px;
+            display: flex; align-items: center; justify-content: center;
+            color: var(--cream);
+        }
+        .nav-links { display: flex; align-items: center; gap: 28px; list-style: none; }
+        .nav-links a {
+            font-size: 13px; font-weight: 500;
+            color: rgba(52, 73, 69, 0.58); text-decoration: none;
+            letter-spacing: 0.01em; transition: color 0.2s;
+        }
+        .nav-links a:hover { color: var(--forest); }
+        .nav-cta {
+            background: var(--forest) !important; color: var(--cream) !important;
+            padding: 8px 18px; border-radius: 8px;
+            font-size: 13px !important; font-weight: 500 !important;
+            transition: opacity 0.2s;
+        }
+        .nav-cta:hover { opacity: 0.82 !important; }
+
+        /* ─── HERO ────────────────────────────────────────── */
+        .hero {
+            min-height: 100vh;
+            padding: 130px 48px 80px;
+            display: grid; grid-template-columns: 1fr 1fr;
+            gap: 72px; align-items: center;
+            max-width: 1280px; margin: 0 auto;
+        }
+        .hero-badge {
+            display: inline-flex; align-items: center; gap: 6px;
+            background: var(--sage); color: var(--forest);
+            padding: 5px 12px; border-radius: 100px;
+            font-size: 10.5px; font-weight: 600; letter-spacing: 0.08em;
+            text-transform: uppercase; margin-bottom: 28px;
+        }
+        .hero-badge-dot {
+            width: 6px; height: 6px; border-radius: 50%;
+            background: var(--forest); opacity: 0.5;
+        }
+        .hero-title {
+            font-family: 'Playfair Display', serif;
+            font-size: clamp(2.8rem, 4.8vw, 4.25rem);
+            font-weight: 700; line-height: 1.1;
+            letter-spacing: -0.025em; color: var(--forest);
+            margin-bottom: 22px;
+        }
+        .hero-title em { font-style: italic; color: rgba(52, 73, 69, 0.55); }
+        .hero-subtitle {
+            font-size: 16.5px; font-weight: 400;
+            color: rgba(52, 73, 69, 0.62);
+            line-height: 1.72; max-width: 480px; margin-bottom: 40px;
+        }
+        .hero-actions { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; }
+        .btn-primary {
+            background: var(--forest); color: var(--cream);
+            padding: 13px 26px; border-radius: 10px;
+            font-size: 14px; font-weight: 600; text-decoration: none;
+            letter-spacing: 0.01em; display: inline-flex; align-items: center; gap: 8px;
+            transition: all 0.22s;
+            box-shadow: 0 4px 14px rgba(52, 73, 69, 0.24);
+        }
+        .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 8px 22px rgba(52, 73, 69, 0.32); }
+        .btn-ghost {
+            color: var(--forest); padding: 13px 16px;
+            font-size: 14px; font-weight: 500; text-decoration: none;
+            display: inline-flex; align-items: center; gap: 6px;
+            opacity: 0.5; transition: opacity 0.2s;
+        }
+        .btn-ghost:hover { opacity: 1; }
+
+        /* ─── MOCK DASHBOARD ─────────────────────────────── */
+        .hero-right { position: relative; }
+        .mock-dashboard {
+            background: white;
+            border: 1px solid var(--beige); border-radius: 20px;
+            padding: 26px;
+            box-shadow: 0 28px 72px rgba(52, 73, 69, 0.11), 0 6px 20px rgba(52, 73, 69, 0.06);
+            animation: float 6s ease-in-out infinite;
+        }
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-9px); }
+        }
+        .mock-header {
+            display: flex; align-items: center; justify-content: space-between;
+            margin-bottom: 18px; padding-bottom: 16px; border-bottom: 1px solid var(--beige);
+        }
+        .mock-title { font-size: 13px; font-weight: 600; color: var(--forest); }
+        .mock-live {
+            display: flex; align-items: center; gap: 5px;
+            font-size: 10px; font-weight: 600; letter-spacing: 0.06em;
+            text-transform: uppercase; color: var(--green-up);
+        }
+        .mock-live-dot {
+            width: 6px; height: 6px; border-radius: 50%;
+            background: var(--green-up);
+            animation: pulse 2s ease-in-out infinite;
+        }
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.4; }
+        }
+        .mock-stats-grid {
+            display: grid; grid-template-columns: repeat(3, 1fr);
+            gap: 10px; margin-bottom: 18px;
+        }
+        .mock-stat {
+            background: var(--cream); border: 1px solid var(--beige);
+            border-radius: 10px; padding: 11px 12px;
+        }
+        .mock-stat-label {
+            font-size: 9px; font-weight: 600; letter-spacing: 0.09em;
+            text-transform: uppercase; color: rgba(52, 73, 69, 0.42); margin-bottom: 3px;
+        }
+        .mock-stat-value {
+            font-size: 17px; font-weight: 700; color: var(--forest);
+            letter-spacing: -0.03em; font-variant-numeric: tabular-nums;
+        }
+        .mock-stat-delta {
+            font-size: 10px; color: var(--green-up); font-weight: 500; margin-top: 2px;
+        }
+
+        /* chart */
+        .mock-chart {
+            background: var(--cream); border: 1px solid var(--beige);
+            border-radius: 12px; padding: 14px 16px; margin-bottom: 14px;
+        }
+        .mock-chart-label {
+            font-size: 9.5px; font-weight: 600; letter-spacing: 0.07em;
+            text-transform: uppercase; color: rgba(52, 73, 69, 0.42); margin-bottom: 10px;
+        }
+        .chart-svg { width: 100%; height: 76px; overflow: visible; }
+        .chart-line {
+            stroke: var(--forest); stroke-width: 2; fill: none;
+            stroke-linecap: round; stroke-linejoin: round;
+            stroke-dasharray: 650; stroke-dashoffset: 650;
+            animation: drawLine 2.2s cubic-bezier(0.4, 0, 0.2, 1) 0.6s forwards;
+        }
+        .chart-area {
+            fill: url(#chartGradient); opacity: 0;
+            animation: fadeArea 0.5s ease-out 2.6s forwards;
+        }
+        @keyframes drawLine { to { stroke-dashoffset: 0; } }
+        @keyframes fadeArea { to { opacity: 1; } }
+
+        /* project rows */
+        .mock-projects { display: flex; flex-direction: column; gap: 7px; }
+        .mock-project {
+            display: flex; align-items: center; justify-content: space-between;
+            padding: 9px 11px; background: var(--cream);
+            border: 1px solid var(--beige); border-radius: 8px;
+        }
+        .mock-project-info { display: flex; align-items: center; gap: 9px; }
+        .mock-project-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--forest); flex-shrink: 0; }
+        .dot-2 { background: #7AAAA0; }
+        .dot-3 { background: #B5A96A; }
+        .mock-project-name { font-size: 11.5px; font-weight: 500; color: var(--forest); }
+        .mock-project-words { font-size: 11px; color: rgba(52, 73, 69, 0.5); font-variant-numeric: tabular-nums; }
+
+        /* floating accent cards */
+        .accent-card {
+            position: absolute; background: white;
+            border: 1px solid var(--beige); border-radius: 12px;
+            padding: 11px 15px;
+            box-shadow: 0 8px 28px rgba(52, 73, 69, 0.1);
+        }
+        .accent-top {
+            top: -18px; right: -18px;
+            display: flex; align-items: center; gap: 10px;
+            animation: float 5.5s ease-in-out infinite 1.2s;
+        }
+        .accent-bottom {
+            bottom: -14px; left: -18px;
+            animation: float 7s ease-in-out infinite 2.4s;
+        }
+        .accent-icon {
+            width: 30px; height: 30px; background: var(--sage); border-radius: 7px;
+            display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+        }
+        .accent-label { font-size: 11.5px; font-weight: 600; color: var(--forest); }
+        .accent-sub { font-size: 10px; color: rgba(52, 73, 69, 0.52); margin-top: 1px; }
+        .sync-indicator { display: flex; align-items: center; gap: 5px; margin-top: 2px; }
+        .sync-dot { width: 5px; height: 5px; border-radius: 50%; background: var(--green-up); }
+
+        /* ─── METRICS STRIP ──────────────────────────────── */
+        .metrics-strip {
+            border-top: 1px solid var(--beige); border-bottom: 1px solid var(--beige);
+            padding: 36px 48px;
+        }
+        .metrics-inner {
+            max-width: 1200px; margin: 0 auto;
+            display: flex; align-items: center; justify-content: space-between; gap: 24px;
+        }
+        .metric-item { text-align: center; }
+        .metric-value {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.9rem; font-weight: 700;
+            color: var(--forest); letter-spacing: -0.03em; line-height: 1; margin-bottom: 4px;
+        }
+        .metric-label { font-size: 11.5px; color: rgba(52, 73, 69, 0.48); font-weight: 500; }
+        .metric-sep { width: 1px; height: 44px; background: var(--beige); }
+
+        /* ─── SECTIONS ───────────────────────────────────── */
+        section { padding: 96px 48px; }
+        .container { max-width: 1200px; margin: 0 auto; }
+        .section-eyebrow {
+            font-size: 11px; font-weight: 600; letter-spacing: 0.12em;
+            text-transform: uppercase; color: rgba(52, 73, 69, 0.42); margin-bottom: 14px;
+        }
+        .section-title {
+            font-family: 'Playfair Display', serif;
+            font-size: clamp(1.9rem, 3.2vw, 2.6rem);
+            font-weight: 700; line-height: 1.18;
+            color: var(--forest); letter-spacing: -0.02em; margin-bottom: 14px;
+        }
+        .section-sub {
+            font-size: 15.5px; color: rgba(52, 73, 69, 0.58);
+            max-width: 500px; line-height: 1.72;
+        }
+
+        /* ─── FEATURES ───────────────────────────────────── */
+        .features-header { text-align: center; margin-bottom: 60px; }
+        .features-header .section-sub { margin: 0 auto; }
+        .features-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px; }
+        .feature-card {
+            background: white; border: 1px solid var(--beige);
+            border-radius: 16px; padding: 34px;
+            transition: all 0.28s; position: relative; overflow: hidden;
+        }
+        .feature-card::after {
+            content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px;
+            background: var(--forest); transform: scaleX(0); transform-origin: left;
+            transition: transform 0.28s;
+        }
+        .feature-card:hover::after { transform: scaleX(1); }
+        .feature-card:hover { box-shadow: 0 14px 44px rgba(52, 73, 69, 0.09); transform: translateY(-2px); }
+        .feature-card.bg-sage { background: var(--sage); border-color: rgba(52,73,69,0.08); }
+        .feature-card.bg-wheat { background: var(--wheat); border-color: rgba(52,73,69,0.08); }
+        .feature-icon {
+            width: 42px; height: 42px; background: var(--forest); border-radius: 10px;
+            display: flex; align-items: center; justify-content: center;
+            margin-bottom: 20px; color: var(--cream);
+        }
+        .feature-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.2rem; font-weight: 600;
+            color: var(--forest); margin-bottom: 10px; letter-spacing: -0.01em;
+        }
+        .feature-desc { font-size: 13.5px; color: rgba(52, 73, 69, 0.63); line-height: 1.72; }
+        .feature-pills { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 16px; }
+        .feature-pill {
+            font-size: 9.5px; font-weight: 600; letter-spacing: 0.07em;
+            text-transform: uppercase; background: rgba(52, 73, 69, 0.08);
+            color: var(--forest); padding: 3px 8px; border-radius: 4px;
+        }
+
+        /* ─── HOW IT WORKS ───────────────────────────────── */
+        .how-section { background: white; }
+        .how-layout {
+            display: grid; grid-template-columns: 5fr 7fr;
+            gap: 80px; align-items: start; margin-top: 60px;
+        }
+        .how-accent {
+            background: var(--sage); border-radius: 16px;
+            padding: 32px; position: sticky; top: 100px;
+        }
+        .how-accent-number {
+            font-family: 'Playfair Display', serif;
+            font-size: 4.5rem; font-weight: 700;
+            color: var(--forest); line-height: 1; margin-bottom: 6px;
+        }
+        .how-accent-label {
+            font-size: 11px; font-weight: 600; letter-spacing: 0.1em;
+            text-transform: uppercase; color: rgba(52, 73, 69, 0.5);
+        }
+        .how-accent-divider { height: 1px; background: rgba(52,73,69,0.15); margin: 24px 0; }
+        .how-accent-note { font-size: 13px; color: rgba(52, 73, 69, 0.62); line-height: 1.65; }
+        .steps { display: flex; flex-direction: column; }
+        .step { display: flex; gap: 20px; padding-bottom: 40px; }
+        .step:last-child { padding-bottom: 0; }
+        .step-col { display: flex; flex-direction: column; align-items: center; }
+        .step-num {
+            width: 34px; height: 34px; background: var(--forest); color: var(--cream);
+            border-radius: 50%; display: flex; align-items: center; justify-content: center;
+            font-size: 13px; font-weight: 700; flex-shrink: 0;
+        }
+        .step-line { width: 1px; flex: 1; background: var(--beige); margin-top: 8px; min-height: 32px; }
+        .step:last-child .step-line { display: none; }
+        .step-body { padding-top: 5px; }
+        .step-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.1rem; font-weight: 600; color: var(--forest); margin-bottom: 6px;
+        }
+        .step-desc { font-size: 13.5px; color: rgba(52, 73, 69, 0.6); line-height: 1.68; }
+
+        /* ─── AUDIENCE ───────────────────────────────────── */
+        .audience-section { background: var(--forest); padding: 96px 48px; }
+        .audience-inner {
+            max-width: 1200px; margin: 0 auto;
+            display: grid; grid-template-columns: 1fr 1fr; gap: 80px; align-items: center;
+        }
+        .audience-eyebrow {
+            font-size: 11px; font-weight: 600; letter-spacing: 0.12em;
+            text-transform: uppercase; color: rgba(213, 227, 232, 0.55); margin-bottom: 14px;
+        }
+        .audience-title {
+            font-family: 'Playfair Display', serif;
+            font-size: clamp(1.9rem, 3vw, 2.6rem);
+            font-weight: 700; line-height: 1.18;
+            color: var(--cream); letter-spacing: -0.02em; margin-bottom: 18px;
+        }
+        .audience-title em { font-style: italic; color: var(--sage); }
+        .audience-desc { font-size: 15px; color: rgba(247, 245, 241, 0.58); line-height: 1.72; margin-bottom: 32px; }
+        .btn-light {
+            background: var(--cream); color: var(--forest);
+            padding: 13px 26px; border-radius: 10px;
+            font-size: 14px; font-weight: 600; text-decoration: none;
+            display: inline-flex; align-items: center; gap: 8px; transition: all 0.22s;
+        }
+        .btn-light:hover { transform: translateY(-2px); box-shadow: 0 8px 22px rgba(0,0,0,0.18); }
+        .audience-cards { display: flex; flex-direction: column; gap: 12px; }
+        .audience-card {
+            background: rgba(247, 245, 241, 0.07);
+            border: 1px solid rgba(247, 245, 241, 0.11);
+            border-radius: 12px; padding: 18px 22px;
+            display: flex; align-items: flex-start; gap: 15px;
+            transition: background 0.2s;
+        }
+        .audience-card:hover { background: rgba(247, 245, 241, 0.11); }
+        .audience-card-icon {
+            width: 34px; height: 34px; border-radius: 8px;
+            background: rgba(213, 227, 232, 0.18);
+            display: flex; align-items: center; justify-content: center;
+            flex-shrink: 0; color: var(--sage);
+        }
+        .audience-card-title { font-size: 13px; font-weight: 600; color: var(--cream); margin-bottom: 3px; }
+        .audience-card-text { font-size: 12px; color: rgba(247, 245, 241, 0.52); line-height: 1.55; }
+
+        /* ─── FINAL CTA ──────────────────────────────────── */
+        .cta-section { padding: 116px 48px; text-align: center; }
+        .cta-inner { max-width: 560px; margin: 0 auto; }
+        .cta-eyebrow {
+            font-size: 11px; font-weight: 600; letter-spacing: 0.12em;
+            text-transform: uppercase; color: rgba(52, 73, 69, 0.38); margin-bottom: 20px;
+        }
+        .cta-title {
+            font-family: 'Playfair Display', serif;
+            font-size: clamp(2.2rem, 4vw, 3.1rem);
+            font-weight: 700; line-height: 1.14;
+            color: var(--forest); letter-spacing: -0.03em; margin-bottom: 16px;
+        }
+        .cta-title em { font-style: italic; color: rgba(52, 73, 69, 0.5); }
+        .cta-sub { font-size: 15px; color: rgba(52, 73, 69, 0.54); line-height: 1.72; margin-bottom: 40px; }
+
+        /* ─── FOOTER ─────────────────────────────────────── */
+        footer { border-top: 1px solid var(--beige); padding: 28px 48px; }
+        .footer-inner {
+            max-width: 1200px; margin: 0 auto;
+            display: flex; align-items: center; justify-content: space-between;
+        }
+        .footer-logo {
+            display: flex; align-items: center; gap: 8px;
+            font-size: 13px; font-weight: 600; color: var(--forest); text-decoration: none;
+        }
+        .footer-logo-icon {
+            width: 22px; height: 22px; background: var(--forest); border-radius: 5px;
+            display: flex; align-items: center; justify-content: center;
+        }
+        .footer-copy { font-size: 12px; color: rgba(52, 73, 69, 0.38); }
+        .footer-links { display: flex; gap: 22px; }
+        .footer-links a {
+            font-size: 12px; color: rgba(52, 73, 69, 0.46);
+            text-decoration: none; transition: color 0.2s;
+        }
+        .footer-links a:hover { color: var(--forest); }
+
+        /* ─── SCROLL ANIMATION ───────────────────────────── */
+        .fade-up { opacity: 0; transform: translateY(22px); transition: opacity 0.62s ease, transform 0.62s ease; }
+        .fade-up.visible { opacity: 1; transform: translateY(0); }
+        .fade-up.delay-1 { transition-delay: 0.1s; }
+        .fade-up.delay-2 { transition-delay: 0.2s; }
+        .fade-up.delay-3 { transition-delay: 0.3s; }
+
+        /* ─── RESPONSIVE ─────────────────────────────────── */
+        @media (max-width: 900px) {
+            nav { padding: 16px 22px; }
+            .nav-links { display: none; }
+            .hero { grid-template-columns: 1fr; padding: 96px 22px 56px; gap: 0; }
+            .hero-right { display: none; }
+            section { padding: 68px 22px; }
+            .features-grid { grid-template-columns: 1fr; }
+            .how-layout { grid-template-columns: 1fr; gap: 40px; }
+            .how-accent { position: static; }
+            .audience-section { padding: 68px 22px; }
+            .audience-inner { grid-template-columns: 1fr; gap: 44px; }
+            .metrics-strip { padding: 28px 22px; }
+            .metrics-inner { display: grid; grid-template-columns: 1fr 1fr; gap: 22px; }
+            .metric-sep { display: none; }
+            .cta-section { padding: 72px 22px; }
+            footer { padding: 24px 22px; }
+            .footer-inner { flex-direction: column; gap: 14px; text-align: center; }
+            .footer-links { gap: 16px; }
+        }
+    </style>
+</head>
+<body>
+
+<!-- ═══ NAV ═══════════════════════════════════════════════ -->
+<nav id="navbar">
+    <a href="#" class="nav-logo">
+        <div class="nav-logo-icon">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+        </div>
+        Overlytics
+    </a>
+    <ul class="nav-links">
+        <li><a href="#features">Features</a></li>
+        <li><a href="#how-it-works">How it works</a></li>
+        <li><a href="#for-researchers">For researchers</a></li>
+        <li><a href="#" class="nav-cta">Get Started Free</a></li>
+    </ul>
+</nav>
+
+<!-- ═══ HERO ════════════════════════════════════════════════ -->
+<div class="hero">
+    <div class="hero-left">
+        <div class="hero-badge">
+            <div class="hero-badge-dot"></div>
+            LaTeX project analytics
+        </div>
+        <h1 class="hero-title">
+            Understand your<br><em>research velocity</em>
+        </h1>
+        <p class="hero-subtitle">
+            Overlytics connects to your Overleaf projects and tracks your writing progress — words, pages, citations, and more — so you always know exactly where you stand.
+        </p>
+        <div class="hero-actions">
+            <a href="#" class="btn-primary">
+                Get Started Free
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+            </a>
+            <a href="#how-it-works" class="btn-ghost">
+                See how it works
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M19 9l-7 7-7-7"/></svg>
+            </a>
+        </div>
+    </div>
+
+    <div class="hero-right">
+        <!-- floating accent: top right -->
+        <div class="accent-card accent-top">
+            <div class="accent-icon">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#344945" stroke-width="2.5" stroke-linecap="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+            </div>
+            <div>
+                <div class="accent-label">+2,841 words today</div>
+                <div class="accent-sub">Chapter 4 · Methodology</div>
+            </div>
+        </div>
+
+        <!-- mock dashboard card -->
+        <div class="mock-dashboard">
+            <div class="mock-header">
+                <span class="mock-title">PhD Thesis Overview</span>
+                <span class="mock-live">
+                    <span class="mock-live-dot"></span>
+                    Live
+                </span>
+            </div>
+
+            <div class="mock-stats-grid">
+                <div class="mock-stat">
+                    <div class="mock-stat-label">Words</div>
+                    <div class="mock-stat-value">47,291</div>
+                    <div class="mock-stat-delta">↑ 3.2%</div>
+                </div>
+                <div class="mock-stat">
+                    <div class="mock-stat-label">Pages</div>
+                    <div class="mock-stat-value">158</div>
+                    <div class="mock-stat-delta">↑ 4 pgs</div>
+                </div>
+                <div class="mock-stat">
+                    <div class="mock-stat-label">Citations</div>
+                    <div class="mock-stat-value">84</div>
+                    <div class="mock-stat-delta">↑ 7</div>
+                </div>
+            </div>
+
+            <div class="mock-chart">
+                <div class="mock-chart-label">30-day word count</div>
+                <svg class="chart-svg" viewBox="0 0 400 76" preserveAspectRatio="none">
+                    <defs>
+                        <linearGradient id="chartGradient" x1="0" y1="0" x2="0" y2="1">
+                            <stop offset="0%" stop-color="#344945" stop-opacity="0.14"/>
+                            <stop offset="100%" stop-color="#344945" stop-opacity="0"/>
+                        </linearGradient>
+                    </defs>
+                    <path class="chart-area" d="M0,70 C20,68 30,65 45,66 C60,67 70,60 85,56 C100,52 110,50 125,47 C140,44 150,46 165,41 C180,36 192,30 207,27 C222,24 232,27 248,21 C264,15 274,11 289,12 C304,13 314,8 330,5 C346,2 358,1 374,0 C384,0 392,1 400,0 L400,76 L0,76 Z"/>
+                    <path class="chart-line" d="M0,70 C20,68 30,65 45,66 C60,67 70,60 85,56 C100,52 110,50 125,47 C140,44 150,46 165,41 C180,36 192,30 207,27 C222,24 232,27 248,21 C264,15 274,11 289,12 C304,13 314,8 330,5 C346,2 358,1 374,0 C384,0 392,1 400,0"/>
+                    <line x1="0" y1="0" x2="400" y2="0" stroke="#E0DCD1" stroke-width="0.6"/>
+                    <line x1="0" y1="38" x2="400" y2="38" stroke="#E0DCD1" stroke-width="0.6"/>
+                    <line x1="0" y1="76" x2="400" y2="76" stroke="#E0DCD1" stroke-width="0.6"/>
+                </svg>
+            </div>
+
+            <div class="mock-projects">
+                <div class="mock-project">
+                    <div class="mock-project-info">
+                        <div class="mock-project-dot"></div>
+                        <div class="mock-project-name">PhD Thesis · Climate Models</div>
+                    </div>
+                    <div class="mock-project-words">47,291 w</div>
+                </div>
+                <div class="mock-project">
+                    <div class="mock-project-info">
+                        <div class="mock-project-dot dot-2"></div>
+                        <div class="mock-project-name">Paper · ICML 2026</div>
+                    </div>
+                    <div class="mock-project-words">8,440 w</div>
+                </div>
+                <div class="mock-project">
+                    <div class="mock-project-info">
+                        <div class="mock-project-dot dot-3"></div>
+                        <div class="mock-project-name">Grant Proposal · DFG</div>
+                    </div>
+                    <div class="mock-project-words">3,102 w</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- floating accent: bottom left -->
+        <div class="accent-card accent-bottom">
+            <div class="accent-label">Synced 2 min ago</div>
+            <div class="sync-indicator">
+                <div class="sync-dot"></div>
+                <span class="accent-sub">3 projects · all synced</span>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ═══ METRICS STRIP ════════════════════════════════════════ -->
+<div class="metrics-strip">
+    <div class="metrics-inner">
+        <div class="metric-item">
+            <div class="metric-value">1M+</div>
+            <div class="metric-label">Words tracked</div>
+        </div>
+        <div class="metric-sep"></div>
+        <div class="metric-item">
+            <div class="metric-value">30-day</div>
+            <div class="metric-label">Progress history</div>
+        </div>
+        <div class="metric-sep"></div>
+        <div class="metric-item">
+            <div class="metric-value">5</div>
+            <div class="metric-label">Metrics per project</div>
+        </div>
+        <div class="metric-sep"></div>
+        <div class="metric-item">
+            <div class="metric-value">Auto</div>
+            <div class="metric-label">Background sync</div>
+        </div>
+        <div class="metric-sep"></div>
+        <div class="metric-item">
+            <div class="metric-value">Free</div>
+            <div class="metric-label">To get started</div>
+        </div>
+    </div>
+</div>
+
+<!-- ═══ FEATURES ════════════════════════════════════════════ -->
+<section id="features">
+    <div class="container">
+        <div class="features-header">
+            <div class="section-eyebrow">What you get</div>
+            <h2 class="section-title">Everything your thesis needs,<br>nothing it doesn't</h2>
+            <p class="section-sub">Five metrics, one dashboard, automatic sync. Overlytics measures the things that matter most when you're writing serious research.</p>
+        </div>
+        <div class="features-grid fade-up">
+            <div class="feature-card bg-sage">
+                <div class="feature-icon">
+                    <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+                </div>
+                <h3 class="feature-title">Velocity Tracking</h3>
+                <p class="feature-desc">See how many words you write per day, week, or month. Understand your writing rhythm and identify when you're most productive.</p>
+                <div class="feature-pills">
+                    <span class="feature-pill">Words</span>
+                    <span class="feature-pill">Pages</span>
+                    <span class="feature-pill">30-day chart</span>
+                </div>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+                </div>
+                <h3 class="feature-title">Deep LaTeX Metrics</h3>
+                <p class="feature-desc">Beyond word count — track citations, floats (figures & tables), and formulas. Know the structure and maturity of your document, not just its size.</p>
+                <div class="feature-pills">
+                    <span class="feature-pill">Citations</span>
+                    <span class="feature-pill">Figures</span>
+                    <span class="feature-pill">Formulas</span>
+                </div>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+                </div>
+                <h3 class="feature-title">Group Collaboration</h3>
+                <p class="feature-desc">Share project tracking with your lab or supervisor. Organize projects into groups with role-based access — admin and member roles included.</p>
+                <div class="feature-pills">
+                    <span class="feature-pill">Labs</span>
+                    <span class="feature-pill">Supervisors</span>
+                    <span class="feature-pill">Roles</span>
+                </div>
+            </div>
+            <div class="feature-card bg-wheat">
+                <div class="feature-icon">
+                    <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="3"/><path d="M12 1v4M12 19v4M4.22 4.22l2.83 2.83M16.95 16.95l2.83 2.83M1 12h4M19 12h4M4.22 19.78l2.83-2.83M16.95 7.05l2.83-2.83"/></svg>
+                </div>
+                <h3 class="feature-title">Overleaf Git Sync</h3>
+                <p class="feature-desc">Connect via Overleaf's Git integration. No manual exports — projects sync automatically in the background so your dashboard is always up to date.</p>
+                <div class="feature-pills">
+                    <span class="feature-pill">Auto-sync</span>
+                    <span class="feature-pill">Background</span>
+                    <span class="feature-pill">Git-based</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ═══ HOW IT WORKS ══════════════════════════════════════════ -->
+<section id="how-it-works" class="how-section">
+    <div class="container">
+        <div class="section-eyebrow">Simple setup</div>
+        <h2 class="section-title">Running in under two minutes</h2>
+        <div class="how-layout fade-up">
+            <div>
+                <div class="how-accent">
+                    <div class="how-accent-number">3</div>
+                    <div class="how-accent-label">simple steps</div>
+                    <div class="how-accent-divider"></div>
+                    <div class="how-accent-note">No LaTeX knowledge required on our end. Your files stay on Overleaf — we just read the metrics and show you the trends.</div>
+                </div>
+            </div>
+            <div class="steps">
+                <div class="step">
+                    <div class="step-col">
+                        <div class="step-num">1</div>
+                        <div class="step-line"></div>
+                    </div>
+                    <div class="step-body">
+                        <div class="step-title">Connect Overleaf</div>
+                        <p class="step-desc">Generate a Git token from your Overleaf account settings under Account → Git Integration. Paste it into Overlytics — it's stored encrypted on our end.</p>
+                    </div>
+                </div>
+                <div class="step">
+                    <div class="step-col">
+                        <div class="step-num">2</div>
+                        <div class="step-line"></div>
+                    </div>
+                    <div class="step-body">
+                        <div class="step-title">Add your projects</div>
+                        <p class="step-desc">Paste your Overleaf project Git URLs. Overlytics clones and analyzes them automatically — detecting your main .tex file and running a full metrics scan.</p>
+                    </div>
+                </div>
+                <div class="step">
+                    <div class="step-col">
+                        <div class="step-num">3</div>
+                        <div class="step-line"></div>
+                    </div>
+                    <div class="step-body">
+                        <div class="step-title">Track your progress</div>
+                        <p class="step-desc">Watch word count, pages, citations, and formulas grow over time on a 30-day chart. Projects sync in the background automatically — or trigger a manual sync anytime.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ═══ AUDIENCE ══════════════════════════════════════════════ -->
+<section id="for-researchers" class="audience-section">
+    <div class="audience-inner">
+        <div>
+            <div class="audience-eyebrow">Built for researchers</div>
+            <h2 class="audience-title">
+                For everyone writing<br><em>serious LaTeX</em>
+            </h2>
+            <p class="audience-desc">
+                Whether you're deep in your dissertation or submitting to a conference, Overlytics gives you the visibility to write with confidence and share progress without the status-update meetings.
+            </p>
+            <a href="#" class="btn-light">
+                Start tracking for free
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+            </a>
+        </div>
+        <div class="audience-cards">
+            <div class="audience-card">
+                <div class="audience-card-icon">
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg>
+                </div>
+                <div>
+                    <div class="audience-card-title">PhD Students</div>
+                    <div class="audience-card-text">Keep your dissertation on track. See chapters grow and know exactly how far you've come since last week — without leaving your workflow.</div>
+                </div>
+            </div>
+            <div class="audience-card">
+                <div class="audience-card-icon">
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+                </div>
+                <div>
+                    <div class="audience-card-title">Research Labs & Groups</div>
+                    <div class="audience-card-text">Track multiple papers and team members in one place. Supervisors can monitor project progress without waiting for email updates.</div>
+                </div>
+            </div>
+            <div class="audience-card">
+                <div class="audience-card-icon">
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/><polyline points="14 2 14 8 20 8"/></svg>
+                </div>
+                <div>
+                    <div class="audience-card-title">Conference Paper Authors</div>
+                    <div class="audience-card-text">Juggling multiple submissions? Track each paper separately and see your total research output — words, citations, and figures — at a glance.</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ═══ FINAL CTA ══════════════════════════════════════════════ -->
+<section class="cta-section">
+    <div class="cta-inner fade-up">
+        <div class="cta-eyebrow">Get started today — it's free</div>
+        <h2 class="cta-title">Your thesis,<br><em>measured.</em></h2>
+        <p class="cta-sub">Join researchers who track their writing with Overlytics. Takes under two minutes to connect your first Overleaf project.</p>
+        <a href="#" class="btn-primary" style="font-size: 15px; padding: 15px 34px; margin: 0 auto;">
+            Get Started Free
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+        </a>
+    </div>
+</section>
+
+<!-- ═══ FOOTER ════════════════════════════════════════════════ -->
+<footer>
+    <div class="footer-inner">
+        <a href="#" class="footer-logo">
+            <div class="footer-logo-icon">
+                <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#F7F5F1" stroke-width="2.5" stroke-linecap="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+            </div>
+            Overlytics
+        </a>
+        <span class="footer-copy">© 2026 Overlytics. All rights reserved.</span>
+        <div class="footer-links">
+            <a href="#">Privacy</a>
+            <a href="#">Terms</a>
+            <a href="#">Contact</a>
+        </div>
+    </div>
+</footer>
+
+<script>
+    // Nav scroll shadow
+    const navbar = document.getElementById('navbar');
+    window.addEventListener('scroll', () => {
+        navbar.classList.toggle('scrolled', window.scrollY > 20);
+    });
+
+    // Fade-up on scroll
+    const fadeEls = document.querySelectorAll('.fade-up');
+    const observer = new IntersectionObserver(entries => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) entry.target.classList.add('visible');
+        });
+    }, { threshold: 0.12 });
+    fadeEls.forEach(el => observer.observe(el));
+
+    // Init lucide icons (if any data-lucide attrs exist)
+    if (window.lucide) lucide.createIcons();
+</script>
+</body>
+</html>

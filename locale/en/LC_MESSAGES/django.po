@@ -1,4 +1,4 @@
-# English translations for Overlytics
+# English translations for Änderung durch Austausch
 msgid ""
 msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -7,379 +7,98 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
 # ── Navigation / base.html ────────────────────────────────────────────────────
-msgid "Übersicht"
-msgstr "Overview"
-
-msgid "Projekte"
-msgstr "Projects"
-
-msgid "Gruppen"
-msgstr "Groups"
-
-msgid "Einstellungen"
-msgstr "Settings"
+msgid "Beiträge"
+msgstr "Posts"
 
 msgid "Abmelden"
 msgstr "Sign out"
 
-msgid "Projekte suchen…"
-msgstr "Search projects…"
+msgid "Neuer Beitrag"
+msgstr "New Post"
 
-msgid "Projekt tracken"
-msgstr "Track project"
+# ── Post list (index) ─────────────────────────────────────────────────────────
+msgid "Noch keine Beiträge"
+msgstr "No posts yet"
 
-# ── Dashboard index ───────────────────────────────────────────────────────────
-msgid "Willkommen zurück!"
-msgstr "Welcome back!"
+msgid "Erstelle den ersten Beitrag über den Button oben rechts."
+msgstr "Create the first post using the button in the top right."
 
-msgid "Hier ist der aktuelle Stand deiner Overleaf-Projekte."
-msgstr "Here's the current status of your Overleaf projects."
+msgid "Noch wurden keine Beiträge veröffentlicht."
+msgstr "No posts have been published yet."
 
-msgid "Synchronisiere…"
-msgstr "Syncing…"
+msgid "Weiterlesen"
+msgstr "Read more"
 
-msgid "Jetzt synchronisieren"
-msgstr "Sync now"
+# ── Post detail ───────────────────────────────────────────────────────────────
+msgid "Alle Beiträge"
+msgstr "All Posts"
 
-msgid "Wörter Gesamt"
-msgstr "Total Words"
+msgid "Uhr"
+msgstr ""
 
-msgid "Seiten Gesamt"
-msgstr "Total Pages"
+msgid "Gefällt mir"
+msgstr "Like"
 
-msgid "Aktive Projekte"
-msgstr "Active Projects"
+msgid "Kommentare"
+msgstr "Comments"
 
-msgid "Quellen"
-msgstr "Sources"
+msgid "Noch keine Kommentare. Sei der Erste!"
+msgstr "No comments yet. Be the first!"
 
-msgid "Floats"
-msgstr "Floats"
+msgid "Kommentar schreiben"
+msgstr "Write a comment"
 
-msgid "Abb. & Tab."
-msgstr "Fig. & Tab."
+msgid "Schreibe einen Kommentar…"
+msgstr "Write a comment…"
 
-msgid "Formeln"
-msgstr "Formulas"
+msgid "Kommentar absenden"
+msgstr "Submit comment"
 
-msgid "Schreibfortschritt"
-msgstr "Writing Progress"
+msgid "Kommentar hinzugefügt."
+msgstr "Comment added."
 
-msgid "Noch keine Verlaufsdaten vorhanden"
-msgstr "No historical data available yet"
+# ── Post form ─────────────────────────────────────────────────────────────────
+msgid "Zurück"
+msgstr "Back"
 
-msgid "Sobald Projekte synchronisiert werden, erscheint hier der Schreibfortschritt."
-msgstr "Once projects are synced, writing progress will appear here."
+msgid "Neuer Beitrag"
+msgstr "New Post"
 
-msgid "Meine Projekte"
-msgstr "My Projects"
+msgid "Veröffentliche einen neuen Beitrag für alle Leser."
+msgstr "Publish a new post for all readers."
 
-msgid "Neues Projekt"
-msgstr "New Project"
+msgid "Titel"
+msgstr "Title"
 
-msgid "Projektname"
-msgstr "Project Name"
+msgid "Untertitel"
+msgstr "Subtitle"
 
-msgid "Status"
-msgstr "Status"
+msgid "optional"
+msgstr "optional"
 
-msgid "Metriken"
-msgstr "Metrics"
+msgid "Inhalt"
+msgstr "Content"
 
-msgid "Letzter Sync"
-msgstr "Last Sync"
+msgid "Worum geht es in diesem Beitrag?"
+msgstr "What is this post about?"
 
-msgid "Aktion"
-msgstr "Action"
+msgid "Ein ergänzender Satz oder Kontext"
+msgstr "A supplementary sentence or context"
 
-msgid "Aktiv"
-msgstr "Active"
+msgid "Schreibe deinen Beitrag in einfacher Sprache…"
+msgstr "Write your post in plain language…"
 
-msgid "Auth-Fehler"
-msgstr "Auth Error"
+msgid "Schreibe klar und verständlich. Zeilenumbrüche werden übernommen."
+msgstr "Write clearly and plainly. Line breaks are preserved."
 
-msgid "Clone-Fehler"
-msgstr "Clone Error"
+msgid "Beitrag veröffentlichen"
+msgstr "Publish post"
 
-msgid "Wörter"
-msgstr "Words"
-
-msgid "Seiten"
-msgstr "Pages"
-
-msgid "Projekt synchronisieren"
-msgstr "Sync project"
-
-msgid "Bearbeiten"
-msgstr "Edit"
-
-msgid "Noch keine Projekte vorhanden"
-msgstr "No projects yet"
-
-msgid "Erstes Projekt hinzufügen"
-msgstr "Add first project"
-
-# ── Projects list ─────────────────────────────────────────────────────────────
-msgid "Projekte verwalten"
-msgstr "Manage Projects"
-
-msgid "Alle deine getrackten Overleaf-Projekte auf einen Blick."
-msgstr "All your tracked Overleaf projects at a glance."
-
-msgid "Löschen"
-msgstr "Delete"
-
-msgid "Keiner Gruppe zugeordnet"
-msgstr "Not assigned to any group"
-
-msgid "Sync:"
-msgstr "Sync:"
-
-msgid "Noch nicht synchronisiert"
-msgstr "Not yet synced"
-
-msgid "Noch keine Projekte"
-msgstr "No projects yet"
-
-msgid "Füge dein erstes Overleaf-Projekt hinzu, um es zu tracken."
-msgstr "Add your first Overleaf project to start tracking it."
-
-msgid "Neues Projekt hinzufügen"
-msgstr "Add new project"
-
-# ── Project form ──────────────────────────────────────────────────────────────
-msgid "Zurück zu Projekten"
-msgstr "Back to Projects"
-
-msgid "z. B. Masterarbeit_Physik"
-msgstr "e.g. Masters_Thesis_Physics"
-
-msgid "Overleaf Git-URL"
-msgstr "Overleaf Git URL"
-
-msgid "Die Git-URL findest du in Overleaf unter Menü → Integration → Git."
-msgstr "Find the Git URL in Overleaf under Menu → Git."
-
-msgid "Speichern"
-msgstr "Save"
+msgid "Beitrag veröffentlicht."
+msgstr "Post published."
 
 msgid "Abbrechen"
 msgstr "Cancel"
-
-# ── Project confirm delete ────────────────────────────────────────────────────
-msgid "Projekt löschen"
-msgstr "Delete Project"
-
-msgid "Bist du sicher, dass du <strong>%(name)s</strong> löschen möchtest?"
-msgstr "Are you sure you want to delete <strong>%(name)s</strong>?"
-
-msgid ""
-"Das Projekt wird dauerhaft aus der Datenbank entfernt. Diese Aktion kann "
-"nicht rückgängig gemacht werden."
-msgstr ""
-"The project will be permanently removed from the database. This action "
-"cannot be undone."
-
-msgid "Ja, endgültig löschen"
-msgstr "Yes, delete permanently"
-
-# ── Groups list ───────────────────────────────────────────────────────────────
-msgid "Gruppen & Freigaben"
-msgstr "Groups & Sharing"
-
-msgid "Verwalte, wer Zugriff auf die Metriken deiner Projekte hat."
-msgstr "Manage who has access to your project metrics."
-
-msgid "Neue Gruppe"
-msgstr "New Group"
-
-msgid "Gruppenname"
-msgstr "Group Name"
-
-msgid "Mitglieder"
-msgstr "Members"
-
-msgid "Deine Rolle"
-msgstr "Your Role"
-
-msgid "Gruppe öffnen"
-msgstr "Open group"
-
-msgid "Noch keine Gruppen"
-msgstr "No groups yet"
-
-msgid "Erstelle eine Gruppe, um Projekte mit anderen zu teilen."
-msgstr "Create a group to share projects with others."
-
-msgid "Erste Gruppe erstellen"
-msgstr "Create first group"
-
-# ── Group form ────────────────────────────────────────────────────────────────
-msgid "Zurück zu Gruppen"
-msgstr "Back to Groups"
-
-msgid "Neue Gruppe erstellen"
-msgstr "Create New Group"
-
-msgid "Du wirst automatisch als Admin der Gruppe eingetragen."
-msgstr "You will automatically be added as the group admin."
-
-msgid "z. B. ML Research Group"
-msgstr "e.g. ML Research Group"
-
-msgid "Gruppe erstellen"
-msgstr "Create Group"
-
-# ── Group confirm delete ──────────────────────────────────────────────────────
-msgid "Zurück zur Gruppe"
-msgstr "Back to Group"
-
-msgid "Gruppe löschen"
-msgstr "Delete Group"
-
-msgid "Bist du sicher, dass du die Gruppe <strong>%(name)s</strong> löschen möchtest?"
-msgstr "Are you sure you want to delete the group <strong>%(name)s</strong>?"
-
-msgid ""
-"Alle Mitgliedschaften und Projektverknüpfungen dieser Gruppe werden "
-"entfernt. Die Projekte selbst bleiben erhalten."
-msgstr ""
-"All memberships and project links for this group will be removed. The "
-"projects themselves will be kept."
-
-msgid "Ja, Gruppe löschen"
-msgstr "Yes, delete group"
-
-# ── Group detail ──────────────────────────────────────────────────────────────
-msgid "Alle Gruppen"
-msgstr "All Groups"
-
-msgid "Erstellt von %(creator)s · %(date)s"
-msgstr "Created by %(creator)s · %(date)s"
-
-msgid "Projekt auswählen…"
-msgstr "Select project…"
-
-msgid "Hinzufügen"
-msgstr "Add"
-
-msgid "Aus Gruppe entfernen"
-msgstr "Remove from group"
-
-msgid "Noch keine Projekte in dieser Gruppe."
-msgstr "No projects in this group yet."
-
-msgid "Einladen"
-msgstr "Invite"
-
-msgid "E-Mail-Adresse eingeben…"
-msgstr "Enter email address…"
-
-msgid "Mitglied entfernen"
-msgstr "Remove member"
-
-# ── Settings ──────────────────────────────────────────────────────────────────
-msgid "Overleaf Git-Token"
-msgstr "Overleaf Git Token"
-
-msgid "Wird verschlüsselt gespeichert und zum Klonen deiner Projekte verwendet."
-msgstr "Stored encrypted and used to clone your projects."
-
-msgid "Gespeicherter Token"
-msgstr "Saved Token"
-
-msgid "Verschlüsselt"
-msgstr "Encrypted"
-
-msgid "Token ändern"
-msgstr "Change Token"
-
-msgid "Token wirklich entfernen?"
-msgstr "Really delete token?"
-
-msgid "Entfernen"
-msgstr "Remove"
-
-msgid "Neuen Token eingeben"
-msgstr "Enter new token"
-
-msgid "Dein Overleaf Git-Token"
-msgstr "Your Overleaf Git Token"
-
-msgid "Den Token findest du in Overleaf unter"
-msgstr "Find the token in Overleaf under"
-
-msgid "Konto → Git-Integration"
-msgstr "Account Settings → Git Integration"
-
-msgid "Token speichern"
-msgstr "Save token"
-
-msgid ""
-"Noch kein Token hinterlegt. Füge deinen Overleaf Git-Token hinzu, damit "
-"deine Projekte automatisch synchronisiert werden können."
-msgstr ""
-"No token set yet. Add your Overleaf Git token so your projects can be "
-"synced automatically."
-
-# ── Onboarding banner ─────────────────────────────────────────────────────────
-msgid "Schritt 1/2: Hinterlege deinen Overleaf-Token, damit deine Projekte synchronisiert werden können."
-msgstr "Step 1/2: Add your Overleaf token so your projects can be synced."
-
-msgid "Schritt 2/2: Lege dein erstes Projekt an, um mit dem Tracking zu beginnen."
-msgstr "Step 2/2: Create your first project to start tracking."
-
-msgid "Einrichten →"
-msgstr "Set up →"
-
-msgid "Jetzt anlegen →"
-msgstr "Create now →"
-
-# ── Onboarding wizard ─────────────────────────────────────────────────────────
-msgid "Willkommen"
-msgstr "Welcome"
-
-msgid "Willkommen bei Overlytics!"
-msgstr "Welcome to Overlytics!"
-
-msgid "Richte in zwei Schritten deinen Account ein – dauert weniger als eine Minute."
-msgstr "Set up your account in two steps – it takes less than a minute."
-
-msgid "Token"
-msgstr "Token"
-
-msgid "Git-Integration einrichten"
-msgstr "Set up Git Integration"
-
-msgid "Zu den Overleaf-Einstellungen →"
-msgstr "Go to Overleaf settings →"
-
-msgid "Git-Integration-Token"
-msgstr "Git-Integration Token"
-
-msgid "Token einfügen…"
-msgstr "Paste token…"
-
-msgid "Weiter →"
-msgstr "Continue →"
-
-msgid "Überspringen"
-msgstr "Skip"
-
-msgid "Erstes Projekt anlegen"
-msgstr "Create First Project"
-
-msgid "Die Git-URL deines Projekts findest du in Overleaf unter"
-msgstr "Find the Git URL for your project in Overleaf under"
-
-msgid "Menü → Integration → Git"
-msgstr "Menu → Integration → Git"
-
-msgid "Projekt anlegen →"
-msgstr "Create project →"
-
-msgid "Weiter zum Dashboard →"
-msgstr "Continue to Dashboard →"
 
 # ── Login ─────────────────────────────────────────────────────────────────────
 msgid "Anmelden"
@@ -388,11 +107,11 @@ msgstr "Sign in"
 msgid "Willkommen zurück"
 msgstr "Welcome back"
 
-msgid "Melde dich an, um dein Dashboard zu öffnen."
-msgstr "Sign in to open your dashboard."
+msgid "Melde dich an, um die Beiträge zu lesen."
+msgstr "Sign in to read the posts."
 
 msgid "E-Mail-Adresse"
-msgstr "Email Address"
+msgstr "Email address"
 
 msgid "Passwort"
 msgstr "Password"
@@ -405,10 +124,10 @@ msgstr "Register"
 
 # ── Register ──────────────────────────────────────────────────────────────────
 msgid "Konto erstellen"
-msgstr "Create Account"
+msgstr "Create account"
 
-msgid "Tracke deine Overleaf-Projekte."
-msgstr "Start now and track your Overleaf projects."
+msgid "Lies und kommentiere Beiträge."
+msgstr "Read and comment on posts."
 
 msgid "Name"
 msgstr "Name"
@@ -417,7 +136,7 @@ msgid "z. B. Jane Doe oder ein Alias"
 msgstr "e.g. Jane Doe or an alias"
 
 msgid "Passwort bestätigen"
-msgstr "Confirm Password"
+msgstr "Confirm password"
 
 msgid "Mindestens 8 Zeichen, nicht nur Ziffern."
 msgstr "At least 8 characters, not only digits."
@@ -427,7 +146,7 @@ msgstr "Already have an account?"
 
 # ── Admin login ───────────────────────────────────────────────────────────────
 msgid "Admin-Zugang"
-msgstr "Admin Access"
+msgstr "Admin access"
 
 msgid "Nur für Administratoren. Normaler Login unter"
 msgstr "Admins only. Regular login at"
@@ -439,73 +158,6 @@ msgstr ""
 "You are signed in as <strong>%(username)s</strong> but don't have access "
 "to this page."
 
-# ── View flash messages ───────────────────────────────────────────────────────
-msgid ""
-"Keine Projekte zum Synchronisieren gefunden. Bitte hinterlege zuerst einen "
-"Overleaf-Token in den Einstellungen."
-msgstr "No projects to sync. Please add an Overleaf token in Settings first."
-
-msgid ""
-"Synchronisation für %(count)d Projekt gestartet – "
-"Ergebnisse erscheinen in wenigen Sekunden."
-msgid_plural ""
-"Synchronisation für %(count)d Projekte gestartet – "
-"Ergebnisse erscheinen in wenigen Sekunden."
-msgstr[0] "Sync started for %(count)d project – results will appear in a few seconds."
-msgstr[1] "Sync started for %(count)d projects – results will appear in a few seconds."
-
-msgid "Kein Overleaf-Token gespeichert. Bitte hinterlege ihn in den Einstellungen."
-msgstr "No Overleaf token saved. Please add it in Settings."
-
-msgid "Synchronisation für „%(name)s“ gestartet – Ergebnisse erscheinen in wenigen Sekunden."
-msgstr "Sync started for \"%(name)s\" – results will appear in a few seconds."
-
-msgid "Overleaf-Token wurde verschlüsselt gespeichert."
-msgstr "Overleaf token saved securely."
-
-msgid "Bitte gib einen gültigen Token ein."
-msgstr "Please enter a valid token."
-
-msgid "Overleaf-Token wurde entfernt."
-msgstr "Overleaf token removed."
-
-msgid "Projekt „%(name)s” wurde angelegt."
-msgstr "Project \"%(name)s\" was created."
-
-msgid "\"{name}\" wurde zur Gruppe hinzugefügt."
-msgstr "\"{name}\" was added to the group."
-
-msgid "Die Gruppe braucht mindestens einen Admin."
-msgstr "The group needs at least one admin."
-
-msgid "\"{name}\" wurde aus der Gruppe entfernt."
-msgstr "\"{name}\" was removed from the group."
-
 # ── Form validation ───────────────────────────────────────────────────────────
 msgid "Die Passwörter stimmen nicht überein."
 msgstr "The passwords don't match."
-
-msgid "Kein Benutzer mit dieser E-Mail-Adresse gefunden."
-msgstr "No user with this email address found."
-
-msgid "Dieser Benutzer ist bereits Mitglied dieser Gruppe."
-msgstr "This user is already a member of this group."
-
-msgid "Projekt"
-msgstr "Project"
-
-# ── Model choices ─────────────────────────────────────────────────────────────
-msgid "Auth Error"
-msgstr "Auth Error"
-
-msgid "Clone Error"
-msgstr "Clone Error"
-
-msgid "Mitglied"
-msgstr "Member"
-
-msgid "Admin"
-msgstr "Admin"
-
-msgid "Gruppe"
-msgstr "Group"

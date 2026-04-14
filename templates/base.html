@@ -5,7 +5,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Overlytics</title>
+    <title>Änderung durch Austausch</title>
     {% include 'includes/head.html' %}
 </head>
 <body class="bg-cream font-sans text-forest">
@@ -15,58 +15,30 @@
     {# Sidebar #}
     <aside class="w-64 bg-forest text-beige hidden md:flex flex-col flex-shrink-0">
         <div class="h-16 flex items-center px-6 border-b border-beige/20">
-            <i data-lucide="activity" class="w-6 h-6 text-sage mr-2"></i>
-            <span class="text-xl font-bold text-cream tracking-tight">Overlytics</span>
+            <i data-lucide="pen-line" class="w-5 h-5 text-sage mr-3 flex-shrink-0"></i>
+            <span class="text-sm font-bold text-cream leading-tight tracking-tight">Änderung<br>durch Austausch</span>
         </div>
 
         <nav class="flex-1 py-6 px-3 space-y-1">
-            <a href="{% url 'dashboard:index' %}"
+            <a href="{% url 'blog:index' %}"
                class="w-full flex items-center px-3 py-2.5 rounded-lg text-sm font-medium transition-all duration-200
                       {% if active_nav == 'index' %}bg-beige/10 text-cream{% else %}text-beige/70 hover:bg-beige/5 hover:text-cream{% endif %}">
-                <i data-lucide="layout-dashboard"
+                <i data-lucide="newspaper"
                    class="w-5 h-5 mr-3 {% if active_nav == 'index' %}text-sage{% else %}text-beige/50{% endif %}"></i>
-                {% trans "Übersicht" %}
+                {% trans "Beiträge" %}
             </a>
-            <a href="{% url 'dashboard:projects' %}"
-               class="w-full flex items-center px-3 py-2.5 rounded-lg text-sm font-medium transition-all duration-200
-                      {% if active_nav == 'projects' %}bg-beige/10 text-cream{% else %}text-beige/70 hover:bg-beige/5 hover:text-cream{% endif %}">
-                <i data-lucide="folder-git-2"
-                   class="w-5 h-5 mr-3 {% if active_nav == 'projects' %}text-sage{% else %}text-beige/50{% endif %}"></i>
-                {% trans "Projekte" %}
-            </a>
-            <a href="{% url 'dashboard:groups' %}"
-               class="w-full flex items-center px-3 py-2.5 rounded-lg text-sm font-medium transition-all duration-200
-                      {% if active_nav == 'groups' %}bg-beige/10 text-cream{% else %}text-beige/70 hover:bg-beige/5 hover:text-cream{% endif %}">
-                <i data-lucide="users"
-                   class="w-5 h-5 mr-3 {% if active_nav == 'groups' %}text-sage{% else %}text-beige/50{% endif %}"></i>
-                {% trans "Gruppen" %}
-            </a>
-            <a href="{% url 'dashboard:settings' %}"
-               class="w-full flex items-center px-3 py-2.5 rounded-lg text-sm font-medium transition-all duration-200
-                      {% if active_nav == 'settings' %}bg-beige/10 text-cream{% else %}text-beige/70 hover:bg-beige/5 hover:text-cream{% endif %}">
-                <i data-lucide="settings"
-                   class="w-5 h-5 mr-3 {% if active_nav == 'settings' %}text-sage{% else %}text-beige/50{% endif %}"></i>
-                {% trans "Einstellungen" %}
-            </a>
-            {% if request.user.is_staff %}
-            <a href="{% url 'dashboard:staff_overview' %}"
-               class="w-full flex items-center px-3 py-2.5 rounded-lg text-sm font-medium transition-all duration-200
-                      {% if active_nav == 'staff' %}bg-beige/10 text-cream{% else %}text-beige/70 hover:bg-beige/5 hover:text-cream{% endif %}">
-                <i data-lucide="shield"
-                   class="w-5 h-5 mr-3 {% if active_nav == 'staff' %}text-sage{% else %}text-beige/50{% endif %}"></i>
-                Admin
-            </a>
-            {% endif %}
         </nav>
 
         <div class="p-4 border-t border-beige/20">
             <div class="flex items-center gap-3 mb-4 px-2">
-                <div class="w-8 h-8 rounded-full bg-wheat flex items-center justify-center text-forest font-bold text-sm">
+                <div class="w-8 h-8 rounded-full bg-wheat flex items-center justify-center text-forest font-bold text-sm flex-shrink-0">
                     {{ request.user.initials }}
                 </div>
                 <div class="flex flex-col min-w-0">
                     <span class="text-sm font-medium text-cream truncate">{{ request.user.name }}</span>
-                    <span class="text-xs text-beige/70">Free Plan</span>
+                    {% if request.user.is_staff %}
+                    <span class="text-xs text-sage/80">Admin</span>
+                    {% endif %}
                 </div>
             </div>
             <form method="post" action="{% url 'accounts:logout' %}">
@@ -97,40 +69,15 @@
                     </button>
                 </form>
 
-                <a href="{% url 'dashboard:project_create' %}"
+                {% if request.user.is_staff %}
+                <a href="{% url 'blog:post_create' %}"
                    class="bg-forest hover:bg-forest/90 text-cream px-4 py-2 rounded-md text-sm font-medium flex items-center transition-colors shadow-sm">
                     <i data-lucide="plus" class="w-4 h-4 mr-2"></i>
-                    {% trans "Projekt tracken" %}
-                </a>
-            </div>
-        </header>
-
-        {# Onboarding banner #}
-        {% if onboarding_step %}
-        <div class="px-6 pt-4">
-            <div class="flex items-center justify-between gap-4 rounded-lg border border-wheat-dark bg-wheat/40 px-4 py-3 text-sm text-forest">
-                <div class="flex items-center gap-2.5">
-                    <i data-lucide="circle-alert" class="w-4 h-4 text-forest/50 flex-shrink-0"></i>
-                    {% if onboarding_step == 1 %}
-                    <span>{% trans "Schritt 1/2: Hinterlege deinen Overleaf-Token, damit deine Projekte synchronisiert werden können." %}</span>
-                    {% else %}
-                    <span>{% trans "Schritt 2/2: Lege dein erstes Projekt an, um mit dem Tracking zu beginnen." %}</span>
-                    {% endif %}
-                </div>
-                {% if onboarding_step == 1 %}
-                <a href="{% url 'dashboard:onboarding' %}"
-                   class="flex-shrink-0 font-medium underline-offset-2 hover:underline whitespace-nowrap">
-                    {% trans "Einrichten →" %}
-                </a>
-                {% else %}
-                <a href="{% url 'dashboard:onboarding' %}?step=2"
-                   class="flex-shrink-0 font-medium underline-offset-2 hover:underline whitespace-nowrap">
-                    {% trans "Jetzt anlegen →" %}
+                    {% trans "Neuer Beitrag" %}
                 </a>
                 {% endif %}
             </div>
-        </div>
-        {% endif %}
+        </header>
 
         {# Flash messages #}
         {% if messages %}

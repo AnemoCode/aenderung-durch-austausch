@@ -1,0 +1,101 @@
+{% extends 'base.html' %}
+{% load i18n %}
+
+{% block content %}
+
+<div class="mb-5">
+    <a href="{% url 'blog:index' %}"
+       class="inline-flex items-center gap-1.5 text-sm text-forest/50 hover:text-forest transition-colors">
+        <i data-lucide="arrow-left" class="w-4 h-4"></i>
+        {% trans "Zurück" %}
+    </a>
+</div>
+
+<div class="max-w-2xl">
+    <div class="mb-6">
+        <h1 class="text-2xl font-bold text-forest">{% trans "Neuer Beitrag" %}</h1>
+        <p class="text-sm text-forest/50 mt-1">{% trans "Veröffentliche einen neuen Beitrag für alle Leser." %}</p>
+    </div>
+
+    <div class="bg-white rounded-2xl border border-beige shadow-sm overflow-hidden">
+        <div class="h-1.5 bg-forest"></div>
+        <div class="p-8">
+            <form method="post" novalidate>
+                {% csrf_token %}
+
+                {# Title #}
+                <div class="mb-5">
+                    <label for="{{ form.title.id_for_label }}"
+                           class="block text-sm font-medium text-forest mb-1.5">
+                        {% trans "Titel" %} <span class="text-rose-400">*</span>
+                    </label>
+                    <input type="text"
+                           name="{{ form.title.html_name }}"
+                           id="{{ form.title.id_for_label }}"
+                           value="{{ form.title.value|default:'' }}"
+                           placeholder="{% trans "Worum geht es in diesem Beitrag?" %}"
+                           class="w-full rounded-lg border px-3 py-2.5 text-sm text-forest
+                                  {% if form.title.errors %}border-rose-400 bg-rose-50{% else %}border-beige bg-cream{% endif %}
+                                  focus:outline-none focus:border-forest/40 focus:ring-2 focus:ring-forest/10 transition">
+                    {% for e in form.title.errors %}
+                    <p class="mt-1 text-xs text-rose-500">{{ e }}</p>
+                    {% endfor %}
+                </div>
+
+                {# Subtitle #}
+                <div class="mb-5">
+                    <label for="{{ form.subtitle.id_for_label }}"
+                           class="block text-sm font-medium text-forest mb-1.5">
+                        {% trans "Untertitel" %}
+                        <span class="text-forest/40 font-normal">– {% trans "optional" %}</span>
+                    </label>
+                    <input type="text"
+                           name="{{ form.subtitle.html_name }}"
+                           id="{{ form.subtitle.id_for_label }}"
+                           value="{{ form.subtitle.value|default:'' }}"
+                           placeholder="{% trans "Ein ergänzender Satz oder Kontext" %}"
+                           class="w-full rounded-lg border px-3 py-2.5 text-sm text-forest
+                                  {% if form.subtitle.errors %}border-rose-400 bg-rose-50{% else %}border-beige bg-cream{% endif %}
+                                  focus:outline-none focus:border-forest/40 focus:ring-2 focus:ring-forest/10 transition">
+                    {% for e in form.subtitle.errors %}
+                    <p class="mt-1 text-xs text-rose-500">{{ e }}</p>
+                    {% endfor %}
+                </div>
+
+                {# Description #}
+                <div class="mb-6">
+                    <label for="{{ form.description.id_for_label }}"
+                           class="block text-sm font-medium text-forest mb-1.5">
+                        {% trans "Inhalt" %} <span class="text-rose-400">*</span>
+                    </label>
+                    <textarea
+                        name="{{ form.description.html_name }}"
+                        id="{{ form.description.id_for_label }}"
+                        rows="12"
+                        placeholder="{% trans "Schreibe deinen Beitrag in einfacher Sprache…" %}"
+                        class="w-full rounded-lg border px-3 py-2.5 text-sm text-forest resize-y
+                               {% if form.description.errors %}border-rose-400 bg-rose-50{% else %}border-beige bg-cream{% endif %}
+                               focus:outline-none focus:border-forest/40 focus:ring-2 focus:ring-forest/10 transition">{{ form.description.value|default:'' }}</textarea>
+                    {% for e in form.description.errors %}
+                    <p class="mt-1 text-xs text-rose-500">{{ e }}</p>
+                    {% endfor %}
+                    <p class="mt-1.5 text-xs text-forest/40">{% trans "Schreibe klar und verständlich. Zeilenumbrüche werden übernommen." %}</p>
+                </div>
+
+                <div class="flex items-center gap-3">
+                    <button type="submit"
+                            class="bg-forest hover:bg-forest/90 text-cream px-6 py-2.5 rounded-lg text-sm font-medium transition-colors shadow-sm flex items-center gap-2">
+                        <i data-lucide="send" class="w-4 h-4"></i>
+                        {% trans "Beitrag veröffentlichen" %}
+                    </button>
+                    <a href="{% url 'blog:index' %}"
+                       class="px-4 py-2.5 rounded-lg text-sm font-medium text-forest/60 hover:text-forest border border-beige hover:border-forest/30 transition-colors">
+                        {% trans "Abbrechen" %}
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

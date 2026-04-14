@@ -5,7 +5,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Overlytics – {% trans "Registrieren" %}</title>
+    <title>Änderung durch Austausch – {% trans "Registrieren" %}</title>
     {% include 'includes/head.html' %}
 </head>
 <body class="min-h-screen bg-cream flex items-center justify-center font-sans text-forest">
@@ -25,15 +25,15 @@
 
     <div class="w-full max-w-sm px-4">
 
-        <div class="flex items-center justify-center gap-2 mb-8">
-            <i data-lucide="activity" class="w-7 h-7 text-forest"></i>
-            <span class="text-2xl font-bold tracking-tight text-forest">Overlytics</span>
+        <div class="flex items-center justify-center gap-2.5 mb-8">
+            <i data-lucide="pen-line" class="w-6 h-6 text-forest"></i>
+            <span class="text-xl font-bold tracking-tight text-forest leading-tight">Änderung durch Austausch</span>
         </div>
 
         <div class="bg-white rounded-2xl border border-beige shadow-sm p-8">
 
             <h1 class="text-lg font-semibold text-forest mb-1">{% trans "Konto erstellen" %}</h1>
-            <p class="text-sm text-forest/60 mb-6">{% trans "Tracke deine Overleaf-Projekte." %}</p>
+            <p class="text-sm text-forest/60 mb-6">{% trans "Lies und kommentiere Beiträge." %}</p>
 
             <form method="post" action="{% url 'accounts:register' %}" novalidate>
                 {% csrf_token %}
@@ -121,7 +121,7 @@
             <a href="{% url 'accounts:login' %}" class="font-medium text-forest hover:underline">{% trans "Anmelden" %}</a>
         </p>
 
-        <p class="text-center text-xs text-forest/30 mt-4">&copy; {% now "Y" %} Overlytics</p>
+        <p class="text-center text-xs text-forest/30 mt-4">&copy; {% now "Y" %} Änderung durch Austausch</p>
     </div>
 
     <script>lucide.createIcons();</script>
