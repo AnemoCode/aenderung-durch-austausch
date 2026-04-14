@@ -68,16 +68,6 @@ jobs:
             ghcr.io/${{ steps.image-tag.outputs.owner }}/aenderung-durch-austausch-postgres:${{ steps.image-tag.outputs.tag }}
             ghcr.io/${{ steps.image-tag.outputs.owner }}/aenderung-durch-austausch-postgres:latest
 
-      - name: Build and push traefik image
-        uses: docker/build-push-action@v6
-        with:
-          context: .
-          file: ./compose/production/traefik/Dockerfile
-          push: true
-          tags: |
-            ghcr.io/${{ steps.image-tag.outputs.owner }}/aenderung-durch-austausch-traefik:${{ steps.image-tag.outputs.tag }}
-            ghcr.io/${{ steps.image-tag.outputs.owner }}/aenderung-durch-austausch-traefik:latest
-
       - name: Build and push nginx image
         uses: docker/build-push-action@v6
         with:
