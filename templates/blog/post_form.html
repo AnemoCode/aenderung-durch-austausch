@@ -3,98 +3,100 @@
 
 {% block content %}
 
-<div class="mb-5">
-    <a href="{% url 'blog:index' %}"
-       class="inline-flex items-center gap-1.5 text-sm text-forest/50 hover:text-forest transition-colors">
-        <i data-lucide="arrow-left" class="w-4 h-4"></i>
-        {% trans "Zurück" %}
-    </a>
-</div>
+<div class="max-w-3xl mx-auto">
 
-<div class="max-w-2xl">
-    <div class="mb-6">
-        <h1 class="text-2xl font-bold text-forest">{% trans "Neuer Beitrag" %}</h1>
-        <p class="text-sm text-forest/50 mt-1">{% trans "Veröffentliche einen neuen Beitrag für alle Leser." %}</p>
+    <div class="mb-8">
+        <a href="{% url 'blog:index' %}"
+           class="inline-flex items-center gap-1.5 meta-label text-forest/60 hover:text-forest transition-colors">
+            <i data-lucide="arrow-left" class="w-4 h-4"></i>
+            {% trans "Zurück" %}
+        </a>
     </div>
 
-    <div class="bg-white rounded-2xl border border-beige shadow-sm overflow-hidden">
-        <div class="h-1.5 bg-forest"></div>
-        <div class="p-8">
-            <form method="post" novalidate>
-                {% csrf_token %}
+    <div class="mb-10">
+        <div class="meta-label text-forest/50 mb-4">{% trans "Neu" %}</div>
+        <h1 class="font-display text-4xl md:text-5xl text-forest tracking-tight leading-[1.1]">
+            {% trans "Neuer Beitrag" %}
+        </h1>
+        <p class="font-serif text-lg text-forest/65 mt-4 leading-relaxed">
+            {% trans "Veröffentliche einen neuen Beitrag für alle Leser." %}
+        </p>
+    </div>
 
-                {# Title #}
-                <div class="mb-5">
-                    <label for="{{ form.title.id_for_label }}"
-                           class="block text-sm font-medium text-forest mb-1.5">
-                        {% trans "Titel" %} <span class="text-rose-400">*</span>
-                    </label>
-                    <input type="text"
-                           name="{{ form.title.html_name }}"
-                           id="{{ form.title.id_for_label }}"
-                           value="{{ form.title.value|default:'' }}"
-                           placeholder="{% trans "Worum geht es in diesem Beitrag?" %}"
-                           class="w-full rounded-lg border px-3 py-2.5 text-sm text-forest
-                                  {% if form.title.errors %}border-rose-400 bg-rose-50{% else %}border-beige bg-cream{% endif %}
-                                  focus:outline-none focus:border-forest/40 focus:ring-2 focus:ring-forest/10 transition">
-                    {% for e in form.title.errors %}
-                    <p class="mt-1 text-xs text-rose-500">{{ e }}</p>
-                    {% endfor %}
-                </div>
+    <div class="lilac-card p-7 md:p-10">
+        <form method="post" novalidate>
+            {% csrf_token %}
 
-                {# Subtitle #}
-                <div class="mb-5">
-                    <label for="{{ form.subtitle.id_for_label }}"
-                           class="block text-sm font-medium text-forest mb-1.5">
-                        {% trans "Untertitel" %}
-                        <span class="text-forest/40 font-normal">– {% trans "optional" %}</span>
-                    </label>
-                    <input type="text"
-                           name="{{ form.subtitle.html_name }}"
-                           id="{{ form.subtitle.id_for_label }}"
-                           value="{{ form.subtitle.value|default:'' }}"
-                           placeholder="{% trans "Ein ergänzender Satz oder Kontext" %}"
-                           class="w-full rounded-lg border px-3 py-2.5 text-sm text-forest
-                                  {% if form.subtitle.errors %}border-rose-400 bg-rose-50{% else %}border-beige bg-cream{% endif %}
-                                  focus:outline-none focus:border-forest/40 focus:ring-2 focus:ring-forest/10 transition">
-                    {% for e in form.subtitle.errors %}
-                    <p class="mt-1 text-xs text-rose-500">{{ e }}</p>
-                    {% endfor %}
-                </div>
+            {# Title #}
+            <div class="mb-6">
+                <label for="{{ form.title.id_for_label }}"
+                       class="block meta-label text-forest/60 mb-2">
+                    {% trans "Titel" %} <span class="text-rose-400 tracking-normal">*</span>
+                </label>
+                <input type="text"
+                       name="{{ form.title.html_name }}"
+                       id="{{ form.title.id_for_label }}"
+                       value="{{ form.title.value|default:'' }}"
+                       placeholder="{% trans "Worum geht es in diesem Beitrag?" %}"
+                       class="lilac-input w-full px-4 py-3 font-display text-xl
+                              {% if form.title.errors %}!border-rose-400 !bg-rose-50{% endif %}">
+                {% for e in form.title.errors %}
+                <p class="mt-1.5 text-xs text-rose-500">{{ e }}</p>
+                {% endfor %}
+            </div>
 
-                {# Description #}
-                <div class="mb-6">
-                    <label for="{{ form.description.id_for_label }}"
-                           class="block text-sm font-medium text-forest mb-1.5">
-                        {% trans "Inhalt" %} <span class="text-rose-400">*</span>
-                    </label>
-                    <textarea
-                        name="{{ form.description.html_name }}"
-                        id="{{ form.description.id_for_label }}"
-                        rows="12"
-                        placeholder="{% trans "Schreibe deinen Beitrag in einfacher Sprache…" %}"
-                        class="w-full rounded-lg border px-3 py-2.5 text-sm text-forest resize-y
-                               {% if form.description.errors %}border-rose-400 bg-rose-50{% else %}border-beige bg-cream{% endif %}
-                               focus:outline-none focus:border-forest/40 focus:ring-2 focus:ring-forest/10 transition">{{ form.description.value|default:'' }}</textarea>
-                    {% for e in form.description.errors %}
-                    <p class="mt-1 text-xs text-rose-500">{{ e }}</p>
-                    {% endfor %}
-                    <p class="mt-1.5 text-xs text-forest/40">{% trans "Schreibe klar und verständlich. Zeilenumbrüche werden übernommen." %}</p>
-                </div>
+            {# Subtitle #}
+            <div class="mb-6">
+                <label for="{{ form.subtitle.id_for_label }}"
+                       class="block meta-label text-forest/60 mb-2">
+                    {% trans "Untertitel" %}
+                    <span class="text-forest/40 tracking-normal normal-case font-normal">— {% trans "optional" %}</span>
+                </label>
+                <input type="text"
+                       name="{{ form.subtitle.html_name }}"
+                       id="{{ form.subtitle.id_for_label }}"
+                       value="{{ form.subtitle.value|default:'' }}"
+                       placeholder="{% trans "Ein ergänzender Satz oder Kontext" %}"
+                       class="lilac-input w-full px-4 py-3 font-serif italic text-base
+                              {% if form.subtitle.errors %}!border-rose-400 !bg-rose-50{% endif %}">
+                {% for e in form.subtitle.errors %}
+                <p class="mt-1.5 text-xs text-rose-500">{{ e }}</p>
+                {% endfor %}
+            </div>
 
-                <div class="flex items-center gap-3">
-                    <button type="submit"
-                            class="bg-forest hover:bg-forest/90 text-cream px-6 py-2.5 rounded-lg text-sm font-medium transition-colors shadow-sm flex items-center gap-2">
-                        <i data-lucide="send" class="w-4 h-4"></i>
-                        {% trans "Beitrag veröffentlichen" %}
-                    </button>
-                    <a href="{% url 'blog:index' %}"
-                       class="px-4 py-2.5 rounded-lg text-sm font-medium text-forest/60 hover:text-forest border border-beige hover:border-forest/30 transition-colors">
-                        {% trans "Abbrechen" %}
-                    </a>
-                </div>
-            </form>
-        </div>
+            {# Description #}
+            <div class="mb-8">
+                <label for="{{ form.description.id_for_label }}"
+                       class="block meta-label text-forest/60 mb-2">
+                    {% trans "Inhalt" %} <span class="text-rose-400 tracking-normal">*</span>
+                </label>
+                <textarea
+                    name="{{ form.description.html_name }}"
+                    id="{{ form.description.id_for_label }}"
+                    rows="14"
+                    placeholder="{% trans "Schreibe deinen Beitrag in einfacher Sprache…" %}"
+                    class="lilac-input w-full px-4 py-3 font-serif text-base leading-relaxed resize-y
+                           {% if form.description.errors %}!border-rose-400 !bg-rose-50{% endif %}">{{ form.description.value|default:'' }}</textarea>
+                {% for e in form.description.errors %}
+                <p class="mt-1.5 text-xs text-rose-500">{{ e }}</p>
+                {% endfor %}
+                <p class="mt-2 text-xs text-forest/45 font-serif italic">
+                    {% trans "Schreibe klar und verständlich. Zeilenumbrüche werden übernommen." %}
+                </p>
+            </div>
+
+            <div class="flex items-center gap-3">
+                <button type="submit"
+                        class="bg-forest hover:bg-forest-700 text-cream px-6 py-3 rounded-md text-sm font-semibold transition-colors shadow-sm inline-flex items-center gap-2">
+                    <i data-lucide="send" class="w-4 h-4"></i>
+                    {% trans "Beitrag veröffentlichen" %}
+                </button>
+                <a href="{% url 'blog:index' %}"
+                   class="px-5 py-3 rounded-md text-sm font-semibold text-forest/65 hover:text-forest border border-forest/15 hover:border-forest/35 transition-colors">
+                    {% trans "Abbrechen" %}
+                </a>
+            </div>
+        </form>
     </div>
 </div>
 

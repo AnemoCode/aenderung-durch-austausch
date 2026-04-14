@@ -5,115 +5,182 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Änderung durch Austausch</title>
+    <title>ÄdA — Ändern durch Austausch</title>
     {% include 'includes/head.html' %}
+
+    {# Editorial typography: Playfair Display (display) + Lora (body) — same as landing #}
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400;1,700&display=swap" rel="stylesheet">
+
+    <style>
+        [x-cloak] { display: none !important; }
+        body.app-body { background-color: #F2EEF9; }
+
+        .font-display { font-family: 'Playfair Display', 'Times New Roman', serif; }
+        .font-serif   { font-family: 'Lora', Georgia, 'Times New Roman', serif; }
+
+        .meta-label {
+            letter-spacing: 0.28em;
+            text-transform: uppercase;
+            font-size: 0.72rem;
+            font-weight: 600;
+        }
+
+        {# Card surface — matches landing chapter cards #}
+        .lilac-card {
+            background-color: #EDE9F8;
+            border: 1px solid rgba(52, 73, 69, 0.12);
+            border-radius: 1rem;
+            transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
+        }
+        .lilac-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 18px 40px -20px rgba(76, 55, 120, 0.25);
+            border-color: rgba(52, 73, 69, 0.25);
+        }
+
+        {# Inputs that feel at home on a lilac background #}
+        .lilac-input {
+            background-color: #FFFFFF;
+            border: 1px solid rgba(52, 73, 69, 0.18);
+            border-radius: 0.5rem;
+            color: #344945;
+            transition: border-color 0.2s ease, box-shadow 0.2s ease;
+        }
+        .lilac-input:focus {
+            outline: none;
+            border-color: rgba(52, 73, 69, 0.5);
+            box-shadow: 0 0 0 3px rgba(76, 55, 120, 0.12);
+        }
+    </style>
 </head>
-<body class="bg-cream font-sans text-forest">
+<body class="app-body font-sans text-forest min-h-screen antialiased selection:bg-forest selection:text-cream flex flex-col">
 
-<div class="flex h-screen overflow-hidden">
-
-    {# Sidebar #}
-    <aside class="w-64 bg-forest text-beige hidden md:flex flex-col flex-shrink-0">
-        <a href="{% url 'landing' %}" class="h-16 flex items-center px-6 border-b border-beige/20 hover:bg-beige/5 transition-colors">
-            <i data-lucide="pen-line" class="w-5 h-5 text-sage mr-3 flex-shrink-0"></i>
-            <span class="text-sm font-bold text-cream leading-tight tracking-tight">Änderung<br>durch Austausch</span>
-        </a>
-
-        <nav class="flex-1 py-6 px-3 space-y-1">
-            <a href="{% url 'blog:index' %}"
-               class="w-full flex items-center px-3 py-2.5 rounded-lg text-sm font-medium transition-all duration-200
-                      {% if active_nav == 'index' %}bg-beige/10 text-cream{% else %}text-beige/70 hover:bg-beige/5 hover:text-cream{% endif %}">
-                <i data-lucide="newspaper"
-                   class="w-5 h-5 mr-3 {% if active_nav == 'index' %}text-sage{% else %}text-beige/50{% endif %}"></i>
-                {% trans "Beiträge" %}
+    {# ─── Top navigation — editorial, matches landing page header ──────── #}
+    <header class="sticky top-0 z-30 border-b border-forest/10" style="background-color: rgba(242, 238, 249, 0.85); backdrop-filter: blur(8px);">
+        <div class="max-w-7xl mx-auto px-6 py-5 flex items-center justify-between gap-4">
+            <a href="{% url 'landing' %}" class="flex items-center gap-3 group flex-shrink-0">
+                <i data-lucide="pen-line" class="w-5 h-5 text-forest/90 group-hover:text-forest transition"></i>
+                <span class="font-display text-lg font-bold tracking-tight text-forest leading-none">
+                    ÄdA
+                </span>
             </a>
-        </nav>
 
-        <div class="p-4 border-t border-beige/20">
-            <div class="flex items-center gap-3 mb-4 px-2">
-                <div class="w-8 h-8 rounded-full bg-wheat flex items-center justify-center text-forest font-bold text-sm flex-shrink-0">
-                    {{ request.user.initials }}
-                </div>
-                <div class="flex flex-col min-w-0">
-                    <span class="text-sm font-medium text-cream truncate">{{ request.user.name }}</span>
-                    {% if request.user.is_staff %}
-                    <span class="text-xs text-sage/80">{% trans "Admin" %}</span>
-                    {% endif %}
-                </div>
-            </div>
-            <form method="post" action="{% url 'accounts:logout' %}">
-                {% csrf_token %}
-                <button type="submit"
-                        class="flex items-center w-full px-2 py-2 text-sm font-medium text-beige/70 hover:text-cream rounded-md transition-colors">
-                    <i data-lucide="log-out" class="w-4 h-4 mr-3"></i>
-                    {% trans "Abmelden" %}
-                </button>
-            </form>
-        </div>
-    </aside>
+            <nav class="hidden md:flex items-center gap-8">
+                <a href="{% url 'blog:index' %}"
+                   class="meta-label transition-colors
+                          {% if active_nav == 'index' %}text-forest{% else %}text-forest/60 hover:text-forest{% endif %}">
+                    {% trans "Blog" %}
+                </a>
+                <a href="{% url 'landing' %}#kapitel"
+                   class="meta-label text-forest/60 hover:text-forest transition-colors">
+                    {% trans "Das Handbuch" %}
+                </a>
+                <a href="{% url 'landing' %}#mitmachen"
+                   class="meta-label text-forest/60 hover:text-forest transition-colors">
+                    {% trans "Mitmachen" %}
+                </a>
+            </nav>
 
-    {# Main Content #}
-    <main class="flex-1 flex flex-col h-screen overflow-y-auto">
-
-        {# Top Header #}
-        <header class="bg-cream flex items-center justify-end px-6 pt-4 pb-2 sticky top-0 z-10">
-            <div class="flex items-center space-x-3">
-                {# Language switcher #}
+            <div class="flex items-center gap-3 flex-shrink-0">
                 <form action="{% url 'set_language' %}" method="post">
                     {% csrf_token %}
                     <input type="hidden" name="next" value="{{ request.path }}">
                     <input type="hidden" name="language" value="{% if CURRENT_LANG == 'de' %}en{% else %}de{% endif %}">
                     <button type="submit"
-                            class="text-xs font-semibold tracking-wide text-forest/60 hover:text-forest border border-beige/60 hover:border-forest/30 px-2.5 py-1 rounded-md transition-colors bg-white">
+                            class="meta-label text-forest/70 hover:text-forest border border-forest/25 hover:border-forest/60 px-3 py-1.5 rounded-md transition-colors bg-white/40">
                         {% if CURRENT_LANG == 'de' %}EN{% else %}DE{% endif %}
                     </button>
                 </form>
 
-                {% if request.user.is_staff %}
-                <a href="{% url 'blog:post_create' %}"
-                   class="bg-forest hover:bg-forest/90 text-cream px-4 py-2 rounded-md text-sm font-medium flex items-center transition-colors shadow-sm">
-                    <i data-lucide="plus" class="w-4 h-4 mr-2"></i>
-                    {% trans "Neuer Beitrag" %}
-                </a>
+                {% if request.user.is_authenticated %}
+                    {% if request.user.is_staff %}
+                    <a href="{% url 'blog:post_create' %}"
+                       class="hidden sm:inline-flex bg-forest text-cream px-4 py-2 rounded-md text-sm font-semibold hover:bg-forest-700 transition-colors shadow-sm items-center gap-2">
+                        <i data-lucide="plus" class="w-4 h-4"></i>
+                        {% trans "Neuer Beitrag" %}
+                    </a>
+                    {% endif %}
+
+                    <div x-data="{ open: false }" class="relative">
+                        <button @click="open = !open" @click.outside="open = false"
+                                class="flex items-center gap-2 px-2 py-1 rounded-md hover:bg-white/60 transition-colors">
+                            <div class="w-8 h-8 rounded-full bg-wheat flex items-center justify-center text-forest font-bold text-sm flex-shrink-0">
+                                {{ request.user.initials }}
+                            </div>
+                            <i data-lucide="chevron-down" class="w-4 h-4 text-forest/50"></i>
+                        </button>
+                        <div x-show="open" x-transition
+                             class="absolute right-0 mt-2 w-56 rounded-xl border border-forest/10 shadow-lg py-2"
+                             style="background-color: #FDFBFF;" x-cloak>
+                            <div class="px-4 py-2">
+                                <p class="text-sm font-medium text-forest truncate">{{ request.user.name }}</p>
+                                {% if request.user.is_staff %}
+                                <p class="meta-label text-forest/50 mt-1">{% trans "Admin" %}</p>
+                                {% endif %}
+                            </div>
+                            <div class="border-t border-forest/10 my-1"></div>
+                            <form method="post" action="{% url 'accounts:logout' %}">
+                                {% csrf_token %}
+                                <button type="submit"
+                                        class="flex items-center w-full px-4 py-2 text-sm font-medium text-forest/70 hover:bg-white/60 hover:text-forest transition-colors">
+                                    <i data-lucide="log-out" class="w-4 h-4 mr-3"></i>
+                                    {% trans "Abmelden" %}
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                {% else %}
+                    <a href="{% url 'accounts:login' %}"
+                       class="bg-forest text-cream px-5 py-2 rounded-md text-sm font-semibold hover:bg-forest-700 transition-colors shadow-sm">
+                        {% trans "Anmelden" %}
+                    </a>
                 {% endif %}
             </div>
-        </header>
-
-        {# Flash messages #}
-        {% if messages %}
-        <div class="px-6 pt-4 space-y-2" id="messages-container">
-            {% for message in messages %}
-            <div x-data="{ show: true }"
-                 x-show="show"
-                 x-init="setTimeout(() => show = false, 4000)"
-                 x-transition:leave="transition ease-in duration-300"
-                 x-transition:leave-start="opacity-100"
-                 x-transition:leave-end="opacity-0"
-                 class="flex items-center justify-between gap-3 px-4 py-3 rounded-lg border text-sm
-                        {% if message.tags == 'error' %}bg-rose-50 border-rose-200 text-rose-700
-                        {% else %}bg-sage/30 border-sage text-forest{% endif %}">
-                <div class="flex items-center gap-2">
-                    <i data-lucide="{% if message.tags == 'error' %}alert-circle{% else %}check-circle-2{% endif %}"
-                       class="w-4 h-4 flex-shrink-0"></i>
-                    <span>{{ message }}</span>
-                </div>
-                <button @click="show = false" class="flex-shrink-0 opacity-60 hover:opacity-100 transition-opacity">
-                    <i data-lucide="x" class="w-4 h-4"></i>
-                </button>
-            </div>
-            {% endfor %}
         </div>
-        {% endif %}
+    </header>
 
-        {# Page Content #}
-        <div class="p-6 max-w-7xl mx-auto w-full space-y-6">
+    {# ─── Flash messages ──────────────────────────────────────────────── #}
+    {% if messages %}
+    <div class="max-w-7xl mx-auto w-full px-6 pt-5 space-y-2" id="messages-container">
+        {% for message in messages %}
+        <div x-data="{ show: true }"
+             x-show="show"
+             x-init="setTimeout(() => show = false, 4000)"
+             x-transition:leave="transition ease-in duration-300"
+             x-transition:leave-start="opacity-100"
+             x-transition:leave-end="opacity-0"
+             class="flex items-center justify-between gap-3 px-4 py-3 rounded-lg border text-sm
+                    {% if message.tags == 'error' %}bg-rose-50 border-rose-200 text-rose-700
+                    {% else %}border-forest/15 text-forest{% endif %}"
+             {% if message.tags != 'error' %}style="background-color: #E4DCF3;"{% endif %}>
+            <div class="flex items-center gap-2">
+                <i data-lucide="{% if message.tags == 'error' %}alert-circle{% else %}check-circle-2{% endif %}"
+                   class="w-4 h-4 flex-shrink-0"></i>
+                <span>{{ message }}</span>
+            </div>
+            <button @click="show = false" class="flex-shrink-0 opacity-60 hover:opacity-100 transition-opacity">
+                <i data-lucide="x" class="w-4 h-4"></i>
+            </button>
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    {# ─── Page content ────────────────────────────────────────────────── #}
+    <main class="flex-1 w-full">
+        <div class="max-w-5xl mx-auto px-6 py-10 md:py-16 w-full">
             {% block content %}{% endblock %}
         </div>
-
     </main>
-</div>
 
-<script>lucide.createIcons();</script>
-{% block extra_js %}{% endblock %}
+    {# ─── Footer ──────────────────────────────────────────────────────── #}
+    <footer class="border-t border-forest/10 py-10 text-center text-sm text-forest/45 font-serif">
+        <p>&copy; {% now "Y" %} ÄdA — Ändern durch Austausch</p>
+    </footer>
+
+    <script>lucide.createIcons();</script>
+    {% block extra_js %}{% endblock %}
 </body>
 </html>

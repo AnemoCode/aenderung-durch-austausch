@@ -80,6 +80,24 @@
             box-shadow: 0 18px 40px -20px rgba(76, 55, 120, 0.25);
             border-color: rgba(52, 73, 69, 0.25);
         }
+        {# Allow automatic hyphenation for long German compound titles inside cards #}
+        .chapter-card h3 {
+            hyphens: auto;
+            overflow-wrap: break-word;
+            word-break: break-word;
+        }
+
+        {# Problem section — deeper lilac wash, sets it apart from the Handbuch grid #}
+        .problem-band {
+            background: linear-gradient(180deg, #E4DCF3 0%, #EDE5FA 55%, #F2EEF9 100%);
+            border-top: 1px solid rgba(76, 55, 120, 0.08);
+            border-bottom: 1px solid rgba(76, 55, 120, 0.08);
+        }
+        .problem-quote {
+            background-color: rgba(255, 255, 255, 0.45);
+            border-left: 3px solid #8E76C8;
+            backdrop-filter: blur(2px);
+        }
 
         {# Ensure Tailwind CDN doesn't override the serif body inside editorial regions #}
         .prose-body p { font-family: 'Lora', Georgia, serif; }
@@ -106,6 +124,10 @@
                     </span>
                 </a>
                 <div class="flex items-center gap-3">
+                    <a href="{% url 'blog:index' %}"
+                       class="meta-label text-forest/70 hover:text-forest px-3 py-1.5 transition-colors">
+                        {% trans "Blog" %}
+                    </a>
                     <form action="{% url 'set_language' %}" method="post">
                         {% csrf_token %}
                         <input type="hidden" name="next" value="{{ request.path }}">
@@ -169,28 +191,30 @@
     </section>
 
     {# ─── PROBLEM ──────────────────────────────────────────────────────── #}
-    <section id="problem" class="max-w-3xl mx-auto px-6 pt-24 md:pt-32 pb-20 scroll-mt-8">
-        <div class="meta-label text-forest/50 mb-8">
-            {% trans "Problem" %}
-        </div>
-        <div class="prose-body space-y-6">
-            <p class="font-serif text-xl md:text-2xl leading-[1.6] text-forest/85">
-                Wir kennen alle mindestens eine Person, mit der wir nicht mehr diskutieren wollen.
-                Weil es anstrengend ist. Weil es sich sinnlos anfühlt. Weil man am Ende genervt abbricht.
-            </p>
-            <p class="font-serif text-xl md:text-2xl leading-[1.6] text-forest/85">
-                Aber diese Meinungen verschwinden nicht, wenn wir schweigen.
-                Ohne Austausch werden sie zur Überzeugung.
-            </p>
-        </div>
+    <section id="problem" class="problem-band scroll-mt-8">
+        <div class="max-w-3xl mx-auto px-6 pt-24 md:pt-32 pb-24 md:pb-28">
+            <div class="meta-label text-forest/55 mb-8">
+                {% trans "Problem" %}
+            </div>
+            <div lang="de" class="problem-quote rounded-xl px-6 md:px-8 py-7 md:py-8 prose-body space-y-6">
+                <p class="font-serif text-xl md:text-2xl leading-[1.6] text-forest/90">
+                    Wir kennen alle mindestens eine Person, mit der wir nicht mehr diskutieren wollen.
+                    Weil es anstrengend ist. Weil es sich sinnlos anfühlt. Weil man am Ende genervt abbricht.
+                </p>
+                <p class="font-serif text-xl md:text-2xl leading-[1.6] text-forest/90">
+                    Aber diese Meinungen verschwinden nicht, wenn wir schweigen.
+                    Ohne Austausch werden sie zur Überzeugung.
+                </p>
+            </div>
 
-        <p class="mt-14 font-display text-3xl md:text-4xl lg:text-5xl text-forest leading-[1.2] tracking-tight text-balance">
-            Wir begegnen Hass mit <span class="italic font-normal text-forest/75">Empathie</span> und <span class="italic font-normal text-forest/75">Wissen</span>.
-        </p>
+            <p class="mt-14 font-display text-3xl md:text-4xl lg:text-5xl text-forest leading-[1.2] tracking-tight text-balance">
+                Wir begegnen Hass mit <span class="italic font-normal text-forest/75">Empathie</span> und <span class="italic font-normal text-forest/75">Wissen</span>.
+            </p>
+        </div>
     </section>
 
     {# ─── DIE FÜNF KAPITEL ─────────────────────────────────────────────── #}
-    <section id="kapitel" class="max-w-6xl mx-auto px-6 pt-12 md:pt-20 pb-20 md:pb-28 border-t border-forest/10">
+    <section id="kapitel" class="max-w-6xl mx-auto px-6 pt-20 md:pt-28 pb-20 md:pb-28">
         <div class="mb-14 md:mb-20 max-w-2xl">
             <div class="meta-label text-forest/50 mb-6">{% trans "Das Handbuch" %}</div>
             <h2 class="font-display text-4xl md:text-5xl lg:text-6xl text-forest tracking-tight leading-[1.05]">
@@ -199,7 +223,7 @@
             </h2>
         </div>
 
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 md:gap-6 prose-body">
+        <div lang="de" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 md:gap-6 prose-body">
 
             {# 01 — Definitionen #}
             <article class="chapter-card p-7 md:p-8 flex flex-col h-full">

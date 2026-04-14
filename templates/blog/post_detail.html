@@ -4,116 +4,119 @@
 {% block content %}
 
 {# Back link #}
-<div class="mb-5">
+<div class="max-w-3xl mx-auto mb-8">
     <a href="{% url 'blog:index' %}"
-       class="inline-flex items-center gap-1.5 text-sm text-forest/50 hover:text-forest transition-colors">
+       class="inline-flex items-center gap-1.5 meta-label text-forest/60 hover:text-forest transition-colors">
         <i data-lucide="arrow-left" class="w-4 h-4"></i>
         {% trans "Alle Beiträge" %}
     </a>
 </div>
 
-<div class="max-w-3xl">
+<article class="max-w-3xl mx-auto">
 
-    {# Post #}
-    <article class="bg-white rounded-2xl border border-beige shadow-sm overflow-hidden mb-6">
-        <div class="h-1.5 bg-forest"></div>
-        <div class="p-8">
-
-            {# Author + date #}
-            <div class="flex items-center gap-3 mb-6">
-                <div class="w-9 h-9 rounded-full bg-wheat flex items-center justify-center text-forest font-bold text-sm flex-shrink-0">
-                    {{ post.author.initials }}
-                </div>
-                <div>
-                    <p class="text-sm font-medium text-forest">{{ post.author.name }}</p>
-                    {% with date=post.created_at|date:"d. F Y" time=post.created_at|date:"H:i" %}
-                    <p class="text-xs text-forest/40">{% blocktrans %}{{ date }}, {{ time }} Uhr{% endblocktrans %}</p>
-                    {% endwith %}
-                </div>
-            </div>
-
-            {# Title #}
-            <h1 class="text-2xl font-bold text-forest leading-snug mb-2">{{ post.title }}</h1>
-            {% if post.subtitle %}
-            <p class="text-base text-forest/60 font-medium mb-6">{{ post.subtitle }}</p>
-            {% else %}
-            <div class="mb-6"></div>
-            {% endif %}
-
-            <div class="border-t border-beige mb-6"></div>
-
-            {# Body #}
-            <div class="prose prose-sm max-w-none text-forest/80 leading-relaxed whitespace-pre-wrap">{{ post.description }}</div>
-
-            {# Like button #}
-            <div class="flex items-center gap-4 mt-8 pt-6 border-t border-beige">
-                <button id="like-btn"
-                        data-post-id="{{ post.pk }}"
-                        data-liked="{{ user_liked|yesno:'true,false' }}"
-                        data-url="{% url 'blog:like_toggle' post.pk %}"
-                        class="flex items-center gap-2 px-4 py-2 rounded-lg border text-sm font-medium transition-all
-                               {% if user_liked %}bg-rose-50 border-rose-200 text-rose-600{% else %}border-beige text-forest/60 hover:border-forest/30 hover:text-forest{% endif %}">
-                    <i data-lucide="heart"
-                       id="like-icon"
-                       class="w-4 h-4 {% if user_liked %}fill-rose-400 text-rose-400{% endif %}"></i>
-                    <span id="like-count">{{ post.likes.count }}</span>
-                    <span>{% trans "Gefällt mir" %}</span>
-                </button>
-
-                <span class="flex items-center gap-1.5 text-sm text-forest/40">
-                    <i data-lucide="message-circle" class="w-4 h-4"></i>
-                    {% blocktrans count count=post.comments.count %}{{ count }} Kommentar{% plural %}{{ count }} Kommentare{% endblocktrans %}
-                </span>
-            </div>
+    {# Meta: author + date #}
+    <div class="flex items-center gap-3 mb-8">
+        <div class="w-10 h-10 rounded-full bg-wheat flex items-center justify-center text-forest font-bold text-sm flex-shrink-0">
+            {{ post.author.initials }}
         </div>
-    </article>
+        <div>
+            <p class="text-sm font-medium text-forest">{{ post.author.name }}</p>
+            {% with date=post.created_at|date:"d. F Y" time=post.created_at|date:"H:i" %}
+            <p class="text-xs text-forest/45">{% blocktrans %}{{ date }}, {{ time }} Uhr{% endblocktrans %}</p>
+            {% endwith %}
+        </div>
+    </div>
 
-    {# Comments section #}
-    <section>
-        <h2 class="text-base font-semibold text-forest mb-4">{% trans "Kommentare" %} ({{ post.comments.count }})</h2>
+    {# Title #}
+    <h1 class="font-display text-4xl md:text-5xl lg:text-6xl text-forest tracking-tight leading-[1.05] text-balance mb-4">
+        {{ post.title }}
+    </h1>
+    {% if post.subtitle %}
+    <p class="font-serif italic text-xl md:text-2xl text-forest/65 leading-[1.5] mb-10">
+        {{ post.subtitle }}
+    </p>
+    {% else %}
+    <div class="mb-10"></div>
+    {% endif %}
 
-        {% for comment in post.comments.all %}
-        <div class="bg-white rounded-xl border border-beige px-5 py-4 mb-3">
-            <div class="flex items-center gap-2.5 mb-2">
-                <div class="w-6 h-6 rounded-full bg-sage/60 flex items-center justify-center text-forest font-bold text-xs flex-shrink-0">
-                    {{ comment.author.initials }}
-                </div>
-                <span class="text-xs font-medium text-forest/80">{{ comment.author.name }}</span>
-                <span class="text-xs text-forest/30">·</span>
-                <span class="text-xs text-forest/40">{{ comment.created_at|date:"d. F Y" }}</span>
+    <div class="border-t border-forest/15 mb-10"></div>
+
+    {# Body #}
+    <div class="font-serif text-lg md:text-xl leading-[1.75] text-forest/85 whitespace-pre-wrap">{{ post.description }}</div>
+
+    {# Like + comment stats #}
+    <div class="flex items-center gap-4 mt-14 pt-8 border-t border-forest/15">
+        <button id="like-btn"
+                data-post-id="{{ post.pk }}"
+                data-liked="{{ user_liked|yesno:'true,false' }}"
+                data-url="{% url 'blog:like_toggle' post.pk %}"
+                class="flex items-center gap-2 px-5 py-2.5 rounded-full border text-sm font-medium transition-all
+                       {% if user_liked %}bg-rose-50 border-rose-200 text-rose-600{% else %}bg-white border-forest/15 text-forest/70 hover:border-forest/40 hover:text-forest{% endif %}">
+            <i data-lucide="heart"
+               id="like-icon"
+               class="w-4 h-4 {% if user_liked %}fill-rose-400 text-rose-400{% endif %}"></i>
+            <span id="like-count">{{ post.likes.count }}</span>
+            <span>{% trans "Gefällt mir" %}</span>
+        </button>
+
+        <span class="flex items-center gap-1.5 text-sm text-forest/50">
+            <i data-lucide="message-circle" class="w-4 h-4"></i>
+            {% blocktrans count count=post.comments.count %}{{ count }} Kommentar{% plural %}{{ count }} Kommentare{% endblocktrans %}
+        </span>
+    </div>
+</article>
+
+{# ─── Comments ────────────────────────────────────────────────────── #}
+<section class="max-w-3xl mx-auto mt-16">
+    <div class="meta-label text-forest/50 mb-6">
+        {% trans "Kommentare" %} · {{ post.comments.count }}
+    </div>
+
+    {% for comment in post.comments.all %}
+    <div class="lilac-card px-6 py-5 mb-3">
+        <div class="flex items-center gap-2.5 mb-3">
+            <div class="w-7 h-7 rounded-full bg-white/70 flex items-center justify-center text-forest font-bold text-xs flex-shrink-0">
+                {{ comment.author.initials }}
             </div>
-            <p class="text-sm text-forest/80 leading-relaxed">{{ comment.body }}</p>
+            <span class="text-sm font-medium text-forest/85">{{ comment.author.name }}</span>
+            <span class="text-xs text-forest/30">·</span>
+            <span class="text-xs text-forest/45">{{ comment.created_at|date:"d. F Y" }}</span>
         </div>
-        {% empty %}
-        <div class="text-sm text-forest/40 mb-6">{% trans "Noch keine Kommentare. Sei der Erste!" %}</div>
-        {% endfor %}
+        <p class="font-serif text-base text-forest/85 leading-relaxed">{{ comment.body }}</p>
+    </div>
+    {% empty %}
+    <div class="font-serif italic text-base text-forest/50 mb-6">
+        {% trans "Noch keine Kommentare. Sei der Erste!" %}
+    </div>
+    {% endfor %}
 
-        {# Add comment #}
-        <div class="bg-white rounded-xl border border-beige p-5 mt-4">
-            <h3 class="text-sm font-semibold text-forest mb-4">{% trans "Kommentar schreiben" %}</h3>
-            <form method="post" action="">
-                {% csrf_token %}
-                <div class="mb-4">
-                    <textarea
-                        name="{{ comment_form.body.html_name }}"
-                        id="{{ comment_form.body.id_for_label }}"
-                        rows="3"
-                        placeholder="{% trans "Schreibe einen Kommentar…" %}"
-                        class="w-full rounded-lg border px-3 py-2.5 text-sm text-forest resize-none
-                               {% if comment_form.body.errors %}border-rose-400 bg-rose-50{% else %}border-beige bg-cream{% endif %}
-                               focus:outline-none focus:border-forest/40 focus:ring-2 focus:ring-forest/10 transition"></textarea>
-                    {% for e in comment_form.body.errors %}
-                    <p class="mt-1 text-xs text-rose-500">{{ e }}</p>
-                    {% endfor %}
-                </div>
-                <button type="submit"
-                        class="bg-forest hover:bg-forest/90 text-cream px-5 py-2 rounded-lg text-sm font-medium transition-colors shadow-sm">
-                    {% trans "Kommentar absenden" %}
-                </button>
-            </form>
-        </div>
-    </section>
-</div>
+    {# Add comment #}
+    <div class="lilac-card p-6 md:p-7 mt-6">
+        <h3 class="font-display text-xl text-forest tracking-tight mb-4">
+            {% trans "Kommentar schreiben" %}
+        </h3>
+        <form method="post" action="">
+            {% csrf_token %}
+            <div class="mb-4">
+                <textarea
+                    name="{{ comment_form.body.html_name }}"
+                    id="{{ comment_form.body.id_for_label }}"
+                    rows="3"
+                    placeholder="{% trans "Schreibe einen Kommentar…" %}"
+                    class="lilac-input w-full px-4 py-3 text-sm font-serif resize-none
+                           {% if comment_form.body.errors %}!border-rose-400 !bg-rose-50{% endif %}"></textarea>
+                {% for e in comment_form.body.errors %}
+                <p class="mt-1 text-xs text-rose-500">{{ e }}</p>
+                {% endfor %}
+            </div>
+            <button type="submit"
+                    class="bg-forest hover:bg-forest-700 text-cream px-6 py-2.5 rounded-md text-sm font-semibold transition-colors shadow-sm inline-flex items-center gap-2">
+                <i data-lucide="send" class="w-4 h-4"></i>
+                {% trans "Kommentar absenden" %}
+            </button>
+        </form>
+    </div>
+</section>
 
 {% endblock %}
 
@@ -133,13 +136,13 @@
 
         if (isLiked) {
             btn.className = btn.className
-                .replace('border-beige text-forest/60 hover:border-forest/30 hover:text-forest', '')
+                .replace('bg-white border-forest/15 text-forest/70 hover:border-forest/40 hover:text-forest', '')
                 + ' bg-rose-50 border-rose-200 text-rose-600';
             icon.className = icon.className + ' fill-rose-400 text-rose-400';
         } else {
             btn.className = btn.className
                 .replace('bg-rose-50 border-rose-200 text-rose-600', '')
-                + ' border-beige text-forest/60 hover:border-forest/30 hover:text-forest';
+                + ' bg-white border-forest/15 text-forest/70 hover:border-forest/40 hover:text-forest';
             icon.className = icon.className
                 .replace(' fill-rose-400 text-rose-400', '');
         }

@@ -5,43 +5,103 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Änderung durch Austausch – {% trans "Registrieren" %}</title>
+    <title>ÄdA — {% trans "Registrieren" %}</title>
     {% include 'includes/head.html' %}
-</head>
-<body class="min-h-screen bg-cream flex items-center justify-center font-sans text-forest">
 
-    {# Language switcher (top-right) #}
-    <div class="fixed top-4 right-4">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400;1,700&display=swap" rel="stylesheet">
+
+    <style>
+        body.auth-body {
+            background-color: #F2EEF9;
+            background-image:
+                radial-gradient(ellipse 90% 60% at 85% -10%, rgba(196, 176, 232, 0.55) 0%, transparent 60%),
+                radial-gradient(ellipse 70% 50% at 0% 110%, rgba(139, 184, 176, 0.35) 0%, transparent 60%),
+                radial-gradient(ellipse 60% 40% at 20% 0%, rgba(232, 224, 245, 0.6) 0%, transparent 55%);
+        }
+
+        .font-display { font-family: 'Playfair Display', 'Times New Roman', serif; }
+        .font-serif   { font-family: 'Lora', Georgia, 'Times New Roman', serif; }
+
+        .meta-label {
+            letter-spacing: 0.28em;
+            text-transform: uppercase;
+            font-size: 0.72rem;
+            font-weight: 600;
+        }
+
+        .auth-card {
+            background-color: rgba(253, 251, 255, 0.85);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(52, 73, 69, 0.1);
+            border-radius: 1.25rem;
+            box-shadow: 0 24px 60px -30px rgba(76, 55, 120, 0.25);
+        }
+
+        .lilac-input {
+            background-color: #FFFFFF;
+            border: 1px solid rgba(52, 73, 69, 0.18);
+            border-radius: 0.5rem;
+            color: #344945;
+            transition: border-color 0.2s ease, box-shadow 0.2s ease;
+        }
+        .lilac-input:focus {
+            outline: none;
+            border-color: rgba(52, 73, 69, 0.5);
+            box-shadow: 0 0 0 3px rgba(76, 55, 120, 0.12);
+        }
+    </style>
+</head>
+<body class="auth-body min-h-screen flex items-center justify-center font-sans text-forest antialiased selection:bg-forest selection:text-cream">
+
+    {# Language toggle (top-right) #}
+    <div class="fixed top-5 right-5 z-20">
         <form action="{% url 'set_language' %}" method="post">
             {% csrf_token %}
             <input type="hidden" name="next" value="{{ request.path }}">
             <input type="hidden" name="language" value="{% if CURRENT_LANG == 'de' %}en{% else %}de{% endif %}">
             <button type="submit"
-                    class="text-xs font-semibold tracking-wide text-forest/60 hover:text-forest border border-beige/60 hover:border-forest/30 px-2.5 py-1 rounded-md transition-colors bg-white">
+                    class="meta-label text-forest/70 hover:text-forest border border-forest/25 hover:border-forest/60 px-3 py-1.5 rounded-md transition-colors bg-white/60 backdrop-blur-sm">
                 {% if CURRENT_LANG == 'de' %}EN{% else %}DE{% endif %}
             </button>
         </form>
     </div>
 
-    <div class="w-full max-w-sm px-4">
+    <div class="w-full max-w-md px-6 py-12">
 
-        <a href="{% url 'landing' %}" class="flex items-center justify-center gap-2.5 mb-8 hover:opacity-80 transition-opacity">
-            <i data-lucide="pen-line" class="w-6 h-6 text-forest"></i>
-            <span class="text-xl font-bold tracking-tight text-forest leading-tight">Änderung durch Austausch</span>
+        {# Wordmark #}
+        <a href="{% url 'landing' %}" class="flex items-center justify-center gap-3 mb-10 group">
+            <i data-lucide="pen-line" class="w-6 h-6 text-forest/85 group-hover:text-forest transition"></i>
+            <span class="font-display text-2xl font-bold tracking-tight text-forest leading-none">
+                ÄdA
+            </span>
         </a>
 
-        <div class="bg-white rounded-2xl border border-beige shadow-sm p-8">
+        {# Card #}
+        <div class="auth-card p-8 md:p-10">
 
-            <h1 class="text-lg font-semibold text-forest mb-1">{% trans "Konto erstellen" %}</h1>
-            <p class="text-sm text-forest/60 mb-6">{% trans "Lies und kommentiere Beiträge." %}</p>
+            <div class="meta-label text-forest/50 mb-4">
+                {% trans "Mitmachen" %}
+            </div>
+
+            <h1 class="font-display text-3xl md:text-4xl text-forest tracking-tight leading-[1.1] mb-3">
+                {% trans "Konto" %}
+                <span class="italic font-normal text-forest/70">{% trans "erstellen" %}.</span>
+            </h1>
+            <p class="font-serif text-base text-forest/65 leading-relaxed mb-8">
+                {% trans "Werd ein Teil von ÄdA und beteilige dich am Austausch." %}
+            </p>
 
             <form method="post" action="{% url 'accounts:register' %}" novalidate>
                 {% csrf_token %}
 
                 {# Name #}
-                <div class="mb-4">
+                <div class="mb-5">
                     <label for="{{ form.name.id_for_label }}"
-                           class="block text-sm font-medium text-forest mb-1.5">{% trans "Name" %}</label>
+                           class="block meta-label text-forest/60 mb-2">
+                        {% trans "Name" %}
+                    </label>
                     <input type="text"
                            name="{{ form.name.html_name }}"
                            id="{{ form.name.id_for_label }}"
@@ -49,79 +109,88 @@
                            placeholder="{% trans "z. B. Jane Doe oder ein Alias" %}"
                            autocomplete="name"
                            autofocus
-                           class="w-full rounded-lg border px-3 py-2.5 text-sm text-forest
-                                  {% if form.name.errors %}border-rose-400 bg-rose-50{% else %}border-beige bg-cream{% endif %}
-                                  focus:outline-none focus:border-forest/40 focus:ring-2 focus:ring-forest/10 transition">
+                           class="lilac-input w-full px-4 py-3 text-sm font-serif
+                                  {% if form.name.errors %}!border-rose-400 !bg-rose-50{% endif %}">
                     {% for e in form.name.errors %}
-                    <p class="mt-1 text-xs text-rose-500">{{ e }}</p>
+                    <p class="mt-1.5 text-xs text-rose-500">{{ e }}</p>
                     {% endfor %}
                 </div>
 
                 {# Email #}
-                <div class="mb-4">
+                <div class="mb-5">
                     <label for="{{ form.email.id_for_label }}"
-                           class="block text-sm font-medium text-forest mb-1.5">{% trans "E-Mail-Adresse" %}</label>
+                           class="block meta-label text-forest/60 mb-2">
+                        {% trans "E-Mail-Adresse" %}
+                    </label>
                     <input type="email"
                            name="{{ form.email.html_name }}"
                            id="{{ form.email.id_for_label }}"
                            value="{{ form.email.value|default:'' }}"
                            autocomplete="email"
-                           class="w-full rounded-lg border px-3 py-2.5 text-sm text-forest
-                                  {% if form.email.errors %}border-rose-400 bg-rose-50{% else %}border-beige bg-cream{% endif %}
-                                  focus:outline-none focus:border-forest/40 focus:ring-2 focus:ring-forest/10 transition">
+                           class="lilac-input w-full px-4 py-3 text-sm font-serif
+                                  {% if form.email.errors %}!border-rose-400 !bg-rose-50{% endif %}">
                     {% for e in form.email.errors %}
-                    <p class="mt-1 text-xs text-rose-500">{{ e }}</p>
+                    <p class="mt-1.5 text-xs text-rose-500">{{ e }}</p>
                     {% endfor %}
                 </div>
 
                 {# Password #}
-                <div class="mb-4">
+                <div class="mb-5">
                     <label for="{{ form.password1.id_for_label }}"
-                           class="block text-sm font-medium text-forest mb-1.5">{% trans "Passwort" %}</label>
+                           class="block meta-label text-forest/60 mb-2">
+                        {% trans "Passwort" %}
+                    </label>
                     <input type="password"
                            name="{{ form.password1.html_name }}"
                            id="{{ form.password1.id_for_label }}"
                            autocomplete="new-password"
-                           class="w-full rounded-lg border px-3 py-2.5 text-sm text-forest
-                                  {% if form.password1.errors %}border-rose-400 bg-rose-50{% else %}border-beige bg-cream{% endif %}
-                                  focus:outline-none focus:border-forest/40 focus:ring-2 focus:ring-forest/10 transition">
+                           class="lilac-input w-full px-4 py-3 text-sm font-serif
+                                  {% if form.password1.errors %}!border-rose-400 !bg-rose-50{% endif %}">
                     {% for e in form.password1.errors %}
-                    <p class="mt-1 text-xs text-rose-500">{{ e }}</p>
+                    <p class="mt-1.5 text-xs text-rose-500">{{ e }}</p>
                     {% endfor %}
                     {% if not form.password1.errors %}
-                    <p class="mt-1.5 text-xs text-forest/40">{% trans "Mindestens 8 Zeichen, nicht nur Ziffern." %}</p>
+                    <p class="mt-2 text-xs text-forest/45 font-serif italic">
+                        {% trans "Mindestens 8 Zeichen, nicht nur Ziffern." %}
+                    </p>
                     {% endif %}
                 </div>
 
                 {# Password confirm #}
-                <div class="mb-6">
+                <div class="mb-8">
                     <label for="{{ form.password2.id_for_label }}"
-                           class="block text-sm font-medium text-forest mb-1.5">{% trans "Passwort bestätigen" %}</label>
+                           class="block meta-label text-forest/60 mb-2">
+                        {% trans "Passwort bestätigen" %}
+                    </label>
                     <input type="password"
                            name="{{ form.password2.html_name }}"
                            id="{{ form.password2.id_for_label }}"
                            autocomplete="new-password"
-                           class="w-full rounded-lg border px-3 py-2.5 text-sm text-forest
-                                  {% if form.password2.errors %}border-rose-400 bg-rose-50{% else %}border-beige bg-cream{% endif %}
-                                  focus:outline-none focus:border-forest/40 focus:ring-2 focus:ring-forest/10 transition">
+                           class="lilac-input w-full px-4 py-3 text-sm font-serif
+                                  {% if form.password2.errors %}!border-rose-400 !bg-rose-50{% endif %}">
                     {% for e in form.password2.errors %}
-                    <p class="mt-1 text-xs text-rose-500">{{ e }}</p>
+                    <p class="mt-1.5 text-xs text-rose-500">{{ e }}</p>
                     {% endfor %}
                 </div>
 
                 <button type="submit"
-                        class="w-full bg-forest hover:bg-forest/90 text-cream font-medium text-sm py-2.5 rounded-lg transition-colors shadow-sm">
+                        class="w-full bg-forest hover:bg-forest-700 text-cream font-semibold text-sm py-3 rounded-md transition-colors shadow-sm inline-flex items-center justify-center gap-2">
                     {% trans "Konto erstellen" %}
+                    <i data-lucide="arrow-right" class="w-4 h-4"></i>
                 </button>
             </form>
         </div>
 
-        <p class="text-center text-sm text-forest/60 mt-5">
+        <p class="text-center font-serif text-sm text-forest/60 mt-6">
             {% trans "Bereits ein Konto?" %}
-            <a href="{% url 'accounts:login' %}" class="font-medium text-forest hover:underline">{% trans "Anmelden" %}</a>
+            <a href="{% url 'accounts:login' %}" class="font-semibold text-forest hover:underline underline-offset-4 decoration-forest/30">
+                {% trans "Anmelden" %}
+            </a>
         </p>
 
-        <p class="text-center text-xs text-forest/30 mt-4">&copy; {% now "Y" %} Änderung durch Austausch</p>
+        <p class="text-center text-xs text-forest/30 mt-6 font-serif">
+            &copy; {% now "Y" %} ÄdA — Ändern durch Austausch
+        </p>
     </div>
 
     <script>lucide.createIcons();</script>
