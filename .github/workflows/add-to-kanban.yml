@@ -1,0 +1,22 @@
+name: Add Issues and PRs to Kanban
+
+on:
+  issues:
+    types: [opened, reopened]
+  pull_request:
+    types: [opened, reopened, ready_for_review]
+
+jobs:
+  add-to-project:
+    if: ${{ vars.KANBAN_PROJECT_URL != '' && secrets.ADD_TO_PROJECT_PAT != '' }}
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      issues: write
+      pull-requests: write
+    steps:
+      - name: Add to project board
+        uses: actions/add-to-project@v1.0.2
+        with:
+          project-url: ${{ vars.KANBAN_PROJECT_URL }}
+          github-token: ${{ secrets.ADD_TO_PROJECT_PAT }}
