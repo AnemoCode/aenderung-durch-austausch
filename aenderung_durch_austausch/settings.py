@@ -51,6 +51,7 @@ INSTALLED_APPS = [
     'django.contrib.humanize',
     'apps.accounts',
     'apps.blog',
+    'apps.topics',
 ]
 
 AUTH_USER_MODEL = 'accounts.User'

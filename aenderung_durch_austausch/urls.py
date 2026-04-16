@@ -27,4 +27,5 @@ urlpatterns = [
     path('', TemplateView.as_view(template_name='landing.html'), name='landing'),
     path('', include('apps.accounts.urls', namespace='accounts')),
     path('blog/', include('apps.blog.urls', namespace='blog')),
+    path('themen/', include('apps.topics.urls', namespace='topics')),
 ]

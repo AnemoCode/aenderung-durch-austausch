@@ -1,0 +1,37 @@
+{% extends 'base.html' %}
+{% load i18n %}
+
+{% block content %}
+<div class="max-w-3xl mx-auto">
+
+    <div class="mb-10">
+        <div class="meta-label text-forest/50 mb-4">{% trans "Handbuch" %}</div>
+        <h1 class="font-display text-4xl md:text-5xl text-forest tracking-tight leading-[1.1]">
+            {% trans "Themen" %}
+        </h1>
+        <p class="font-serif text-lg text-forest/65 mt-4 leading-relaxed">
+            {% trans "Alle Themen im Überblick." %}
+        </p>
+    </div>
+
+    {% if topics %}
+    <div class="space-y-4">
+        {% for topic in topics %}
+        <a href="{% url 'topics:topic_detail' topic.pk %}"
+           class="lilac-card block p-6 no-underline">
+            <h2 class="font-display text-xl text-forest font-bold">{{ topic.title }}</h2>
+            {% if topic.description %}
+            <p class="font-serif text-forest/65 mt-2 leading-relaxed line-clamp-2">{{ topic.description }}</p>
+            {% endif %}
+            <p class="meta-label text-forest/40 mt-3">
+                {{ topic.parts.count }} {% trans "Teile" %}
+            </p>
+        </a>
+        {% endfor %}
+    </div>
+    {% else %}
+    <p class="font-serif text-forest/50 italic">{% trans "Noch keine Themen vorhanden." %}</p>
+    {% endif %}
+
+</div>
+{% endblock %}
