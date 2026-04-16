@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-04-14 18:07+0000\n"
+"POT-Creation-Date: 2026-04-16 18:29+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -18,187 +18,330 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
+#: apps/accounts/admin.py:17
 msgid "Persönliche Daten"
 msgstr ""
 
+#: apps/accounts/admin.py:18
 msgid "Berechtigungen"
 msgstr ""
 
+#: apps/accounts/admin.py:19
 msgid "Wichtige Daten"
 msgstr ""
 
+#: apps/accounts/forms.py:13 apps/accounts/models.py:24
+#: templates/accounts/login.html:110 templates/accounts/register.html:123
+#: templates/admin/login.html:65
 msgid "E-Mail-Adresse"
 msgstr ""
 
+#: apps/accounts/forms.py:20 templates/accounts/login.html:128
+#: templates/accounts/register.html:141 templates/admin/login.html:85
 msgid "Passwort"
 msgstr ""
 
+#: apps/accounts/forms.py:25 templates/accounts/register.html:163
 msgid "Passwort bestätigen"
 msgstr ""
 
+#: apps/accounts/forms.py:38
 msgid "Die Passwörter stimmen nicht überein."
 msgstr ""
 
+#: apps/accounts/models.py:10
 msgid "Eine E-Mail-Adresse ist erforderlich."
 msgstr ""
 
+#: apps/accounts/models.py:25 templates/accounts/register.html:103
 msgid "Name"
 msgstr ""
 
+#: apps/accounts/models.py:36 apps/accounts/models.py:37
 msgid "Benutzer"
 msgstr ""
 
-msgid "Titel"
-msgstr ""
-
-msgid "Untertitel"
-msgstr ""
-
-msgid "Inhalt"
-msgstr ""
-
+#: apps/blog/forms.py:12
 msgid "Dein Kommentar"
 msgstr ""
 
+#: apps/blog/forms.py:15 templates/blog/topic_detail.html:141
 msgid "Schreibe einen Kommentar…"
 msgstr ""
 
+#: apps/blog/models.py:10
+msgid "Titel"
+msgstr ""
+
+#: apps/blog/models.py:15
+msgid "URL-Kürzel"
+msgstr ""
+
+#: apps/blog/models.py:21
+msgid "Autor"
+msgstr ""
+
+#: apps/blog/models.py:25
 msgid "Veröffentlicht"
 msgstr ""
 
-msgid "Beitrag"
+#: apps/blog/models.py:33 apps/blog/models.py:70
+msgid "Tags"
 msgstr ""
 
-msgid "Beiträge"
+#: apps/blog/models.py:37 apps/blog/models.py:63
+msgid "Thema"
 msgstr ""
 
+#: apps/blog/models.py:38 templates/blog/topic_list.html:10
+msgid "Themen"
+msgstr ""
+
+#: apps/blog/models.py:65
+msgid "Unterüberschrift"
+msgstr ""
+
+#: apps/blog/models.py:66
+msgid "Inhalt"
+msgstr ""
+
+#: apps/blog/models.py:67
+msgid "Reihenfolge"
+msgstr ""
+
+#: apps/blog/models.py:74
+msgid "Thementeil"
+msgstr ""
+
+#: apps/blog/models.py:75
+msgid "Thementeile"
+msgstr ""
+
+#: apps/blog/models.py:92 apps/blog/models.py:97
 msgid "Kommentar"
 msgstr ""
 
+#: apps/blog/models.py:98 templates/blog/topic_detail.html:107
 msgid "Kommentare"
 msgstr ""
 
+#: apps/blog/models.py:119 apps/blog/models.py:120
+#: templates/blog/topic_detail.html:87 templates/blog/topic_detail.html:93
 msgid "Gefällt mir"
 msgstr ""
 
+#: apps/blog/views.py:67
 msgid "Kommentar hinzugefügt."
 msgstr ""
 
-msgid "Beitrag veröffentlicht."
-msgstr ""
-
+#: templates/accounts/login.html:8 templates/accounts/login.html:85
+#: templates/accounts/login.html:143 templates/accounts/register.html:187
+#: templates/admin/login.html:8 templates/admin/login.html:101
+#: templates/base.html:137 templates/blog/topic_detail.html:162
+#: templates/landing.html:142 templates/landing.html:345
 msgid "Anmelden"
 msgstr ""
 
-msgid "Willkommen zurück"
+#: templates/accounts/login.html:89
+msgid "Willkommen"
 msgstr ""
 
+#: templates/accounts/login.html:90
+msgid "zurück"
+msgstr ""
+
+#: templates/accounts/login.html:93
 msgid "Melde dich an, um die Beiträge zu lesen."
 msgstr ""
 
+#: templates/accounts/login.html:150
 msgid "Noch kein Konto?"
 msgstr ""
 
+#: templates/accounts/login.html:152 templates/accounts/register.html:8
+#: templates/landing.html:340
 msgid "Registrieren"
 msgstr ""
 
-msgid "Konto erstellen"
+#: templates/accounts/register.html:85 templates/base.html:82
+#: templates/landing.html:175 templates/landing.html:330
+msgid "Mitmachen"
 msgstr ""
 
-msgid "Lies und kommentiere Beiträge."
+#: templates/accounts/register.html:89
+msgid "Konto"
 msgstr ""
 
+#: templates/accounts/register.html:90
+msgid "erstellen"
+msgstr ""
+
+#: templates/accounts/register.html:93
+msgid "Werd ein Teil von ÄdA und beteilige dich am Austausch."
+msgstr ""
+
+#: templates/accounts/register.html:109
 msgid "z. B. Jane Doe oder ein Alias"
 msgstr ""
 
+#: templates/accounts/register.html:154
 msgid "Mindestens 8 Zeichen, nicht nur Ziffern."
 msgstr ""
 
+#: templates/accounts/register.html:178
+msgid "Konto erstellen"
+msgstr ""
+
+#: templates/accounts/register.html:185
 msgid "Bereits ein Konto?"
 msgstr ""
 
+#: templates/admin/login.html:37
 msgid "Admin-Zugang"
 msgstr ""
 
+#: templates/admin/login.html:38
 msgid "Nur für Administratoren. Normaler Login unter"
 msgstr ""
 
+#: templates/admin/login.html:53
 #, python-format
-msgid "Du bist als <strong>%(username)s</strong> angemeldet, hast aber keinen Zugriff auf diese Seite."
+msgid ""
+"Du bist als <strong>%(username)s</strong> angemeldet, hast aber keinen "
+"Zugriff auf diese Seite."
 msgstr ""
 
+#: templates/base.html:74 templates/blog/topic_list.html:8
+#: templates/landing.html:129
+msgid "Blog"
+msgstr ""
+
+#: templates/base.html:78 templates/landing.html:219
+msgid "Das Handbuch"
+msgstr ""
+
+#: templates/base.html:102
+msgid "Neues Thema"
+msgstr ""
+
+#: templates/base.html:120
 msgid "Admin"
 msgstr ""
 
+#: templates/base.html:129
 msgid "Abmelden"
 msgstr ""
 
-msgid "Neuer Beitrag"
+#: templates/blog/tag_detail.html:11 templates/blog/topic_detail.html:11
+msgid "Alle Themen"
 msgstr ""
 
+#: templates/blog/tag_detail.html:17
+msgid "Tag"
+msgstr ""
+
+#: templates/blog/tag_detail.html:22 templates/blog/topic_list.html:13
 #, python-format
-msgid "%(count)s Beitrag"
-msgid_plural "%(count)s Beiträge"
+msgid "%(count)s Thema"
+msgid_plural "%(count)s Themen"
 msgstr[0] ""
 msgstr[1] ""
 
-msgid "Weiterlesen"
+#: templates/blog/tag_detail.html:23
+#, python-format
+msgid "%(count)s Thementeil"
+msgid_plural "%(count)s Thementeile"
+msgstr[0] ""
+msgstr[1] ""
+
+#: templates/blog/tag_detail.html:30
+msgid "Themen mit diesem Tag"
 msgstr ""
 
-msgid "Noch keine Beiträge"
+#: templates/blog/tag_detail.html:57
+msgid "Thementeile mit diesem Tag"
 msgstr ""
 
-msgid "Erstelle den ersten Beitrag über den Button oben rechts."
+#: templates/blog/tag_detail.html:85
+msgid "Keine Treffer"
 msgstr ""
 
-msgid "Noch wurden keine Beiträge veröffentlicht."
-msgstr ""
-
-msgid "Alle Beiträge"
-msgstr ""
-
+#: templates/blog/topic_detail.html:25
 #, python-format
 msgid "%(date)s, %(time)s Uhr"
 msgstr ""
 
+#: templates/blog/topic_detail.html:71
+msgid "Inhalte folgen in Kürze."
+msgstr ""
+
+#: templates/blog/topic_detail.html:99
 #, python-format
 msgid "%(count)s Kommentar"
 msgid_plural "%(count)s Kommentare"
 msgstr[0] ""
 msgstr[1] ""
 
+#: templates/blog/topic_detail.html:124
 msgid "Noch keine Kommentare. Sei der Erste!"
 msgstr ""
 
+#: templates/blog/topic_detail.html:132
 msgid "Kommentar schreiben"
 msgstr ""
 
+#: templates/blog/topic_detail.html:151
 msgid "Kommentar absenden"
 msgstr ""
 
-msgid "Zurück"
+#: templates/blog/topic_detail.html:158
+msgid "Melde dich an, um zu kommentieren."
 msgstr ""
 
-msgid "Veröffentliche einen neuen Beitrag für alle Leser."
+#: templates/blog/topic_list.html:14
+msgid "akademisch fundiert, tagespolitisch relevant, persönlich und direkt."
 msgstr ""
 
-msgid "Worum geht es in diesem Beitrag?"
+#: templates/blog/topic_list.html:68 templates/landing.html:188
+msgid "Weiterlesen"
 msgstr ""
 
-msgid "optional"
+#: templates/blog/topic_list.html:83
+msgid "Noch keine Themen"
 msgstr ""
 
-msgid "Ein ergänzender Satz oder Kontext"
+#: templates/blog/topic_list.html:86
+msgid "Noch wurden keine Themen veröffentlicht."
 msgstr ""
 
-msgid "Schreibe deinen Beitrag in einfacher Sprache…"
+#: templates/landing.html:152
+msgid "Community Projekt"
 msgstr ""
 
-msgid "Schreibe klar und verständlich. Zeilenumbrüche werden übernommen."
+#: templates/landing.html:167
+msgid ""
+"Ein digitales Handbuch zum analogen Umgang mit rechtsextremen Meinungen und "
+"Verschwörungstheorien."
 msgstr ""
 
-msgid "Beitrag veröffentlichen"
+#: templates/landing.html:180
+msgid "Mehr erfahren"
 msgstr ""
 
-msgid "Abbrechen"
+#: templates/landing.html:197
+msgid "Problem"
+msgstr ""
+
+#: templates/landing.html:294
+msgid "Community"
+msgstr ""
+
+#: templates/landing.html:332
+msgid "Melde dich an."
+msgstr ""
+
+#: templates/landing.html:335
+msgid ""
+"Werd ein Teil von ÄdA – als Autor:in, Multiplikator:in oder einfach als "
+"Mensch, der das nächste schwierige Gespräch besser führen will."
 msgstr ""
