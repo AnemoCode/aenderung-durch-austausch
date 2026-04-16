@@ -1,21 +1,7 @@
 from django import forms
 from django.utils.translation import gettext_lazy as _
 
-from .models import Comment, Post
-
-
-class PostForm(forms.ModelForm):
-    class Meta:
-        model = Post
-        fields = ['title', 'subtitle', 'description']
-        labels = {
-            'title': _('Titel'),
-            'subtitle': _('Untertitel'),
-            'description': _('Inhalt'),
-        }
-        widgets = {
-            'description': forms.Textarea(attrs={'rows': 12}),
-        }
+from .models import Comment
 
 
 class CommentForm(forms.ModelForm):

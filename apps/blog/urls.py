@@ -5,8 +5,8 @@ from . import views
 app_name = 'blog'
 
 urlpatterns = [
-    path('', views.PostListView.as_view(), name='index'),
-    path('posts/new/', views.PostCreateView.as_view(), name='post_create'),
-    path('posts/<int:pk>/', views.PostDetailView.as_view(), name='post_detail'),
-    path('posts/<int:pk>/like/', views.like_toggle, name='like_toggle'),
+    path('', views.TopicListView.as_view(), name='index'),
+    path('topics/<slug:slug>/', views.TopicDetailView.as_view(), name='topic_detail'),
+    path('topics/<slug:slug>/like/', views.topic_like_toggle, name='topic_like_toggle'),
+    path('posts/<int:pk>/', views.PostDetailRedirectView.as_view(), name='post_detail'),
 ]
