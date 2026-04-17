@@ -1,5 +1,4 @@
 {% load i18n %}
-{% get_current_language as CURRENT_LANG %}
 
 {# ─── Sticky top navigation ─────────────────────────────────────────── #}
 {# Used on landing + all inner pages. The logo is the only link back to the landing page. #}
@@ -48,18 +47,7 @@
         {# Right-hand controls #}
         <div class="flex items-center gap-3 flex-shrink-0">
 
-            {# Language toggle — DE/EN #}
-            <form action="{% url 'set_language' %}" method="post" class="flex-shrink-0">
-                {% csrf_token %}
-                <input type="hidden" name="next" value="{{ request.path }}">
-                <input type="hidden" name="language" value="{% if CURRENT_LANG == 'de' %}en{% else %}de{% endif %}">
-                <button type="submit"
-                        class="meta-label text-forest/70 hover:text-forest border border-forest/25 hover:border-forest/60 px-3 py-1.5 rounded-md transition-colors bg-white/40">
-                    {% if CURRENT_LANG == 'de' %}EN{% else %}DE{% endif %}
-                </button>
-            </form>
-
-            {# Auth: Anmelden or account menu #}
+{# Auth: Anmelden or account menu #}
             {% if request.user.is_authenticated %}
                 {% if request.user.is_staff %}
                 <a href="{% url 'blog:post_create' %}"

@@ -55,20 +55,7 @@
 </head>
 <body class="auth-body min-h-screen flex items-center justify-center font-sans text-forest antialiased selection:bg-forest selection:text-cream">
 
-    {# Language toggle (top-right) #}
-    <div class="fixed top-5 right-5 z-20">
-        <form action="{% url 'set_language' %}" method="post">
-            {% csrf_token %}
-            <input type="hidden" name="next" value="{{ request.path }}">
-            <input type="hidden" name="language" value="{% if CURRENT_LANG == 'de' %}en{% else %}de{% endif %}">
-            <button type="submit"
-                    class="meta-label text-forest/70 hover:text-forest border border-forest/25 hover:border-forest/60 px-3 py-1.5 rounded-md transition-colors bg-white/60 backdrop-blur-sm">
-                {% if CURRENT_LANG == 'de' %}EN{% else %}DE{% endif %}
-            </button>
-        </form>
-    </div>
-
-    <div class="w-full max-w-md px-6 py-12">
+<div class="w-full max-w-md px-6 py-12">
 
         {# Wordmark #}
         <a href="{% url 'landing' %}" class="flex items-center justify-center gap-3 mb-10 group">
