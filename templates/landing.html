@@ -105,45 +105,19 @@
 </head>
 <body class="landing-body font-sans text-forest min-h-screen antialiased selection:bg-forest selection:text-cream">
 
+    {# ─── Sticky top navigation — shared include ───────────────────── #}
+    {% include 'includes/header.html' %}
+
     {# ─── HERO ─────────────────────────────────────────────────────────── #}
-    <section class="relative min-h-screen w-full overflow-hidden flex items-center justify-center" style="background-color: #F2EEF9;">
+    {# min-h-screen minus sticky header height so the hero still fills the viewport #}
+    <section class="relative w-full overflow-hidden flex items-center justify-center"
+             style="background-color: #F2EEF9; min-height: calc(100vh - 69px);">
 
         {# Animated mesh-gradient backdrop #}
         <div id="mesh-gradient" class="absolute inset-0"></div>
 
         {# Soft veil + bottom fade into the next section #}
         <div class="absolute inset-0 hero-veil pointer-events-none"></div>
-
-        {# Header — floats over the gradient #}
-        <header class="absolute top-0 left-0 right-0 z-20">
-            <div class="max-w-7xl mx-auto px-6 py-7 flex items-center justify-between">
-                <a href="{% url 'landing' %}" class="flex items-center gap-3 group">
-                    <i data-lucide="pen-line" class="w-6 h-6 text-forest/90 group-hover:text-forest transition"></i>
-                    <span class="font-display text-lg font-bold tracking-tight text-forest leading-[1.05]">
-                        ÄdA
-                    </span>
-                </a>
-                <div class="flex items-center gap-3">
-                    <a href="{% url 'blog:index' %}"
-                       class="meta-label text-forest/70 hover:text-forest px-3 py-1.5 transition-colors">
-                        {% trans "Blog" %}
-                    </a>
-                    <form action="{% url 'set_language' %}" method="post">
-                        {% csrf_token %}
-                        <input type="hidden" name="next" value="{{ request.path }}">
-                        <input type="hidden" name="language" value="{% if CURRENT_LANG == 'de' %}en{% else %}de{% endif %}">
-                        <button type="submit"
-                                class="meta-label text-forest/70 hover:text-forest border border-forest/25 hover:border-forest/60 px-3 py-1.5 rounded-md transition-colors bg-white/40 backdrop-blur-sm">
-                            {% if CURRENT_LANG == 'de' %}EN{% else %}DE{% endif %}
-                        </button>
-                    </form>
-                    <a href="{% url 'accounts:login' %}"
-                       class="bg-forest text-cream px-5 py-2 rounded-md text-sm font-semibold hover:bg-forest-700 transition-colors shadow-sm">
-                        {% trans "Anmelden" %}
-                    </a>
-                </div>
-            </div>
-        </header>
 
         {# Hero content #}
         <div class="relative z-10 max-w-5xl mx-auto px-6 w-full">
@@ -226,59 +200,79 @@
         <div lang="de" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 md:gap-6 prose-body">
 
             {# 01 — Definitionen #}
-            <article class="chapter-card p-7 md:p-8 flex flex-col h-full">
+            <a href="{% url 'definitionen' %}" class="chapter-card p-7 md:p-8 flex flex-col h-full group">
                 <div class="numeral text-6xl text-forest/25 mb-5 select-none">01</div>
                 <h3 class="font-display text-2xl md:text-[1.75rem] text-forest tracking-tight mb-4">Definitionen</h3>
-                <p class="font-serif text-base md:text-lg leading-[1.65] text-forest/80">
+                <p class="font-serif text-base md:text-lg leading-[1.65] text-forest/80 flex-1">
                     Was bedeutet Rechtsextremismus? Was ist Rechtspopulismus? Was ist
                     die freiheitlich-demokratische Grundordnung? Die wichtigsten
                     Begriffe — erklärt in einfacher und formaler Sprache.
                 </p>
-            </article>
+                <span class="meta-label text-forest/50 group-hover:text-forest inline-flex items-center gap-1.5 mt-6 transition-colors">
+                    {% trans "Zum Kapitel" %}
+                    <i data-lucide="arrow-right" class="w-3.5 h-3.5"></i>
+                </span>
+            </a>
 
             {# 02 — Argumentationsweisen & Gegenargumente #}
-            <article class="chapter-card p-7 md:p-8 flex flex-col h-full">
+            <a href="{% url 'argumentation' %}" class="chapter-card p-7 md:p-8 flex flex-col h-full group">
                 <div class="numeral text-6xl text-forest/25 mb-5 select-none">02</div>
                 <h3 class="font-display text-2xl md:text-[1.75rem] text-forest tracking-tight mb-4">Argumentationsweisen &amp; Gegenargumente</h3>
-                <p class="font-serif text-base md:text-lg leading-[1.65] text-forest/80">
+                <p class="font-serif text-base md:text-lg leading-[1.65] text-forest/80 flex-1">
                     Woher kommen rechte Argumentationsmuster? Welche inneren Widersprüche
                     haben sie? Wir zeigen die kausalen Herleitungen — und wie man ihnen
                     fundiert begegnet.
                 </p>
-            </article>
+                <span class="meta-label text-forest/50 group-hover:text-forest inline-flex items-center gap-1.5 mt-6 transition-colors">
+                    {% trans "Zum Kapitel" %}
+                    <i data-lucide="arrow-right" class="w-3.5 h-3.5"></i>
+                </span>
+            </a>
 
             {# 03 — Digitale Medienkompetenz #}
-            <article class="chapter-card p-7 md:p-8 flex flex-col h-full">
+            <a href="{% url 'medienkompetenz' %}" class="chapter-card p-7 md:p-8 flex flex-col h-full group">
                 <div class="numeral text-6xl text-forest/25 mb-5 select-none">03</div>
                 <h3 class="font-display text-2xl md:text-[1.75rem] text-forest tracking-tight mb-4">Digitale Medienkompetenz</h3>
-                <p class="font-serif text-base md:text-lg leading-[1.65] text-forest/80">
+                <p class="font-serif text-base md:text-lg leading-[1.65] text-forest/80 flex-1">
                     Wie erkenne ich KI-generierte Inhalte, Bot-Accounts oder manipulative
                     Kommentare? Wie finde ich verlässliche Quellen? Was ist Framing,
                     was ist Nudging?
                 </p>
-            </article>
+                <span class="meta-label text-forest/50 group-hover:text-forest inline-flex items-center gap-1.5 mt-6 transition-colors">
+                    {% trans "Zum Kapitel" %}
+                    <i data-lucide="arrow-right" class="w-3.5 h-3.5"></i>
+                </span>
+            </a>
 
             {# 04 — Kommunikationstechniken #}
-            <article class="chapter-card p-7 md:p-8 flex flex-col h-full">
+            <a href="{% url 'kommunikation' %}" class="chapter-card p-7 md:p-8 flex flex-col h-full group">
                 <div class="numeral text-6xl text-forest/25 mb-5 select-none">04</div>
                 <h3 class="font-display text-2xl md:text-[1.75rem] text-forest tracking-tight mb-4">Kommunikationstechniken</h3>
-                <p class="font-serif text-base md:text-lg leading-[1.65] text-forest/80">
+                <p class="font-serif text-base md:text-lg leading-[1.65] text-forest/80 flex-1">
                     Wie überzeugt man Menschen — oder bringt sie zumindest zum
                     Hinterfragen? Wir vermitteln rhetorische Stilmittel und
                     Gesprächstechniken für den Diskurs mit rechtem Gedankengut.
                 </p>
-            </article>
+                <span class="meta-label text-forest/50 group-hover:text-forest inline-flex items-center gap-1.5 mt-6 transition-colors">
+                    {% trans "Zum Kapitel" %}
+                    <i data-lucide="arrow-right" class="w-3.5 h-3.5"></i>
+                </span>
+            </a>
 
             {# 05 — Blog #}
-            <article class="chapter-card p-7 md:p-8 flex flex-col h-full">
+            <a href="{% url 'blog:index' %}" class="chapter-card p-7 md:p-8 flex flex-col h-full group">
                 <div class="numeral text-6xl text-forest/25 mb-5 select-none">05</div>
                 <h3 class="font-display text-2xl md:text-[1.75rem] text-forest tracking-tight mb-4">Blog</h3>
-                <p class="font-serif text-base md:text-lg leading-[1.65] text-forest/80">
+                <p class="font-serif text-base md:text-lg leading-[1.65] text-forest/80 flex-1">
                     Mindestens einmal im Monat: ein Artikel, Kommentar oder Essay von
                     externen Autor:innen — akademisch fundiert, tagespolitisch
                     relevant, persönlich und direkt.
                 </p>
-            </article>
+                <span class="meta-label text-forest/50 group-hover:text-forest inline-flex items-center gap-1.5 mt-6 transition-colors">
+                    {% trans "Zum Kapitel" %}
+                    <i data-lucide="arrow-right" class="w-3.5 h-3.5"></i>
+                </span>
+            </a>
         </div>
     </section>
 

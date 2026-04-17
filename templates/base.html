@@ -27,6 +27,14 @@
             font-weight: 600;
         }
 
+        {# Editorial numeral — used on pillar placeholder pages #}
+        .numeral {
+            font-family: 'Playfair Display', serif;
+            font-weight: 900;
+            font-style: italic;
+            line-height: 0.85;
+        }
+
         {# Card surface — matches landing chapter cards #}
         .lilac-card {
             background-color: #EDE9F8;
@@ -57,89 +65,8 @@
 </head>
 <body class="app-body font-sans text-forest min-h-screen antialiased selection:bg-forest selection:text-cream flex flex-col">
 
-    {# ─── Top navigation — editorial, matches landing page header ──────── #}
-    <header class="sticky top-0 z-30 border-b border-forest/10" style="background-color: rgba(242, 238, 249, 0.85); backdrop-filter: blur(8px);">
-        <div class="max-w-7xl mx-auto px-6 py-5 flex items-center justify-between gap-4">
-            <a href="{% url 'landing' %}" class="flex items-center gap-3 group flex-shrink-0">
-                <i data-lucide="pen-line" class="w-5 h-5 text-forest/90 group-hover:text-forest transition"></i>
-                <span class="font-display text-lg font-bold tracking-tight text-forest leading-none">
-                    ÄdA
-                </span>
-            </a>
-
-            <nav class="hidden md:flex items-center gap-8">
-                <a href="{% url 'blog:index' %}"
-                   class="meta-label transition-colors
-                          {% if active_nav == 'index' %}text-forest{% else %}text-forest/60 hover:text-forest{% endif %}">
-                    {% trans "Blog" %}
-                </a>
-                <a href="{% url 'landing' %}#kapitel"
-                   class="meta-label text-forest/60 hover:text-forest transition-colors">
-                    {% trans "Das Handbuch" %}
-                </a>
-                <a href="{% url 'landing' %}#mitmachen"
-                   class="meta-label text-forest/60 hover:text-forest transition-colors">
-                    {% trans "Mitmachen" %}
-                </a>
-            </nav>
-
-            <div class="flex items-center gap-3 flex-shrink-0">
-                <form action="{% url 'set_language' %}" method="post">
-                    {% csrf_token %}
-                    <input type="hidden" name="next" value="{{ request.path }}">
-                    <input type="hidden" name="language" value="{% if CURRENT_LANG == 'de' %}en{% else %}de{% endif %}">
-                    <button type="submit"
-                            class="meta-label text-forest/70 hover:text-forest border border-forest/25 hover:border-forest/60 px-3 py-1.5 rounded-md transition-colors bg-white/40">
-                        {% if CURRENT_LANG == 'de' %}EN{% else %}DE{% endif %}
-                    </button>
-                </form>
-
-                {% if request.user.is_authenticated %}
-                    {% if request.user.is_staff %}
-                    <a href="{% url 'blog:post_create' %}"
-                       class="hidden sm:inline-flex bg-forest text-cream px-4 py-2 rounded-md text-sm font-semibold hover:bg-forest-700 transition-colors shadow-sm items-center gap-2">
-                        <i data-lucide="plus" class="w-4 h-4"></i>
-                        {% trans "Neuer Beitrag" %}
-                    </a>
-                    {% endif %}
-
-                    <div x-data="{ open: false }" class="relative">
-                        <button @click="open = !open" @click.outside="open = false"
-                                class="flex items-center gap-2 px-2 py-1 rounded-md hover:bg-white/60 transition-colors">
-                            <div class="w-8 h-8 rounded-full bg-wheat flex items-center justify-center text-forest font-bold text-sm flex-shrink-0">
-                                {{ request.user.initials }}
-                            </div>
-                            <i data-lucide="chevron-down" class="w-4 h-4 text-forest/50"></i>
-                        </button>
-                        <div x-show="open" x-transition
-                             class="absolute right-0 mt-2 w-56 rounded-xl border border-forest/10 shadow-lg py-2"
-                             style="background-color: #FDFBFF;" x-cloak>
-                            <div class="px-4 py-2">
-                                <p class="text-sm font-medium text-forest truncate">{{ request.user.name }}</p>
-                                {% if request.user.is_staff %}
-                                <p class="meta-label text-forest/50 mt-1">{% trans "Admin" %}</p>
-                                {% endif %}
-                            </div>
-                            <div class="border-t border-forest/10 my-1"></div>
-                            <form method="post" action="{% url 'accounts:logout' %}">
-                                {% csrf_token %}
-                                <button type="submit"
-                                        class="flex items-center w-full px-4 py-2 text-sm font-medium text-forest/70 hover:bg-white/60 hover:text-forest transition-colors">
-                                    <i data-lucide="log-out" class="w-4 h-4 mr-3"></i>
-                                    {% trans "Abmelden" %}
-                                </button>
-                            </form>
-                        </div>
-                    </div>
-                {% else %}
-                    <a href="{% url 'accounts:login' %}"
-                       class="bg-forest text-cream px-5 py-2 rounded-md text-sm font-semibold hover:bg-forest-700 transition-colors shadow-sm">
-                        {% trans "Anmelden" %}
-                    </a>
-                {% endif %}
-            </div>
-        </div>
-    </header>
+    {# ─── Top navigation — shared across landing + inner pages ──────── #}
+    {% include 'includes/header.html' %}
 
     {# ─── Flash messages ──────────────────────────────────────────────── #}
     {% if messages %}
