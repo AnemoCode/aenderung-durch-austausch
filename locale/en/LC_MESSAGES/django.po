@@ -137,17 +137,12 @@ msgid "Anmelden"
 msgstr "Sign in"
 
 #: templates/accounts/login.html:89
-#, fuzzy
-#| msgid "Willkommen zurück"
 msgid "Willkommen"
-msgstr "Welcome back"
+msgstr "Welcome"
 
-# ── Post form ─────────────────────────────────────────────────────────────────
 #: templates/accounts/login.html:90
-#, fuzzy
-#| msgid "Zurück"
 msgid "zurück"
-msgstr "Back"
+msgstr "back"
 
 #: templates/accounts/login.html:93
 msgid "Melde dich an, um die Beiträge zu lesen."

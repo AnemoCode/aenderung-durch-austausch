@@ -96,7 +96,7 @@
 
                 {% if request.user.is_authenticated %}
                     {% if request.user.is_staff %}
-                    <a href="/admin/blog/topic/add/"
+                    <a href="{% url 'admin:blog_topic_add' %}"
                        class="hidden sm:inline-flex bg-forest text-cream px-4 py-2 rounded-md text-sm font-semibold hover:bg-forest-700 transition-colors shadow-sm items-center gap-2">
                         <i data-lucide="plus" class="w-4 h-4"></i>
                         {% trans "Neues Thema" %}

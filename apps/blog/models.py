@@ -45,11 +45,11 @@ class Topic(models.Model):
 
     def save(self, *args, **kwargs):
         if not self.slug:
-            base_slug = slugify(self.title, allow_unicode=False)
-            slug = base_slug
+            base = slugify(self.title, allow_unicode=False) or 'thema'
+            slug = base
             counter = 1
             while Topic.objects.filter(slug=slug).exclude(pk=self.pk).exists():
-                slug = f'{base_slug}-{counter}'
+                slug = f'{base}-{counter}'
                 counter += 1
             self.slug = slug
         super().save(*args, **kwargs)

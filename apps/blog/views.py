@@ -1,6 +1,7 @@
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
-from django.http import Http404, JsonResponse
+from django.db.models import Count
+from django.http import JsonResponse
 from django.shortcuts import get_object_or_404, redirect
 from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
@@ -20,7 +21,11 @@ class TopicListView(ListView):
         return (
             Topic.objects.filter(is_published=True)
             .select_related('author')
-            .prefetch_related('tags', 'parts', 'likes', 'comments')
+            .prefetch_related('tags')
+            .annotate(
+                likes_count=Count('likes', distinct=True),
+                comments_count=Count('comments', distinct=True),
+            )
         )
 
     def get_context_data(self, **kwargs):
@@ -75,7 +80,9 @@ class PostDetailRedirectView(RedirectView):
     permanent = True
 
     def get_redirect_url(self, *args, **kwargs):
-        topic = get_object_or_404(Topic, legacy_post_id=kwargs['pk'])
+        topic = get_object_or_404(
+            Topic, legacy_post_id=kwargs['pk'], is_published=True
+        )
         return topic.get_absolute_url()
 
 

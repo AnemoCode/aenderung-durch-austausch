@@ -56,11 +56,11 @@
             <div class="flex items-center gap-3 text-xs text-forest/45">
                 <span class="flex items-center gap-1">
                     <i data-lucide="heart" class="w-3.5 h-3.5"></i>
-                    {{ topic.likes.count }}
+                    {{ topic.likes_count }}
                 </span>
                 <span class="flex items-center gap-1">
                     <i data-lucide="message-circle" class="w-3.5 h-3.5"></i>
-                    {{ topic.comments.count }}
+                    {{ topic.comments_count }}
                 </span>
             </div>
             <a href="{% url 'blog:topic_detail' topic.slug %}"

@@ -3,10 +3,11 @@ from django.utils.text import slugify
 
 
 def _unique_slug(Topic, base_slug):
-    slug = base_slug or 'thema'
+    base = base_slug or 'thema'
+    slug = base
     counter = 1
     while Topic.objects.filter(slug=slug).exists():
-        slug = f'{base_slug}-{counter}'
+        slug = f'{base}-{counter}'
         counter += 1
     return slug
 
@@ -26,14 +27,18 @@ def migrate_posts_to_topics(apps, schema_editor):
             author_id=post.author_id,
             is_published=post.is_published,
             legacy_post_id=post.id,
+        )
+        Topic.objects.filter(pk=topic.pk).update(
             created_at=post.created_at,
             updated_at=post.updated_at,
         )
-        TopicPart.objects.create(
+        part = TopicPart.objects.create(
             topic=topic,
             heading=post.subtitle or post.title,
             body=post.description,
             order=0,
+        )
+        TopicPart.objects.filter(pk=part.pk).update(
             created_at=post.created_at,
             updated_at=post.updated_at,
         )
