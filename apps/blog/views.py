@@ -1,5 +1,4 @@
 from django.contrib import messages
-from django.contrib.auth.decorators import login_required
 from django.db.models import Count
 from django.http import JsonResponse
 from django.shortcuts import get_object_or_404, redirect
@@ -43,7 +42,11 @@ class TopicDetailView(DetailView):
         return (
             Topic.objects.filter(is_published=True)
             .select_related('author')
-            .prefetch_related('tags', 'parts__tags', 'comments__author', 'likes')
+            .prefetch_related('tags', 'parts__tags', 'comments__author')
+            .annotate(
+                likes_count=Count('likes', distinct=True),
+                comments_count=Count('comments', distinct=True),
+            )
         )
 
     def get_context_data(self, **kwargs):
@@ -110,10 +113,11 @@ class TagDetailView(TemplateView):
         return ctx
 
 
-@login_required
 def topic_like_toggle(request, slug):
     if request.method != 'POST':
         return JsonResponse({'error': 'Method not allowed'}, status=405)
+    if not request.user.is_authenticated:
+        return JsonResponse({'error': 'Authentication required'}, status=401)
     topic = get_object_or_404(Topic, slug=slug, is_published=True)
     like, created = Like.objects.get_or_create(topic=topic, user=request.user)
     if not created:

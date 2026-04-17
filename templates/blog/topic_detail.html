@@ -83,20 +83,20 @@
             <i data-lucide="heart"
                id="like-icon"
                class="w-4 h-4 {% if user_liked %}fill-rose-400 text-rose-400{% endif %}"></i>
-            <span id="like-count">{{ topic.likes.count }}</span>
+            <span id="like-count">{{ topic.likes_count }}</span>
             <span>{% trans "Gefällt mir" %}</span>
         </button>
         {% else %}
         <span class="flex items-center gap-2 px-5 py-2.5 rounded-full border bg-white border-forest/15 text-sm font-medium text-forest/60">
             <i data-lucide="heart" class="w-4 h-4"></i>
-            <span>{{ topic.likes.count }}</span>
+            <span>{{ topic.likes_count }}</span>
             <span>{% trans "Gefällt mir" %}</span>
         </span>
         {% endif %}
 
         <span class="flex items-center gap-1.5 text-sm text-forest/50">
             <i data-lucide="message-circle" class="w-4 h-4"></i>
-            {% blocktrans count count=topic.comments.count %}{{ count }} Kommentar{% plural %}{{ count }} Kommentare{% endblocktrans %}
+            {% blocktrans count count=topic.comments_count %}{{ count }} Kommentar{% plural %}{{ count }} Kommentare{% endblocktrans %}
         </span>
     </div>
 </article>
@@ -104,7 +104,7 @@
 {# ─── Comments ────────────────────────────────────────────────────── #}
 <section class="max-w-3xl mx-auto mt-16">
     <div class="meta-label text-forest/50 mb-6">
-        {% trans "Kommentare" %} · {{ topic.comments.count }}
+        {% trans "Kommentare" %} · {{ topic.comments_count }}
     </div>
 
     {% for comment in topic.comments.all %}
