@@ -62,6 +62,12 @@ class TopicPart(models.Model):
         related_name='parts',
         verbose_name=_('Thema'),
     )
+    author = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name='topic_parts',
+        verbose_name=_('Autor'),
+    )
     heading = models.CharField(max_length=300, verbose_name=_('Unterüberschrift'))
     body = models.TextField(verbose_name=_('Inhalt'))
     order = models.PositiveIntegerField(default=0, verbose_name=_('Reihenfolge'))

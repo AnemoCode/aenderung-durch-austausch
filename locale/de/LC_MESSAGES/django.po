@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-04-16 18:29+0000\n"
+"POT-Creation-Date: 2026-04-17 14:08+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -69,6 +69,54 @@ msgstr ""
 msgid "Schreibe einen Kommentar…"
 msgstr ""
 
+#: apps/blog/forms.py:25 templates/blog/post_form.html:35
+msgid "Bestehendes Thema"
+msgstr ""
+
+#: apps/blog/forms.py:26 templates/blog/post_form.html:43
+msgid "– Neues Thema anlegen –"
+msgstr ""
+
+#: apps/blog/forms.py:31 templates/blog/post_form.html:60
+msgid "Titel des neuen Themas"
+msgstr ""
+
+#: apps/blog/forms.py:36 apps/blog/models.py:71
+#: templates/blog/post_form.html:78
+msgid "Unterüberschrift"
+msgstr ""
+
+#: apps/blog/forms.py:40 apps/blog/models.py:72
+#: templates/blog/post_form.html:96
+msgid "Inhalt"
+msgstr ""
+
+#: apps/blog/forms.py:45 apps/blog/models.py:33 apps/blog/models.py:76
+#: templates/blog/post_form.html:117
+msgid "Tags"
+msgstr ""
+
+#: apps/blog/forms.py:46
+msgid "Kommagetrennt, z. B. \"klima, mobilitaet\""
+msgstr ""
+
+#: apps/blog/forms.py:56
+msgid ""
+"Wähle entweder ein bestehendes Thema oder lege ein neues an — nicht beides."
+msgstr ""
+
+#: apps/blog/forms.py:60
+msgid ""
+"Bitte wähle ein bestehendes Thema oder gib einen Titel für ein neues Thema "
+"ein."
+msgstr ""
+
+#: apps/blog/forms.py:67
+msgid ""
+"Ein Thema mit diesem Titel existiert bereits — bitte wähle es oben aus der "
+"Liste."
+msgstr ""
+
 #: apps/blog/models.py:10
 msgid "Titel"
 msgstr ""
@@ -77,7 +125,7 @@ msgstr ""
 msgid "URL-Kürzel"
 msgstr ""
 
-#: apps/blog/models.py:21
+#: apps/blog/models.py:21 apps/blog/models.py:69
 msgid "Autor"
 msgstr ""
 
@@ -85,53 +133,45 @@ msgstr ""
 msgid "Veröffentlicht"
 msgstr ""
 
-#: apps/blog/models.py:33 apps/blog/models.py:70
-msgid "Tags"
-msgstr ""
-
 #: apps/blog/models.py:37 apps/blog/models.py:63
 msgid "Thema"
 msgstr ""
 
-#: apps/blog/models.py:38 templates/blog/topic_list.html:10
+#: apps/blog/models.py:38
 msgid "Themen"
 msgstr ""
 
-#: apps/blog/models.py:65
-msgid "Unterüberschrift"
-msgstr ""
-
-#: apps/blog/models.py:66
-msgid "Inhalt"
-msgstr ""
-
-#: apps/blog/models.py:67
+#: apps/blog/models.py:73
 msgid "Reihenfolge"
 msgstr ""
 
-#: apps/blog/models.py:74
+#: apps/blog/models.py:80
 msgid "Thementeil"
 msgstr ""
 
-#: apps/blog/models.py:75
+#: apps/blog/models.py:81
 msgid "Thementeile"
 msgstr ""
 
-#: apps/blog/models.py:92 apps/blog/models.py:97
+#: apps/blog/models.py:98 apps/blog/models.py:103
 msgid "Kommentar"
 msgstr ""
 
-#: apps/blog/models.py:98 templates/blog/topic_detail.html:107
+#: apps/blog/models.py:104 templates/blog/topic_detail.html:107
 msgid "Kommentare"
 msgstr ""
 
-#: apps/blog/models.py:119 apps/blog/models.py:120
+#: apps/blog/models.py:125 apps/blog/models.py:126
 #: templates/blog/topic_detail.html:87 templates/blog/topic_detail.html:93
 msgid "Gefällt mir"
 msgstr ""
 
-#: apps/blog/views.py:67
+#: apps/blog/views.py:128
 msgid "Kommentar hinzugefügt."
+msgstr ""
+
+#: apps/blog/views.py:204
+msgid "Beitrag veröffentlicht."
 msgstr ""
 
 #: templates/accounts/login.html:8 templates/accounts/login.html:85
@@ -220,8 +260,8 @@ msgstr ""
 msgid "Das Handbuch"
 msgstr ""
 
-#: templates/base.html:102
-msgid "Neues Thema"
+#: templates/base.html:102 templates/blog/post_form.html:19
+msgid "Neuer Beitrag"
 msgstr ""
 
 #: templates/base.html:120
@@ -232,6 +272,60 @@ msgstr ""
 msgid "Abmelden"
 msgstr ""
 
+#: templates/blog/_part_card.html:64 templates/landing.html:188
+msgid "Weiterlesen"
+msgstr ""
+
+#: templates/blog/post_form.html:12
+msgid "Zurück"
+msgstr ""
+
+#: templates/blog/post_form.html:17
+msgid "Neu"
+msgstr ""
+
+#: templates/blog/post_form.html:22
+msgid ""
+"Schreibe einen neuen Thementeil — ordne ihn einem bestehenden Thema zu oder "
+"lege ein neues Thema an."
+msgstr ""
+
+#: templates/blog/post_form.html:36
+msgid "oder neu anlegen"
+msgstr ""
+
+#: templates/blog/post_form.html:66
+msgid "Worum geht es in diesem Thema?"
+msgstr ""
+
+#: templates/blog/post_form.html:84
+msgid "Ein präziser, prägnanter Satz"
+msgstr ""
+
+#: templates/blog/post_form.html:102
+msgid "Schreibe deinen Beitrag in einfacher Sprache…"
+msgstr ""
+
+#: templates/blog/post_form.html:109
+msgid "Schreibe klar und verständlich. Zeilenumbrüche werden übernommen."
+msgstr ""
+
+#: templates/blog/post_form.html:118
+msgid "optional"
+msgstr ""
+
+#: templates/blog/post_form.html:124
+msgid "klima, mobilitaet, energie"
+msgstr ""
+
+#: templates/blog/post_form.html:145
+msgid "Beitrag veröffentlichen"
+msgstr ""
+
+#: templates/blog/post_form.html:149
+msgid "Abbrechen"
+msgstr ""
+
 #: templates/blog/tag_detail.html:11 templates/blog/topic_detail.html:11
 msgid "Alle Themen"
 msgstr ""
@@ -240,7 +334,7 @@ msgstr ""
 msgid "Tag"
 msgstr ""
 
-#: templates/blog/tag_detail.html:22 templates/blog/topic_list.html:13
+#: templates/blog/tag_detail.html:22
 #, python-format
 msgid "%(count)s Thema"
 msgid_plural "%(count)s Themen"
@@ -298,20 +392,63 @@ msgstr ""
 msgid "Melde dich an, um zu kommentieren."
 msgstr ""
 
+#: templates/blog/topic_list.html:10
+msgid "Beiträge"
+msgstr ""
+
+#: templates/blog/topic_list.html:13 templates/blog/topic_list.html:70
+#, python-format
+msgid "%(count)s Beitrag"
+msgid_plural "%(count)s Beiträge"
+msgstr[0] ""
+msgstr[1] ""
+
 #: templates/blog/topic_list.html:14
 msgid "akademisch fundiert, tagespolitisch relevant, persönlich und direkt."
 msgstr ""
 
-#: templates/blog/topic_list.html:68 templates/landing.html:188
-msgid "Weiterlesen"
+#: templates/blog/topic_list.html:22
+msgid "Gruppierung"
 msgstr ""
 
-#: templates/blog/topic_list.html:83
-msgid "Noch keine Themen"
+#: templates/blog/topic_list.html:27
+msgid "Nach Thema"
 msgstr ""
 
-#: templates/blog/topic_list.html:86
-msgid "Noch wurden keine Themen veröffentlicht."
+#: templates/blog/topic_list.html:28
+msgid "Nach Autor"
+msgstr ""
+
+#: templates/blog/topic_list.html:29
+msgid "Keine Gruppierung"
+msgstr ""
+
+#: templates/blog/topic_list.html:34
+msgid "Sortierung"
+msgstr ""
+
+#: templates/blog/topic_list.html:39
+msgid "Neueste zuerst"
+msgstr ""
+
+#: templates/blog/topic_list.html:40
+msgid "Älteste zuerst"
+msgstr ""
+
+#: templates/blog/topic_list.html:41
+msgid "Beliebteste zuerst"
+msgstr ""
+
+#: templates/blog/topic_list.html:46
+msgid "Anwenden"
+msgstr ""
+
+#: templates/blog/topic_list.html:89
+msgid "Noch keine Beiträge"
+msgstr ""
+
+#: templates/blog/topic_list.html:92
+msgid "Noch wurden keine Beiträge veröffentlicht."
 msgstr ""
 
 #: templates/landing.html:152

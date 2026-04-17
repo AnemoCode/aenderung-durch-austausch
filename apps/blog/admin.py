@@ -6,7 +6,7 @@ from .models import Comment, Like, Topic, TopicPart
 class TopicPartInline(admin.StackedInline):
     model = TopicPart
     extra = 1
-    fields = ['order', 'heading', 'body', 'tags']
+    fields = ['order', 'author', 'heading', 'body', 'tags']
     ordering = ['order']
 
 
@@ -23,9 +23,9 @@ class TopicAdmin(admin.ModelAdmin):
 
 @admin.register(TopicPart)
 class TopicPartAdmin(admin.ModelAdmin):
-    list_display = ['topic', 'order', 'heading', 'created_at']
-    list_filter = ['topic', 'tags']
-    search_fields = ['heading', 'body', 'topic__title', 'tags__name']
+    list_display = ['topic', 'order', 'heading', 'author', 'created_at']
+    list_filter = ['topic', 'author', 'tags']
+    search_fields = ['heading', 'body', 'topic__title', 'author__name', 'tags__name']
     ordering = ['topic', 'order']
 
 
