@@ -1,0 +1,64 @@
+{% extends 'base.html' %}
+{% load i18n %}
+
+{% block content %}
+
+<div class="max-w-3xl mx-auto" lang="de">
+
+    {# ─── Header: numeral + title + tagline ─────────────────────────── #}
+    <div class="flex items-start gap-5 md:gap-6 mb-10 md:mb-14">
+        <div class="numeral text-6xl md:text-7xl text-forest/25 select-none leading-none pt-1">
+            {{ pillar_numeral }}
+        </div>
+        <div class="flex-1 min-w-0">
+            <div class="meta-label text-forest/50 mb-4">{% trans "Kapitel" %}</div>
+            <h1 class="font-display text-4xl md:text-5xl lg:text-6xl text-forest tracking-tight leading-[1.05] mb-5">
+                {{ pillar_title }}
+            </h1>
+            <p class="font-serif italic text-lg md:text-xl text-forest/75 leading-relaxed">
+                {{ pillar_tagline }}
+            </p>
+        </div>
+    </div>
+
+    {# ─── Construction notice ───────────────────────────────────────── #}
+    <div class="lilac-card p-7 md:p-10 flex gap-5 md:gap-6 mb-10">
+        <div class="flex-shrink-0 w-12 h-12 rounded-full bg-white/70 flex items-center justify-center">
+            <i data-lucide="hard-hat" class="w-5 h-5 text-forest/70"></i>
+        </div>
+        <div class="flex-1 min-w-0">
+            <div class="meta-label text-forest/55 mb-2">{% trans "In Arbeit" %}</div>
+            <p class="font-serif text-lg md:text-xl text-forest/85 leading-[1.55]">
+                {% trans "Wir arbeiten noch an diesem Kapitel. Hier findest du bald:" %}
+            </p>
+        </div>
+    </div>
+
+    {# ─── What's coming — bullet list ───────────────────────────────── #}
+    <ul class="space-y-4 md:space-y-5 mb-14 md:mb-16">
+        {% for point in pillar_points %}
+        <li class="flex gap-4 items-start">
+            <i data-lucide="sparkle" class="w-4 h-4 text-forest/50 flex-shrink-0 mt-1.5"></i>
+            <p class="font-serif text-base md:text-lg text-forest/80 leading-[1.65]">
+                {{ point }}
+            </p>
+        </li>
+        {% endfor %}
+    </ul>
+
+    {# ─── Return CTA ─────────────────────────────────────────────────── #}
+    <div class="pt-10 border-t border-forest/10 flex flex-col sm:flex-row gap-4 sm:items-center sm:justify-between">
+        <a href="{% url 'landing' %}"
+           class="meta-label text-forest/60 hover:text-forest inline-flex items-center gap-2 transition-colors">
+            <i data-lucide="arrow-left" class="w-4 h-4"></i>
+            {% trans "Zurück zur Startseite" %}
+        </a>
+        <a href="{% url 'blog:index' %}"
+           class="meta-label text-forest/60 hover:text-forest inline-flex items-center gap-2 transition-colors">
+            {% trans "In der Zwischenzeit: Blog lesen" %}
+            <i data-lucide="arrow-right" class="w-4 h-4"></i>
+        </a>
+    </div>
+</div>
+
+{% endblock %}
