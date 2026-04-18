@@ -1,4 +1,4 @@
-# Änderung durch Austausch 🫂
+# Änderung durch Austausch
 
 Digitales Handbuch zum analogen Umgang mit rechtsextremen Meinungen und Verschwörungstheorien.
 
