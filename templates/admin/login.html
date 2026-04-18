@@ -10,20 +10,7 @@
 </head>
 <body class="min-h-screen bg-cream flex items-center justify-center font-sans text-forest">
 
-    {# Language switcher (top-right) #}
-    <div class="fixed top-4 right-4">
-        <form action="{% url 'set_language' %}" method="post">
-            {% csrf_token %}
-            <input type="hidden" name="next" value="{{ request.path }}">
-            <input type="hidden" name="language" value="{% if CURRENT_LANG == 'de' %}en{% else %}de{% endif %}">
-            <button type="submit"
-                    class="text-xs font-semibold tracking-wide text-forest/60 hover:text-forest border border-beige/60 hover:border-forest/30 px-2.5 py-1 rounded-md transition-colors bg-white">
-                {% if CURRENT_LANG == 'de' %}EN{% else %}DE{% endif %}
-            </button>
-        </form>
-    </div>
-
-    <div class="w-full max-w-sm px-4">
+<div class="w-full max-w-sm px-4">
 
         {# Logo + wordmark #}
         <div class="flex items-center justify-center gap-2 mb-8">
