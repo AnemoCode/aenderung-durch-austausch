@@ -4,6 +4,7 @@ from django.http import HttpResponse
 from django.urls import path, include
 from django.views.generic import TemplateView
 
+from apps.blog.views import TagDetailView
 # Placeholder pillars — pages that are under development.
 # `active_nav` highlights the current pillar in the shared header.
 # `pillar_numeral` / `pillar_title` / `pillar_tagline` / `pillar_points` render the placeholder body.
@@ -88,6 +89,7 @@ urlpatterns = [
     path("health/", lambda request: HttpResponse("ok"), name="health"),
     path("i18n/", include("django.conf.urls.i18n")),
     path("admin/", admin.site.urls),
+    path("tag/<slug:slug>/", TagDetailView.as_view(), name="tag_detail"),
     path("", TemplateView.as_view(template_name="landing.html"), name="landing"),
     path("", include("apps.accounts.urls", namespace="accounts")),
     path("blog/", include("apps.blog.urls", namespace="blog")),

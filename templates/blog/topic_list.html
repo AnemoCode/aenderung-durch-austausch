@@ -1,0 +1,97 @@
+{% extends 'base.html' %}
+{% load i18n %}
+
+{% block content %}
+
+{# ─── Page header ─────────────────────────────────────────────────── #}
+<div class="max-w-3xl mb-10">
+    <div class="meta-label text-forest/50 mb-5">{% trans "Blog" %}</div>
+    <h1 class="font-display text-4xl md:text-5xl lg:text-6xl text-forest tracking-tight leading-[1.05]">
+        {% trans "Beiträge" %}
+    </h1>
+    <p class="font-serif text-lg md:text-xl text-forest/70 mt-5 max-w-2xl leading-relaxed">
+        {% blocktrans count count=total_parts %}{{ count }} Beitrag{% plural %}{{ count }} Beiträge{% endblocktrans %}
+        — {% trans "akademisch fundiert, tagespolitisch relevant, persönlich und direkt." %}
+    </p>
+</div>
+
+{# ─── Controls: grouping + sorting ─────────────────────────────────── #}
+<form method="get" class="mb-10 flex flex-wrap items-end gap-4">
+    <div>
+        <label for="group-select" class="block meta-label text-forest/60 mb-2">
+            {% trans "Gruppierung" %}
+        </label>
+        <select id="group-select" name="group"
+                onchange="this.form.submit()"
+                class="lilac-input px-4 py-2.5 font-serif text-sm">
+            <option value="topic" {% if group == 'topic' %}selected{% endif %}>{% trans "Nach Thema" %}</option>
+            <option value="author" {% if group == 'author' %}selected{% endif %}>{% trans "Nach Autor" %}</option>
+            <option value="none" {% if group == 'none' %}selected{% endif %}>{% trans "Keine Gruppierung" %}</option>
+        </select>
+    </div>
+    <div>
+        <label for="sort-select" class="block meta-label text-forest/60 mb-2">
+            {% trans "Sortierung" %}
+        </label>
+        <select id="sort-select" name="sort"
+                onchange="this.form.submit()"
+                class="lilac-input px-4 py-2.5 font-serif text-sm">
+            <option value="date_desc" {% if sort == 'date_desc' %}selected{% endif %}>{% trans "Neueste zuerst" %}</option>
+            <option value="date_asc" {% if sort == 'date_asc' %}selected{% endif %}>{% trans "Älteste zuerst" %}</option>
+            <option value="likes_desc" {% if sort == 'likes_desc' %}selected{% endif %}>{% trans "Beliebteste zuerst" %}</option>
+        </select>
+    </div>
+    <noscript>
+        <button type="submit" class="bg-forest text-cream px-5 py-2.5 rounded-md text-sm font-semibold">
+            {% trans "Anwenden" %}
+        </button>
+    </noscript>
+</form>
+
+{% if groups %}
+    {% for key, label, meta, group_parts in groups %}
+    <section class="mb-14">
+        {% if meta %}
+        <div class="mb-6 flex items-center gap-3">
+            {% if meta.type == 'topic' %}
+                <i data-lucide="folder-open" class="w-5 h-5 text-forest/50"></i>
+                <h2 class="font-display text-2xl md:text-3xl text-forest tracking-tight">
+                    <a href="{% url 'blog:topic_detail' meta.topic.slug %}"
+                       class="hover:text-forest/70 transition-colors">{{ label }}</a>
+                </h2>
+                <span class="meta-label text-forest/40">· {{ meta.topic.author.name }}</span>
+            {% elif meta.type == 'author' %}
+                <div class="w-8 h-8 rounded-full bg-wheat flex items-center justify-center text-forest font-bold text-xs flex-shrink-0">
+                    {{ meta.author.initials }}
+                </div>
+                <h2 class="font-display text-2xl md:text-3xl text-forest tracking-tight">
+                    {{ label }}
+                </h2>
+                <span class="meta-label text-forest/40">· {% blocktrans count count=group_parts|length %}{{ count }} Beitrag{% plural %}{{ count }} Beiträge{% endblocktrans %}</span>
+            {% endif %}
+        </div>
+        {% endif %}
+
+        <div class="grid gap-5 md:gap-6 sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3">
+            {% for part in group_parts %}
+            {% include 'blog/_part_card.html' with part=part show_topic=show_topic_on_card show_author=show_author_on_card %}
+            {% endfor %}
+        </div>
+    </section>
+    {% endfor %}
+{% else %}
+{# Empty state #}
+<div class="lilac-card flex flex-col items-center justify-center py-20 md:py-28 text-center max-w-xl mx-auto">
+    <div class="w-14 h-14 rounded-full bg-white/60 flex items-center justify-center mb-5">
+        <i data-lucide="book-open" class="w-6 h-6 text-forest/40"></i>
+    </div>
+    <h3 class="font-display text-2xl md:text-3xl text-forest tracking-tight mb-2">
+        {% trans "Noch keine Beiträge" %}
+    </h3>
+    <p class="font-serif text-base text-forest/60 max-w-sm px-6">
+        {% trans "Noch wurden keine Beiträge veröffentlicht." %}
+    </p>
+</div>
+{% endif %}
+
+{% endblock %}

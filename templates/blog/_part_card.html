@@ -1,0 +1,68 @@
+{% load i18n %}
+<article class="lilac-card p-7 md:p-8 flex flex-col h-full group">
+
+    {# Meta: author + date #}
+    {% if show_author %}
+    <div class="flex items-center gap-2.5 mb-5">
+        <div class="w-7 h-7 rounded-full bg-wheat flex items-center justify-center text-forest font-bold text-xs flex-shrink-0">
+            {{ part.author.initials }}
+        </div>
+        <div class="flex flex-col leading-none">
+            <span class="text-xs font-medium text-forest/80">{{ part.author.name }}</span>
+            <span class="text-xs text-forest/40 mt-0.5">{{ part.created_at|date:"d. F Y" }}</span>
+        </div>
+    </div>
+    {% else %}
+    <div class="mb-5 text-xs text-forest/40">{{ part.created_at|date:"d. F Y" }}</div>
+    {% endif %}
+
+    {# Topic breadcrumb (hidden when already grouped by topic) #}
+    {% if show_topic %}
+    <div class="meta-label text-forest/50 mb-2">
+        <a href="{% url 'blog:topic_detail' part.topic.slug %}"
+           class="hover:text-forest transition-colors">
+            {{ part.topic.title }}
+        </a>
+    </div>
+    {% endif %}
+
+    {# Heading #}
+    <h3 class="font-display text-xl md:text-2xl text-forest tracking-tight leading-[1.2] mb-3">
+        <a href="{% url 'blog:topic_detail' part.topic.slug %}"
+           class="hover:text-forest/70 transition-colors">
+            {{ part.heading }}
+        </a>
+    </h3>
+
+    {# Body excerpt #}
+    <p class="font-serif text-sm text-forest/70 leading-relaxed mb-4 flex-1">
+        {{ part.body|truncatewords:28 }}
+    </p>
+
+    {# Tag chips #}
+    {% if part.tags.all %}
+    <div class="flex flex-wrap gap-1.5 mb-4">
+        {% for tag in part.tags.all %}
+        <a href="{% url 'tag_detail' tag.slug %}"
+           class="meta-label text-xs px-2.5 py-1 rounded-full bg-white/60 border border-forest/15 text-forest/70 hover:bg-white hover:border-forest/40 hover:text-forest transition-colors">
+            #{{ tag.name }}
+        </a>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    {# Footer: stats + CTA #}
+    <div class="flex items-center justify-between pt-5 border-t border-forest/10">
+        <div class="flex items-center gap-3 text-xs text-forest/45">
+            <span class="flex items-center gap-1">
+                <i data-lucide="heart" class="w-3.5 h-3.5"></i>
+                {{ part.topic_likes }}
+            </span>
+        </div>
+        <a href="{% url 'blog:topic_detail' part.topic.slug %}"
+           class="meta-label text-forest/60 group-hover:text-forest flex items-center gap-1.5 transition-colors">
+            {% trans "Weiterlesen" %}
+            <i data-lucide="arrow-right" class="w-3.5 h-3.5"></i>
+        </a>
+    </div>
+</article>
