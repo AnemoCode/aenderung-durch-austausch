@@ -1,0 +1,90 @@
+{% extends 'base.html' %}
+{% load i18n %}
+
+{% block content %}
+
+{# Back link #}
+<div class="max-w-3xl mx-auto mb-8">
+    <a href="{% url 'blog:index' %}"
+       class="inline-flex items-center gap-1.5 meta-label text-forest/60 hover:text-forest transition-colors">
+        <i data-lucide="arrow-left" class="w-4 h-4"></i>
+        {% trans "Alle Themen" %}
+    </a>
+</div>
+
+{# Page header #}
+<div class="max-w-3xl mb-12 md:mb-16">
+    <div class="meta-label text-forest/50 mb-5">{% trans "Tag" %}</div>
+    <h1 class="font-display text-4xl md:text-5xl lg:text-6xl text-forest tracking-tight leading-[1.05]">
+        #{{ tag.name }}
+    </h1>
+    <p class="font-serif text-lg md:text-xl text-forest/70 mt-5 max-w-2xl leading-relaxed">
+        {% blocktrans count count=topics|length %}{{ count }} Thema{% plural %}{{ count }} Themen{% endblocktrans %}
+        · {% blocktrans count count=parts|length %}{{ count }} Thementeil{% plural %}{{ count }} Thementeile{% endblocktrans %}
+    </p>
+</div>
+
+{# ─── Topics with this tag ───────────────────────────────────────── #}
+{% if topics %}
+<section class="mb-16">
+    <h2 class="meta-label text-forest/60 mb-5">{% trans "Themen mit diesem Tag" %}</h2>
+    <div class="grid gap-5 md:gap-6 sm:grid-cols-2">
+        {% for topic in topics %}
+        <article class="lilac-card p-7 flex flex-col h-full group">
+            <div class="flex items-center gap-2.5 mb-4">
+                <div class="w-7 h-7 rounded-full bg-wheat flex items-center justify-center text-forest font-bold text-xs flex-shrink-0">
+                    {{ topic.author.initials }}
+                </div>
+                <span class="text-xs font-medium text-forest/80">{{ topic.author.name }}</span>
+                <span class="text-xs text-forest/30">·</span>
+                <span class="text-xs text-forest/40">{{ topic.created_at|date:"d. F Y" }}</span>
+            </div>
+            <h3 class="font-display text-xl md:text-2xl text-forest tracking-tight leading-[1.2] flex-1">
+                <a href="{% url 'blog:topic_detail' topic.slug %}"
+                   class="hover:text-forest/70 transition-colors">
+                    {{ topic.title }}
+                </a>
+            </h3>
+        </article>
+        {% endfor %}
+    </div>
+</section>
+{% endif %}
+
+{# ─── Parts with this tag ────────────────────────────────────────── #}
+{% if parts %}
+<section class="mb-16">
+    <h2 class="meta-label text-forest/60 mb-5">{% trans "Thementeile mit diesem Tag" %}</h2>
+    <div class="space-y-4">
+        {% for part in parts %}
+        <article class="lilac-card p-6">
+            <div class="meta-label text-xs text-forest/45 mb-2">
+                <a href="{% url 'blog:topic_detail' part.topic.slug %}"
+                   class="hover:text-forest transition-colors">
+                    {{ part.topic.title }}
+                </a>
+            </div>
+            <h3 class="font-display text-lg md:text-xl text-forest tracking-tight leading-[1.25]">
+                <a href="{% url 'blog:topic_detail' part.topic.slug %}"
+                   class="hover:text-forest/70 transition-colors">
+                    {{ part.heading }}
+                </a>
+            </h3>
+        </article>
+        {% endfor %}
+    </div>
+</section>
+{% endif %}
+
+{% if not topics and not parts %}
+<div class="lilac-card flex flex-col items-center justify-center py-20 md:py-28 text-center max-w-xl mx-auto">
+    <div class="w-14 h-14 rounded-full bg-white/60 flex items-center justify-center mb-5">
+        <i data-lucide="search-x" class="w-6 h-6 text-forest/40"></i>
+    </div>
+    <h3 class="font-display text-2xl md:text-3xl text-forest tracking-tight mb-2">
+        {% trans "Keine Treffer" %}
+    </h3>
+</div>
+{% endif %}
+
+{% endblock %}

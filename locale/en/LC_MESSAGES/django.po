@@ -10,195 +10,195 @@ msgstr ""
 
 # ── Admin fieldsets ───────────────────────────────────────────────────────────
 msgid "Persönliche Daten"
-msgstr "Personal information"
+msgstr ""
 
 msgid "Berechtigungen"
-msgstr "Permissions"
+msgstr ""
 
 msgid "Wichtige Daten"
-msgstr "Important dates"
+msgstr ""
 
 msgid "E-Mail-Adresse"
-msgstr "Email address"
+msgstr ""
 
 msgid "Passwort"
-msgstr "Password"
+msgstr ""
 
 msgid "Passwort bestätigen"
-msgstr "Confirm password"
+msgstr ""
 
 # ── Form validation ───────────────────────────────────────────────────────────
 msgid "Die Passwörter stimmen nicht überein."
-msgstr "The passwords don't match."
+msgstr ""
 
 msgid "Eine E-Mail-Adresse ist erforderlich."
-msgstr "An email address is required."
+msgstr ""
 
 msgid "Name"
-msgstr "Name"
+msgstr ""
 
 msgid "Benutzer"
-msgstr "User"
+msgstr ""
 
 msgid "Titel"
-msgstr "Title"
+msgstr ""
 
 msgid "Untertitel"
-msgstr "Subtitle"
+msgstr ""
 
 msgid "Inhalt"
-msgstr "Content"
+msgstr ""
 
 msgid "Dein Kommentar"
-msgstr "Your comment"
+msgstr ""
 
 msgid "Schreibe einen Kommentar…"
-msgstr "Write a comment…"
+msgstr ""
 
 msgid "Veröffentlicht"
-msgstr "Published"
+msgstr ""
 
 # ── Model verbose names ───────────────────────────────────────────────────────
 msgid "Beitrag"
-msgstr "Post"
+msgstr ""
 
 # ── Navigation / base.html ────────────────────────────────────────────────────
 msgid "Beiträge"
-msgstr "Posts"
+msgstr ""
 
 msgid "Kommentar"
-msgstr "Comment"
+msgstr ""
 
 msgid "Kommentare"
-msgstr "Comments"
+msgstr ""
 
 msgid "Gefällt mir"
-msgstr "Like"
+msgstr ""
 
 msgid "Kommentar hinzugefügt."
-msgstr "Comment added."
+msgstr ""
 
 msgid "Beitrag veröffentlicht."
-msgstr "Post published."
+msgstr ""
 
 # ── Login ─────────────────────────────────────────────────────────────────────
 msgid "Anmelden"
-msgstr "Sign in"
+msgstr ""
 
 msgid "Willkommen zurück"
-msgstr "Welcome back"
+msgstr ""
 
 msgid "Melde dich an, um die Beiträge zu lesen."
-msgstr "Sign in to read the posts."
+msgstr ""
 
 msgid "Noch kein Konto?"
-msgstr "Don't have an account yet?"
+msgstr ""
 
 msgid "Registrieren"
-msgstr "Register"
+msgstr ""
 
 # ── Register ──────────────────────────────────────────────────────────────────
 msgid "Konto erstellen"
-msgstr "Create account"
+msgstr ""
 
 msgid "Lies und kommentiere Beiträge."
-msgstr "Read and comment on posts."
+msgstr ""
 
 msgid "z. B. Jane Doe oder ein Alias"
-msgstr "e.g. Jane Doe or an alias"
+msgstr ""
 
 msgid "Mindestens 8 Zeichen, nicht nur Ziffern."
-msgstr "At least 8 characters, not only digits."
+msgstr ""
 
 msgid "Bereits ein Konto?"
-msgstr "Already have an account?"
+msgstr ""
 
 # ── Admin login ───────────────────────────────────────────────────────────────
 msgid "Admin-Zugang"
-msgstr "Admin access"
+msgstr ""
 
 msgid "Nur für Administratoren. Normaler Login unter"
-msgstr "Admins only. Regular login at"
+msgstr ""
 
 #, python-format
 msgid "Du bist als <strong>%(username)s</strong> angemeldet, hast aber keinen Zugriff auf diese Seite."
-msgstr "You are signed in as <strong>%(username)s</strong> but don't have access to this page."
+msgstr ""
 
 msgid "Admin"
-msgstr "Admin"
+msgstr ""
 
 msgid "Abmelden"
-msgstr "Sign out"
+msgstr ""
 
 msgid "Neuer Beitrag"
-msgstr "New post"
+msgstr ""
 
 #, python-format
 msgid "%(count)s Beitrag"
 msgid_plural "%(count)s Beiträge"
-msgstr[0] "%(count)s post"
-msgstr[1] "%(count)s posts"
+msgstr[0] ""
+msgstr[1] ""
 
 msgid "Weiterlesen"
-msgstr "Read more"
+msgstr ""
 
 # ── Post list (index) ─────────────────────────────────────────────────────────
 msgid "Noch keine Beiträge"
-msgstr "No posts yet"
+msgstr ""
 
 msgid "Erstelle den ersten Beitrag über den Button oben rechts."
-msgstr "Create the first post using the button in the top right."
+msgstr ""
 
 msgid "Noch wurden keine Beiträge veröffentlicht."
-msgstr "No posts have been published yet."
+msgstr ""
 
 # ── Post detail ───────────────────────────────────────────────────────────────
 msgid "Alle Beiträge"
-msgstr "All posts"
+msgstr ""
 
 #, python-format
 msgid "%(date)s, %(time)s Uhr"
-msgstr "%(date)s, %(time)s"
+msgstr ""
 
 #, python-format
 msgid "%(count)s Kommentar"
 msgid_plural "%(count)s Kommentare"
-msgstr[0] "%(count)s comment"
-msgstr[1] "%(count)s comments"
+msgstr[0] ""
+msgstr[1] ""
 
 msgid "Noch keine Kommentare. Sei der Erste!"
-msgstr "No comments yet. Be the first!"
+msgstr ""
 
 msgid "Kommentar schreiben"
-msgstr "Write a comment"
+msgstr ""
 
 msgid "Kommentar absenden"
-msgstr "Submit comment"
+msgstr ""
 
 # ── Post form ─────────────────────────────────────────────────────────────────
 msgid "Zurück"
-msgstr "Back"
+msgstr ""
 
 msgid "Veröffentliche einen neuen Beitrag für alle Leser."
-msgstr "Publish a new post for all readers."
+msgstr ""
 
 msgid "Worum geht es in diesem Beitrag?"
-msgstr "What is this post about?"
+msgstr ""
 
 msgid "optional"
-msgstr "optional"
+msgstr ""
 
 msgid "Ein ergänzender Satz oder Kontext"
-msgstr "A supplementary sentence or context"
+msgstr ""
 
 msgid "Schreibe deinen Beitrag in einfacher Sprache…"
-msgstr "Write your post in plain language…"
+msgstr ""
 
 msgid "Schreibe klar und verständlich. Zeilenumbrüche werden übernommen."
-msgstr "Write clearly and plainly. Line breaks are preserved."
+msgstr ""
 
 msgid "Beitrag veröffentlichen"
-msgstr "Publish post"
+msgstr ""
 
 msgid "Abbrechen"
-msgstr "Cancel"
+msgstr ""

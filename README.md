@@ -1,4 +1,4 @@
-# Änderung durch Austausch 🫂🫂
+# Änderung durch Austausch 🫂
 
 Digitales Handbuch zum analogen Umgang mit rechtsextremen Meinungen und Verschwörungstheorien.
 
@@ -30,19 +30,3 @@ das Admin-Panel unter [http://localhost:8000/admin](http://localhost:8000/admin)
 | Datenbank | PostgreSQL 17 |
 | Python | 3.12+ |
 | Paketverwaltung | uv |
-
-## Internationalisierung (i18n)
-
-Das Projekt unterstützt Deutsch (Standard) und Englisch.
-
-**Übersetzungen aktualisieren:**
-
-```bash
-# Neue Strings extrahieren
-uv run python manage.py makemessages -l en -l de --no-wrap --no-location
-
-# Übersetzungen kompilieren (erzeugt .mo Dateien)
-uv run python manage.py compilemessages
-```
-
-Die Übersetzungsdateien befinden sich im Ordner `locale/`.

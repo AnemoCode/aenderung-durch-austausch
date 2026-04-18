@@ -1,0 +1,211 @@
+{% extends 'base.html' %}
+{% load i18n %}
+
+{% block content %}
+
+{# Back link #}
+<div class="max-w-3xl mx-auto mb-8">
+    <a href="{% url 'blog:index' %}"
+       class="inline-flex items-center gap-1.5 meta-label text-forest/60 hover:text-forest transition-colors">
+        <i data-lucide="arrow-left" class="w-4 h-4"></i>
+        {% trans "Alle Themen" %}
+    </a>
+</div>
+
+<article class="max-w-3xl mx-auto">
+
+    {# Meta: author + date #}
+    <div class="flex items-center gap-3 mb-8">
+        <div class="w-10 h-10 rounded-full bg-wheat flex items-center justify-center text-forest font-bold text-sm flex-shrink-0">
+            {{ topic.author.initials }}
+        </div>
+        <div>
+            <p class="text-sm font-medium text-forest">{{ topic.author.name }}</p>
+            {% with date=topic.created_at|date:"d. F Y" time=topic.created_at|date:"H:i" %}
+            <p class="text-xs text-forest/45">{% blocktrans %}{{ date }}, {{ time }} Uhr{% endblocktrans %}</p>
+            {% endwith %}
+        </div>
+    </div>
+
+    {# Title #}
+    <h1 class="font-display text-4xl md:text-5xl lg:text-6xl text-forest tracking-tight leading-[1.05] text-balance mb-6">
+        {{ topic.title }}
+    </h1>
+
+    {# Topic-level tag chips #}
+    {% if topic.tags.all %}
+    <div class="flex flex-wrap gap-2 mb-10">
+        {% for tag in topic.tags.all %}
+        <a href="{% url 'tag_detail' tag.slug %}"
+           class="meta-label text-xs px-3 py-1.5 rounded-full bg-white/70 border border-forest/15 text-forest/75 hover:bg-white hover:border-forest/40 hover:text-forest transition-colors">
+            #{{ tag.name }}
+        </a>
+        {% endfor %}
+    </div>
+    {% else %}
+    <div class="mb-10"></div>
+    {% endif %}
+
+    <div class="border-t border-forest/15 mb-10"></div>
+
+    {# ─── Topic parts ───────────────────────────────────────────────── #}
+    {% for part in parts %}
+    <section class="mb-12">
+        <h2 class="font-display text-2xl md:text-3xl text-forest tracking-tight leading-[1.15] mb-5">
+            {{ part.heading }}
+        </h2>
+        <div class="font-serif text-lg md:text-xl leading-[1.75] text-forest/85 whitespace-pre-wrap">{{ part.body }}</div>
+        {% if part.tags.all %}
+        <div class="flex flex-wrap gap-1.5 mt-5">
+            {% for tag in part.tags.all %}
+            <a href="{% url 'tag_detail' tag.slug %}"
+               class="meta-label text-xs px-2.5 py-1 rounded-full bg-white/60 border border-forest/15 text-forest/70 hover:bg-white hover:border-forest/40 hover:text-forest transition-colors">
+                #{{ tag.name }}
+            </a>
+            {% endfor %}
+        </div>
+        {% endif %}
+    </section>
+    {% empty %}
+    <div class="font-serif text-lg md:text-xl leading-[1.75] text-forest/60 italic mb-12">
+        {% trans "Inhalte folgen in Kürze." %}
+    </div>
+    {% endfor %}
+
+    {# Like + comment stats #}
+    <div class="flex items-center gap-4 mt-14 pt-8 border-t border-forest/15">
+        {% if request.user.is_authenticated %}
+        <button id="like-btn"
+                data-liked="{{ user_liked|yesno:'true,false' }}"
+                data-url="{% url 'blog:topic_like_toggle' topic.slug %}"
+                class="flex items-center gap-2 px-5 py-2.5 rounded-full border text-sm font-medium transition-all
+                       {% if user_liked %}bg-rose-50 border-rose-200 text-rose-600{% else %}bg-white border-forest/15 text-forest/70 hover:border-forest/40 hover:text-forest{% endif %}">
+            <i data-lucide="heart"
+               id="like-icon"
+               class="w-4 h-4 {% if user_liked %}fill-rose-400 text-rose-400{% endif %}"></i>
+            <span id="like-count">{{ topic.likes_count }}</span>
+            <span>{% trans "Gefällt mir" %}</span>
+        </button>
+        {% else %}
+        <span class="flex items-center gap-2 px-5 py-2.5 rounded-full border bg-white border-forest/15 text-sm font-medium text-forest/60">
+            <i data-lucide="heart" class="w-4 h-4"></i>
+            <span>{{ topic.likes_count }}</span>
+            <span>{% trans "Gefällt mir" %}</span>
+        </span>
+        {% endif %}
+
+        <span class="flex items-center gap-1.5 text-sm text-forest/50">
+            <i data-lucide="message-circle" class="w-4 h-4"></i>
+            {% blocktrans count count=topic.comments_count %}{{ count }} Kommentar{% plural %}{{ count }} Kommentare{% endblocktrans %}
+        </span>
+    </div>
+</article>
+
+{# ─── Comments ────────────────────────────────────────────────────── #}
+<section class="max-w-3xl mx-auto mt-16">
+    <div class="meta-label text-forest/50 mb-6">
+        {% trans "Kommentare" %} · {{ topic.comments_count }}
+    </div>
+
+    {% for comment in topic.comments.all %}
+    <div class="lilac-card px-6 py-5 mb-3">
+        <div class="flex items-center gap-2.5 mb-3">
+            <div class="w-7 h-7 rounded-full bg-white/70 flex items-center justify-center text-forest font-bold text-xs flex-shrink-0">
+                {{ comment.author.initials }}
+            </div>
+            <span class="text-sm font-medium text-forest/85">{{ comment.author.name }}</span>
+            <span class="text-xs text-forest/30">·</span>
+            <span class="text-xs text-forest/45">{{ comment.created_at|date:"d. F Y" }}</span>
+        </div>
+        <p class="font-serif text-base text-forest/85 leading-relaxed">{{ comment.body }}</p>
+    </div>
+    {% empty %}
+    <div class="font-serif italic text-base text-forest/50 mb-6">
+        {% trans "Noch keine Kommentare. Sei der Erste!" %}
+    </div>
+    {% endfor %}
+
+    {# Add comment #}
+    {% if request.user.is_authenticated %}
+    <div class="lilac-card p-6 md:p-7 mt-6">
+        <h3 class="font-display text-xl text-forest tracking-tight mb-4">
+            {% trans "Kommentar schreiben" %}
+        </h3>
+        <form method="post" action="">
+            {% csrf_token %}
+            <div class="mb-4">
+                <textarea
+                    name="{{ comment_form.body.html_name }}"
+                    id="{{ comment_form.body.id_for_label }}"
+                    rows="3"
+                    placeholder="{% trans "Schreibe einen Kommentar…" %}"
+                    class="lilac-input w-full px-4 py-3 text-sm font-serif resize-none
+                           {% if comment_form.body.errors %}!border-rose-400 !bg-rose-50{% endif %}"></textarea>
+                {% for e in comment_form.body.errors %}
+                <p class="mt-1 text-xs text-rose-500">{{ e }}</p>
+                {% endfor %}
+            </div>
+            <button type="submit"
+                    class="bg-forest hover:bg-forest-700 text-cream px-6 py-2.5 rounded-md text-sm font-semibold transition-colors shadow-sm inline-flex items-center gap-2">
+                <i data-lucide="send" class="w-4 h-4"></i>
+                {% trans "Kommentar absenden" %}
+            </button>
+        </form>
+    </div>
+    {% else %}
+    <div class="lilac-card p-6 md:p-7 mt-6 text-center">
+        <p class="font-serif text-base text-forest/70 mb-3">
+            {% trans "Melde dich an, um zu kommentieren." %}
+        </p>
+        <a href="{% url 'accounts:login' %}?next={{ request.path }}"
+           class="inline-flex items-center gap-2 bg-forest hover:bg-forest-700 text-cream px-5 py-2 rounded-md text-sm font-semibold transition-colors">
+            {% trans "Anmelden" %}
+        </a>
+    </div>
+    {% endif %}
+</section>
+
+{% endblock %}
+
+{% block extra_js %}
+<script>
+(function () {
+    const btn = document.getElementById('like-btn');
+    if (!btn) return;
+
+    let liked = btn.dataset.liked === 'true';
+    const icon = document.getElementById('like-icon');
+    const countEl = document.getElementById('like-count');
+
+    function applyState(isLiked, count) {
+        liked = isLiked;
+        countEl.textContent = count;
+
+        if (isLiked) {
+            btn.className = btn.className
+                .replace('bg-white border-forest/15 text-forest/70 hover:border-forest/40 hover:text-forest', '')
+                + ' bg-rose-50 border-rose-200 text-rose-600';
+            icon.className = icon.className + ' fill-rose-400 text-rose-400';
+        } else {
+            btn.className = btn.className
+                .replace('bg-rose-50 border-rose-200 text-rose-600', '')
+                + ' bg-white border-forest/15 text-forest/70 hover:border-forest/40 hover:text-forest';
+            icon.className = icon.className
+                .replace(' fill-rose-400 text-rose-400', '');
+        }
+        lucide.createIcons();
+    }
+
+    btn.addEventListener('click', async function () {
+        const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+        const res = await fetch(btn.dataset.url, {
+            method: 'POST',
+            headers: { 'X-CSRFToken': csrfToken, 'Accept': 'application/json' },
+        });
+        if (!res.ok) return;
+        const data = await res.json();
+        applyState(data.liked, data.count);
+    });
+})();
+</script>
+{% endblock %}

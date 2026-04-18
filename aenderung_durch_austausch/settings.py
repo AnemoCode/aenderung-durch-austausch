@@ -49,9 +49,9 @@ INSTALLED_APPS = [
     'whitenoise.runserver_nostatic',
     'django.contrib.staticfiles',
     'django.contrib.humanize',
+    'taggit',
     'apps.accounts',
     'apps.blog',
-    'apps.topics',
 ]
 
 AUTH_USER_MODEL = 'accounts.User'
