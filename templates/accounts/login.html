@@ -140,6 +140,42 @@
             </a>
         </p>
 
+        {% if staging_credentials %}
+        <div x-data="{ open: false }" class="mt-6">
+            <button @click="open = !open"
+                    class="w-full flex items-center justify-between gap-2 px-4 py-3 rounded-xl text-xs font-semibold tracking-wide uppercase border transition-colors"
+                    style="background-color: rgba(253,251,255,0.7); border-color: rgba(52,73,69,0.15); color: #344945;">
+                <span class="flex items-center gap-2">
+                    <i data-lucide="key-round" class="w-3.5 h-3.5"></i>
+                    Staging-Zugänge
+                </span>
+                <i data-lucide="chevron-down" class="w-3.5 h-3.5 transition-transform" :class="open ? 'rotate-180' : ''"></i>
+            </button>
+            <div x-show="open" x-transition x-cloak
+                 class="mt-2 rounded-xl border overflow-hidden"
+                 style="background-color: rgba(253,251,255,0.85); border-color: rgba(52,73,69,0.12);">
+                <table class="w-full text-xs font-serif">
+                    <thead>
+                        <tr style="background-color: rgba(52,73,69,0.05);">
+                            <th class="px-4 py-2 text-left meta-label text-forest/50" style="font-size:0.6rem;">Name</th>
+                            <th class="px-4 py-2 text-left meta-label text-forest/50" style="font-size:0.6rem;">E-Mail</th>
+                            <th class="px-4 py-2 text-left meta-label text-forest/50" style="font-size:0.6rem;">Passwort</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for user in staging_credentials %}
+                        <tr class="border-t" style="border-color: rgba(52,73,69,0.08);">
+                            <td class="px-4 py-2.5 text-forest/80">{{ user.name }}{% if user.is_superuser %} <span class="meta-label text-forest/40" style="font-size:0.55rem;">Admin</span>{% endif %}</td>
+                            <td class="px-4 py-2.5 font-medium text-forest cursor-pointer select-all">{{ user.email }}</td>
+                            <td class="px-4 py-2.5 font-medium text-forest cursor-pointer select-all">{{ user.password }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        {% endif %}
+
         <p class="text-center text-xs text-forest/30 mt-6 font-serif">
             &copy; {% now "Y" %} ÄdA — Ändern durch Austausch
         </p>
