@@ -1,0 +1,31 @@
+services:
+  db:
+    image: postgres:17-alpine
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-aenderung-durch-austausch}
+      POSTGRES_USER: ${POSTGRES_USER:-aenderung-durch-austausch}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-aenderung-durch-austausch}
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-aenderung-durch-austausch}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+
+  web:
+    build:
+      context: .
+      target: staging
+    ports:
+      - "8000:8000"
+    env_file:
+      - .env
+    depends_on:
+      db:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health/"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+      start_period: 60s
