@@ -1,0 +1,15 @@
+[run]
+source = apps, aenderung_durch_austausch
+omit =
+    */migrations/*
+    */test_settings.py
+    */management/*
+    */staging_data.py
+    */celery.py
+    */wsgi.py
+    */asgi.py
+    aenderung_durch_austausch/settings.py
+
+[report]
+show_missing = true
+fail_under = 90
