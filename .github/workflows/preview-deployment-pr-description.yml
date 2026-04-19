@@ -4,10 +4,6 @@ on:
   issue_comment:
     types: [created]
 
-concurrency:
-  group: pr-desc-${{ github.event.issue.number }}
-  cancel-in-progress: false
-
 jobs:
   update-pr-description:
     if: >-
