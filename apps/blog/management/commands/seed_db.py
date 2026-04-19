@@ -162,7 +162,7 @@ class Command(BaseCommand):
                 },
             )
             if created:
-                topic.tags.set(*topic_data.get("tags", []))
+                topic.tags.set(topic_data.get("tags", []))
                 self.stdout.write(f"  Created topic: {topic.title}")
             else:
                 self.stdout.write(f"  Topic already exists: {topic.title}")
