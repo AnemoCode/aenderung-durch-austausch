@@ -115,14 +115,27 @@
                         <span class="ql-formats">
                             <button class="ql-bold"></button>
                             <button class="ql-italic"></button>
+                            <button class="ql-underline"></button>
+                            <button class="ql-strike"></button>
                         </span>
                         <span class="ql-formats">
                             <button class="ql-list" value="ordered"></button>
                             <button class="ql-list" value="bullet"></button>
+                            <button class="ql-indent" value="-1"></button>
+                            <button class="ql-indent" value="+1"></button>
                         </span>
                         <span class="ql-formats">
                             <button class="ql-blockquote"></button>
+                            <button class="ql-code-block"></button>
                             <button class="ql-link"></button>
+                        </span>
+                        <span class="ql-formats">
+                            <select class="ql-align">
+                                <option selected></option>
+                                <option value="center"></option>
+                                <option value="right"></option>
+                                <option value="justify"></option>
+                            </select>
                         </span>
                         <span class="ql-formats">
                             <button class="ql-clean"></button>
@@ -135,7 +148,7 @@
                 <input type="hidden" name="{{ form.body.html_name }}" id="id_body" value="{{ form.body.value|default:'' }}">
 
                 <p class="mt-2 text-xs text-forest/45 font-serif italic">
-                    {% trans "Formatierter Text: Überschriften, fett, kursiv, Listen, Links, Zitate." %}
+                    {% trans "Formatierter Text: Überschriften, fett, kursiv, unterstrichen, durchgestrichen, Listen, Einrückung, Ausrichtung, Codeblock, Links, Zitate." %}
                 </p>
             </div>
 
