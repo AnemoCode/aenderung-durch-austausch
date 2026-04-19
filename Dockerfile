@@ -49,3 +49,15 @@ EXPOSE 8000
 
 ENTRYPOINT ["/entrypoint.sh"]
 CMD ["gunicorn", "aenderung_durch_austausch.wsgi:application", "--bind", "0.0.0.0:8000"]
+
+# ── Staging stage ─────────────────────────────────────────────────────────────
+# Extends the runtime image with a staging-specific entrypoint that runs fresh
+# migrations, seeds the database with representative test data, and then starts
+# the application server.  Build with: docker build --target staging .
+FROM runtime AS staging
+
+COPY entrypoint.staging.sh /entrypoint.staging.sh
+RUN chmod +x /entrypoint.staging.sh
+
+ENTRYPOINT ["/entrypoint.staging.sh"]
+CMD ["gunicorn", "aenderung_durch_austausch.wsgi:application", "--bind", "0.0.0.0:8000"]
