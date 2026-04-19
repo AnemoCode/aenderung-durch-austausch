@@ -4,14 +4,9 @@ from django.contrib.auth import get_user_model
 from django.core.management.base import BaseCommand
 
 from apps.blog.models import Comment, Like, Topic, TopicPart
+from apps.blog.staging_data import SEED_USERS
 
 User = get_user_model()
-
-SEED_USERS = [
-    {"email": "admin@staging.local", "name": "Staging Admin", "password": "staging-admin", "is_staff": True, "is_superuser": True},
-    {"email": "alice@staging.local", "name": "Alice Müller", "password": "staging-alice"},
-    {"email": "bob@staging.local", "name": "Bob Schmidt", "password": "staging-bob"},
-]
 
 SEED_TOPICS = [
     {
