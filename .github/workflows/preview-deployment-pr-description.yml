@@ -1,0 +1,65 @@
+name: Update PR Description with Preview Deployment
+
+on:
+  issue_comment:
+    types: [created]
+
+jobs:
+  update-pr-description:
+    if: >-
+      github.event.issue.pull_request != null &&
+      github.event.comment.user.login == 'exploited-intern' &&
+      contains(github.event.comment.body, '<!-- preview-deployment -->')
+    runs-on: ubuntu-latest
+    permissions:
+      pull-requests: write
+
+    steps:
+      - name: Sync preview deployment block in PR description
+        uses: actions/github-script@v7
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const startMarker = '<!-- preview-deployment:start -->';
+            const endMarker = '<!-- preview-deployment:end -->';
+            const triggerMarker = '<!-- preview-deployment -->';
+
+            const commentBody = context.payload.comment.body;
+            const prNumber = context.payload.issue.number;
+
+            const { data: pr } = await github.rest.pulls.get({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              pull_number: prNumber,
+            });
+
+            const currentBody = pr.body || '';
+            const block = `${startMarker}\n${commentBody}\n${endMarker}`;
+
+            const startIndex = currentBody.indexOf(startMarker);
+            const endIndex = currentBody.indexOf(endMarker);
+
+            let newBody;
+            if (startIndex !== -1 && endIndex !== -1 && endIndex > startIndex) {
+              newBody =
+                currentBody.substring(0, startIndex) +
+                block +
+                currentBody.substring(endIndex + endMarker.length);
+            } else {
+              const separator = currentBody.length > 0 ? '\n\n' : '';
+              newBody = currentBody + separator + block;
+            }
+
+            if (newBody === currentBody) {
+              core.info(`PR #${prNumber} description already up to date.`);
+              return;
+            }
+
+            await github.rest.pulls.update({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              pull_number: prNumber,
+              body: newBody,
+            });
+
+            core.info(`Updated PR #${prNumber} description with preview deployment info.`);
