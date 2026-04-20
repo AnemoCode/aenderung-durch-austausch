@@ -10,20 +10,6 @@ from apps.blog.views import TagDetailView
 # `pillar_numeral` / `pillar_title` / `pillar_tagline` / `pillar_points` render the placeholder body.
 PILLAR_PAGES = [
     {
-        "slug": "definitionen",
-        "name": "definitionen",
-        "active_nav": "definitionen",
-        "numeral": "01",
-        "title": "Definitionen",
-        "tagline": "Die wichtigsten Begriffe – in einfacher und formaler Sprache.",
-        "points": [
-            "Rechtsextremismus, Rechtspopulismus, Rassismus – klar definiert.",
-            "Freiheitlich-demokratische Grundordnung und ihre Prinzipien.",
-            "Verschwörungserzählungen und gruppenbezogene Menschenfeindlichkeit.",
-            "Jeder Begriff zweifach erklärt: in einfacher Sprache und in formaler Sprache.",
-        ],
-    },
-    {
         "slug": "argumentationsweisen",
         "name": "argumentation",
         "active_nav": "argumentation",
@@ -93,5 +79,6 @@ urlpatterns = [
     path("", TemplateView.as_view(template_name="landing.html"), name="landing"),
     path("", include("apps.accounts.urls", namespace="accounts")),
     path("blog/", include("apps.blog.urls", namespace="blog")),
+    path("definitionen/", include("apps.definitions.urls", namespace="definitions")),
     *pillar_urls,
 ]

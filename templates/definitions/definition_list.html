@@ -1,0 +1,213 @@
+{% extends 'base.html' %}
+{% load i18n %}
+
+{% block content %}
+<div class="space-y-10 md:space-y-14">
+
+    {# ─── Pillar header: numeral + title + tagline ──────────────── #}
+    <header class="flex items-start gap-5 md:gap-6 max-w-3xl">
+        <div class="numeral text-6xl md:text-7xl text-forest/25 select-none leading-none pt-1" aria-hidden="true">
+            01
+        </div>
+        <div class="flex-1 min-w-0">
+            <div class="meta-label text-forest/50 mb-4">{% trans "Kapitel" %}</div>
+            <h1 class="font-display text-4xl md:text-5xl lg:text-6xl text-forest tracking-tight leading-[1.05] mb-5">
+                {% trans "Definitionen" %}
+            </h1>
+            <p class="font-serif italic text-lg md:text-xl text-forest/75 leading-relaxed">
+                {% trans "Die wichtigsten Begriffe – in einfacher und formaler Sprache." %}
+            </p>
+        </div>
+    </header>
+
+    {# ─── Alpine root: wraps search + letter bar + results ──────── #}
+    <div x-data="{
+            q: '{{ query|escapejs }}',
+            match(t) { return !this.q || t.toLowerCase().includes(this.q.toLowerCase()); }
+         }"
+         class="space-y-10 md:space-y-12">
+
+        {# ─── Control bar: search + staff CTA ───────────────────── #}
+        <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+            <form method="get" class="flex-1 md:max-w-md relative" role="search">
+                {% if active_letter %}<input type="hidden" name="letter" value="{{ active_letter }}">{% endif %}
+                <label for="def-search" class="sr-only">{% trans "Begriff suchen" %}</label>
+                <div class="relative">
+                    <i data-lucide="search" class="w-4 h-4 text-forest/40 absolute left-4 top-1/2 -translate-y-1/2 pointer-events-none"></i>
+                    <input id="def-search" type="search" name="q"
+                           x-model.debounce.100ms="q"
+                           value="{{ query }}"
+                           placeholder="{% trans 'Begriff suchen …' %}"
+                           autocomplete="off"
+                           class="lilac-input w-full pl-11 pr-4 py-3 font-serif text-base">
+                </div>
+            </form>
+
+            {% if request.user.is_staff %}
+            <a href="{% url 'definitions:create' %}"
+               class="bg-forest hover:bg-forest-700 text-cream px-5 py-2.5 rounded-md text-sm font-semibold transition-colors shadow-sm inline-flex items-center gap-2 flex-shrink-0">
+                <i data-lucide="plus" class="w-4 h-4"></i>
+                {% trans "Neue Definition" %}
+            </a>
+            {% endif %}
+        </div>
+
+        {# ─── A–Z letter bar ────────────────────────────────────── #}
+        <nav class="flex flex-wrap items-center gap-1" aria-label="{% trans 'Nach Anfangsbuchstaben filtern' %}">
+            {% for L in letters %}
+                {% if L == active_letter %}
+                    <span class="meta-label text-xs px-2.5 py-1.5 rounded-md bg-forest text-cream min-w-[2rem] text-center"
+                          aria-current="true">{{ L }}</span>
+                {% elif L in active_letters %}
+                    <a href="?letter={{ L }}{% if query %}&q={{ query }}{% endif %}"
+                       class="meta-label text-xs px-2.5 py-1.5 rounded-md text-forest hover:bg-forest/10 transition-colors min-w-[2rem] text-center">{{ L }}</a>
+                {% else %}
+                    <span class="meta-label text-xs px-2.5 py-1.5 rounded-md text-forest/25 min-w-[2rem] text-center cursor-default"
+                          aria-disabled="true">{{ L }}</span>
+                {% endif %}
+            {% endfor %}
+            <span class="w-px h-5 bg-forest/15 mx-2" aria-hidden="true"></span>
+            {% if active_letter %}
+                <a href="?{% if query %}q={{ query }}{% endif %}"
+                   class="meta-label text-xs px-3 py-1.5 rounded-md text-forest hover:bg-forest/10 transition-colors">
+                    {% trans "Alle" %}
+                </a>
+            {% else %}
+                <span class="meta-label text-xs px-3 py-1.5 rounded-md bg-forest text-cream"
+                      aria-current="true">
+                    {% trans "Alle" %}
+                </span>
+            {% endif %}
+        </nav>
+
+        {# ─── Results ───────────────────────────────────────────── #}
+        {% if total_count == 0 %}
+            {# Absolute empty state — no definitions exist at all #}
+            <div class="lilac-card flex flex-col items-center justify-center py-20 md:py-28 text-center max-w-xl mx-auto">
+                <div class="w-14 h-14 rounded-full bg-white/60 flex items-center justify-center mb-5">
+                    <i data-lucide="book-open" class="w-6 h-6 text-forest/40"></i>
+                </div>
+                <h3 class="font-display text-2xl md:text-3xl text-forest tracking-tight mb-2">
+                    {% trans "Noch keine Definitionen" %}
+                </h3>
+                <p class="font-serif text-base text-forest/60 max-w-sm px-6 mb-6">
+                    {% trans "Das Wörterbuch ist gerade noch leer. Der erste Eintrag wartet darauf, geschrieben zu werden." %}
+                </p>
+                {% if request.user.is_staff %}
+                <a href="{% url 'definitions:create' %}"
+                   class="bg-forest hover:bg-forest-700 text-cream px-5 py-2.5 rounded-md text-sm font-semibold transition-colors shadow-sm inline-flex items-center gap-2">
+                    <i data-lucide="plus" class="w-4 h-4"></i>
+                    {% trans "Erste Definition anlegen" %}
+                </a>
+                {% endif %}
+            </div>
+        {% elif not grouped %}
+            {# Server-side filter returned nothing #}
+            <div class="lilac-card flex flex-col items-center justify-center py-16 text-center max-w-xl mx-auto">
+                <div class="w-12 h-12 rounded-full bg-white/60 flex items-center justify-center mb-4">
+                    <i data-lucide="search-x" class="w-5 h-5 text-forest/40"></i>
+                </div>
+                <h3 class="font-display text-xl md:text-2xl text-forest tracking-tight mb-2">
+                    {% trans "Keine Definitionen gefunden" %}
+                </h3>
+                <p class="font-serif text-sm text-forest/60 max-w-sm px-6">
+                    {% trans "Versuche einen anderen Buchstaben oder eine andere Suche." %}
+                </p>
+            </div>
+        {% else %}
+            {% for letter, defs in grouped %}
+            <section class="mb-14 md:mb-16 last:mb-0"
+                     x-show="[{% for d in defs %}'{{ d.term|escapejs }}'{% if not forloop.last %},{% endif %}{% endfor %}].some(t => match(t))"
+                     id="letter-{{ letter }}">
+                <div class="flex items-baseline gap-5 mb-8 pb-4 border-b border-forest/10">
+                    <span class="font-display italic text-6xl md:text-7xl text-forest/20 leading-none select-none">
+                        {{ letter }}
+                    </span>
+                    <span class="meta-label text-forest/45">
+                        {% blocktrans count count=defs|length %}{{ count }} Eintrag{% plural %}{{ count }} Einträge{% endblocktrans %}
+                    </span>
+                </div>
+
+                <div class="grid gap-5 md:gap-6 sm:grid-cols-2 lg:grid-cols-3">
+                    {% for d in defs %}
+                    <article class="lilac-card p-7 md:p-8 flex flex-col h-full group"
+                             x-data="{ mode: 'simple' }"
+                             x-show="match('{{ d.term|escapejs }}')">
+
+                        {# Term #}
+                        <h3 class="font-display text-xl md:text-2xl text-forest tracking-tight leading-[1.2] mb-4">
+                            <a href="{{ d.get_absolute_url }}"
+                               class="hover:text-forest/70 transition-colors">
+                                {{ d.term }}
+                            </a>
+                        </h3>
+
+                        {# Mode toggle pill #}
+                        <div role="group" aria-label="{% trans 'Sprachregister auswählen' %}"
+                             class="inline-flex self-start rounded-full bg-white/60 border border-forest/15 p-0.5 mb-4">
+                            <button type="button" @click="mode = 'simple'" :aria-pressed="mode === 'simple'"
+                                    class="meta-label text-[0.65rem] px-3 py-1 rounded-full transition-colors"
+                                    :class="mode === 'simple' ? 'bg-forest text-cream' : 'text-forest/60 hover:text-forest'">
+                                {% trans "Einfach" %}
+                            </button>
+                            <button type="button" @click="mode = 'formal'" :aria-pressed="mode === 'formal'"
+                                    class="meta-label text-[0.65rem] px-3 py-1 rounded-full transition-colors"
+                                    :class="mode === 'formal' ? 'bg-forest text-cream' : 'text-forest/60 hover:text-forest'">
+                                {% trans "Formal" %}
+                            </button>
+                        </div>
+
+                        {# Explanations #}
+                        <p x-show="mode === 'simple'" x-transition.opacity.duration.150ms
+                           class="font-serif text-sm text-forest/75 leading-relaxed whitespace-pre-wrap mb-4 flex-1">
+                            {{ d.simple_explanation|truncatewords:40 }}
+                        </p>
+                        <p x-show="mode === 'formal'" x-transition.opacity.duration.150ms x-cloak
+                           class="font-serif text-sm text-forest/75 leading-relaxed whitespace-pre-wrap mb-4 flex-1">
+                            {{ d.formal_explanation|truncatewords:40 }}
+                        </p>
+
+                        {# Tag chips #}
+                        {% if d.tags.all %}
+                        <div class="flex flex-wrap gap-1.5 mb-4">
+                            {% for tag in d.tags.all %}
+                            <a href="{% url 'tag_detail' tag.slug %}"
+                               class="meta-label text-xs px-2.5 py-1 rounded-full bg-white/60 border border-forest/15 text-forest/70 hover:bg-white hover:border-forest/40 hover:text-forest transition-colors">
+                                #{{ tag.name }}
+                            </a>
+                            {% endfor %}
+                        </div>
+                        {% endif %}
+
+                        {# CTA footer #}
+                        <div class="pt-4 border-t border-forest/10 mt-auto flex justify-end">
+                            <a href="{{ d.get_absolute_url }}"
+                               class="meta-label text-forest/60 group-hover:text-forest flex items-center gap-1.5 transition-colors">
+                                {% trans "Zum Eintrag" %}
+                                <i data-lucide="arrow-right" class="w-3.5 h-3.5"></i>
+                            </a>
+                        </div>
+                    </article>
+                    {% endfor %}
+                </div>
+            </section>
+            {% endfor %}
+
+            {# Client-side "nothing matches" empty state #}
+            <div class="lilac-card flex flex-col items-center justify-center py-16 text-center max-w-xl mx-auto"
+                 x-show="![{% for letter, defs in grouped %}{% for d in defs %}'{{ d.term|escapejs }}'{% if not forloop.last or not forloop.parentloop.last %},{% endif %}{% endfor %}{% endfor %}].some(t => match(t))"
+                 x-cloak>
+                <div class="w-12 h-12 rounded-full bg-white/60 flex items-center justify-center mb-4">
+                    <i data-lucide="search-x" class="w-5 h-5 text-forest/40"></i>
+                </div>
+                <h3 class="font-display text-xl md:text-2xl text-forest tracking-tight mb-2">
+                    {% trans "Keine Treffer" %}
+                </h3>
+                <p class="font-serif text-sm text-forest/60 max-w-sm px-6">
+                    {% trans "Kein Eintrag passt zu deiner Suche." %}
+                </p>
+            </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
