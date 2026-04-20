@@ -94,7 +94,11 @@ class DefinitionDetailView(DetailView):
     context_object_name = 'definition'
 
     def get_queryset(self):
-        return Definition.objects.filter(is_published=True).prefetch_related('tags')
+        return (
+            Definition.objects.filter(is_published=True)
+            .select_related('author')
+            .prefetch_related('tags')
+        )
 
     def get_context_data(self, **kwargs):
         ctx = super().get_context_data(**kwargs)

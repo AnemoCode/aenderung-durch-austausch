@@ -153,6 +153,13 @@ class DefinitionViewsTests(TestCase):
 
     # ---- update view ---------------------------------------------------
 
+    def test_update_anonymous_redirects_to_login(self):
+        res = self.client.get(
+            reverse('definitions:edit', kwargs={'slug': self.holo.slug})
+        )
+        self.assertEqual(res.status_code, 302)
+        self.assertIn('/login/', res.url)
+
     def test_update_non_staff_redirects(self):
         self.client.force_login(self.other)
         res = self.client.get(

@@ -148,6 +148,10 @@ class TagDetailView(TemplateView):
     template_name = 'blog/tag_detail.html'
 
     def get_context_data(self, **kwargs):
+        # Inline import: apps.definitions imports nothing from blog, but
+        # keeping the dependency local to this method documents that blog
+        # does not require definitions to load — the two apps remain
+        # independent at import time.
         from apps.definitions.models import Definition
 
         ctx = super().get_context_data(**kwargs)
