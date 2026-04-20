@@ -59,7 +59,7 @@
                     <span class="meta-label text-xs px-2.5 py-1.5 rounded-md bg-forest text-cream min-w-[2rem] text-center"
                           aria-current="true">{{ L }}</span>
                 {% elif L in active_letters %}
-                    <a href="?letter={{ L }}{% if query %}&q={{ query }}{% endif %}"
+                    <a href="?letter={{ L|urlencode }}{% if query %}&q={{ query|urlencode }}{% endif %}"
                        class="meta-label text-xs px-2.5 py-1.5 rounded-md text-forest hover:bg-forest/10 transition-colors min-w-[2rem] text-center">{{ L }}</a>
                 {% else %}
                     <span class="meta-label text-xs px-2.5 py-1.5 rounded-md text-forest/25 min-w-[2rem] text-center cursor-default"
@@ -68,7 +68,7 @@
             {% endfor %}
             <span class="w-px h-5 bg-forest/15 mx-2" aria-hidden="true"></span>
             {% if active_letter %}
-                <a href="?{% if query %}q={{ query }}{% endif %}"
+                <a href="?{% if query %}q={{ query|urlencode }}{% endif %}"
                    class="meta-label text-xs px-3 py-1.5 rounded-md text-forest hover:bg-forest/10 transition-colors">
                     {% trans "Alle" %}
                 </a>
@@ -81,7 +81,7 @@
         </nav>
 
         {# ─── Results ───────────────────────────────────────────── #}
-        {% if total_count == 0 %}
+        {% if not has_any_definitions %}
             {# Absolute empty state — no definitions exist at all #}
             <div class="lilac-card flex flex-col items-center justify-center py-20 md:py-28 text-center max-w-xl mx-auto">
                 <div class="w-14 h-14 rounded-full bg-white/60 flex items-center justify-center mb-5">

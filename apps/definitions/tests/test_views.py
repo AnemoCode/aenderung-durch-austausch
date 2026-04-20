@@ -62,6 +62,36 @@ class DefinitionViewsTests(TestCase):
         self.assertEqual(res.status_code, 200)
         self.assertContains(res, 'Holocaust')
 
+    def test_list_hash_bucket_filters_non_alpha_terms(self):
+        Definition.objects.create(
+            term='1933',
+            simple_explanation='Machtergreifung.',
+            formal_explanation='Jahr der Machtergreifung.',
+            author=self.staff,
+        )
+        # '#' must be URL-encoded as %23; Django decodes it on the server.
+        res = self.client.get(reverse('definitions:index'), {'letter': '#'})
+        self.assertEqual(res.status_code, 200)
+        self.assertContains(res, '1933')
+        self.assertNotContains(res, 'Holocaust')
+        self.assertNotContains(res, 'Ideologie')
+
+    def test_list_filtered_empty_shows_no_results_not_absolute_empty(self):
+        # Search that matches nothing while definitions exist must hit the
+        # "Keine Definitionen gefunden" branch, not "Noch keine Definitionen".
+        res = self.client.get(
+            reverse('definitions:index'), {'q': 'xyzzy-not-a-term'}
+        )
+        self.assertEqual(res.status_code, 200)
+        self.assertContains(res, 'Keine Definitionen gefunden')
+        self.assertNotContains(res, 'Noch keine Definitionen')
+
+    def test_list_absolute_empty_when_no_definitions_exist(self):
+        Definition.objects.all().delete()
+        res = self.client.get(reverse('definitions:index'))
+        self.assertEqual(res.status_code, 200)
+        self.assertContains(res, 'Noch keine Definitionen')
+
     # ---- detail view ---------------------------------------------------
 
     def test_detail_renders_published(self):

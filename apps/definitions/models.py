@@ -1,5 +1,6 @@
 from django.conf import settings
 from django.db import models
+from django.db.models.functions import Lower
 from django.urls import reverse
 from django.utils.text import slugify
 from django.utils.translation import gettext_lazy as _
@@ -37,6 +38,16 @@ class Definition(models.Model):
         ordering = ['term']
         verbose_name = _('Definition')
         verbose_name_plural = _('Definitionen')
+        constraints = [
+            # Enforce case-insensitive uniqueness at the DB layer so the
+            # invariant holds regardless of entry point (admin, ORM, racing
+            # form submissions) — the form-level `clean_term` check alone is
+            # not sufficient.
+            models.UniqueConstraint(
+                Lower('term'),
+                name='definitions_definition_term_ci_unique',
+            ),
+        ]
 
     def __str__(self):
         return self.term

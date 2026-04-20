@@ -1,4 +1,5 @@
 from django.contrib.auth import get_user_model
+from django.db import IntegrityError, transaction
 from django.test import TestCase
 from django.urls import reverse
 
@@ -64,3 +65,14 @@ class DefinitionModelTests(TestCase):
         self._make(term='Mobilität')
         terms = list(Definition.objects.values_list('term', flat=True))
         self.assertEqual(terms, ['Antisemitismus', 'Mobilität', 'Zionismus'])
+
+    def test_term_case_insensitive_unique_at_db_level(self):
+        self._make(term='Holocaust')
+        with self.assertRaises(IntegrityError):
+            with transaction.atomic():
+                Definition.objects.create(
+                    term='holocaust',
+                    simple_explanation='x',
+                    formal_explanation='y',
+                    author=self.author,
+                )

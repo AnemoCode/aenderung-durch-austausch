@@ -54,15 +54,20 @@ class DefinitionListView(ListView):
 
     def get_context_data(self, **kwargs):
         ctx = super().get_context_data(**kwargs)
-        all_defs = list(ctx['definitions'])
+        # ctx['definitions'] is already filtered by the `q` search param, so it
+        # reflects "results for the current query" rather than "all published".
+        # The "absolute empty" empty state needs a separate unfiltered probe so
+        # a 0-result search doesn't masquerade as "the dictionary is empty".
+        search_results = list(ctx['definitions'])
         letter = self._letter()
+        has_any_definitions = Definition.objects.filter(is_published=True).exists()
 
-        active_letters = {d.initial_letter for d in all_defs}
+        active_letters = {d.initial_letter for d in search_results}
 
         if letter:
-            visible = [d for d in all_defs if d.initial_letter == letter]
+            visible = [d for d in search_results if d.initial_letter == letter]
         else:
-            visible = all_defs
+            visible = search_results
 
         # Group by initial letter, preserving alphabetical order via LETTERS.
         grouped: dict[str, list[Definition]] = {}
@@ -77,7 +82,8 @@ class DefinitionListView(ListView):
             'active_letters': active_letters,
             'query': self._query(),
             'grouped': ordered_groups,
-            'total_count': len(all_defs),
+            'has_any_definitions': has_any_definitions,
+            'total_count': len(search_results),
             'visible_count': len(visible),
         })
         return ctx
