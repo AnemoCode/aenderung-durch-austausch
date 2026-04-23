@@ -9,5 +9,6 @@ urlpatterns = [
     path('posts/new/', views.TopicPartCreateView.as_view(), name='post_create'),
     path('topics/<slug:slug>/', views.TopicDetailView.as_view(), name='topic_detail'),
     path('topics/<slug:slug>/like/', views.topic_like_toggle, name='topic_like_toggle'),
+    path('topics/<slug:slug>/comments/<int:pk>/delete/', views.CommentDeleteView.as_view(), name='comment_delete'),
     path('posts/<int:pk>/', views.PostDetailRedirectView.as_view(), name='post_detail'),
 ]

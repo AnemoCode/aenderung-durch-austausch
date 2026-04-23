@@ -49,7 +49,7 @@
 
 {# Auth: Anmelden or account menu #}
             {% if request.user.is_authenticated %}
-                {% if request.user.is_staff %}
+                {% if request.user.is_staff or perms.blog.add_topicpart %}
                 <a href="{% url 'blog:post_create' %}"
                    class="hidden sm:inline-flex bg-forest text-cream px-4 py-2 rounded-md text-sm font-semibold hover:bg-forest-700 transition-colors shadow-sm items-center gap-2">
                     <i data-lucide="plus" class="w-4 h-4"></i>
@@ -72,6 +72,8 @@
                             <p class="text-sm font-medium text-forest truncate">{{ request.user.name }}</p>
                             {% if request.user.is_staff %}
                             <p class="meta-label text-forest/50 mt-1">{% trans "Admin" %}</p>
+                            {% elif perms.blog.add_topicpart %}
+                            <p class="meta-label text-forest/50 mt-1">{% trans "Moderator" %}</p>
                             {% endif %}
                         </div>
                         <div class="border-t border-forest/10 my-1"></div>
