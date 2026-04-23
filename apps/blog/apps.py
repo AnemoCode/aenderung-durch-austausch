@@ -18,10 +18,7 @@ def _create_moderator_group(sender, **kwargs):
 
     try:
         moderator, _ = Group.objects.get_or_create(name='Moderator')
-        perms = Permission.objects.filter(
-            codename__in=['add_topicpart', 'add_comment', 'delete_comment'],
-            content_type__app_label='blog',
-        )
+        perms = Permission.objects.filter(content_type__app_label='blog')
         if not perms.exists():
             print(
                 "WARNING: No blog permissions found for Moderator group — "

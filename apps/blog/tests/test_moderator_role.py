@@ -10,10 +10,7 @@ User = get_user_model()
 
 def _get_moderator_group():
     group, _ = Group.objects.get_or_create(name='Moderator')
-    perms = Permission.objects.filter(
-        codename__in=['add_topicpart', 'add_comment', 'delete_comment'],
-        content_type__app_label='blog',
-    )
+    perms = Permission.objects.filter(content_type__app_label='blog')
     group.permissions.set(perms)
     return group
 
@@ -159,6 +156,10 @@ class ModeratorGroupSetupTests(TestCase):
     def test_moderator_group_has_required_permissions(self):
         group = _get_moderator_group()
         codenames = set(group.permissions.values_list('codename', flat=True))
-        self.assertIn('add_topicpart', codenames)
-        self.assertIn('add_comment', codenames)
-        self.assertIn('delete_comment', codenames)
+        expected = {
+            'add_topic', 'change_topic', 'delete_topic', 'view_topic',
+            'add_topicpart', 'change_topicpart', 'delete_topicpart', 'view_topicpart',
+            'add_comment', 'change_comment', 'delete_comment', 'view_comment',
+            'add_like', 'change_like', 'delete_like', 'view_like',
+        }
+        self.assertTrue(expected.issubset(codenames))
