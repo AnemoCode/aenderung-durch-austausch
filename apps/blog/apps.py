@@ -12,6 +12,8 @@ class BlogConfig(AppConfig):
 
 
 def _create_moderator_group(sender, **kwargs):
+    import sys
+
     from django.contrib.auth.models import Group, Permission
 
     try:
@@ -20,6 +22,12 @@ def _create_moderator_group(sender, **kwargs):
             codename__in=['add_topicpart', 'add_comment', 'delete_comment'],
             content_type__app_label='blog',
         )
-        moderator.permissions.add(*perms)
-    except Exception:
-        pass
+        if not perms.exists():
+            print(
+                "WARNING: No blog permissions found for Moderator group — "
+                "content types may not be synced yet.",
+                file=sys.stderr,
+            )
+        moderator.permissions.set(perms)
+    except Exception as exc:
+        print(f"ERROR: Failed to create Moderator group: {exc}", file=sys.stderr)

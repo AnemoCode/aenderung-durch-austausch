@@ -123,6 +123,7 @@ class Command(BaseCommand):
             self.stdout.write(self.style.WARNING("All data flushed."))
 
         self._seed_users()
+        self._seed_moderator()
         self._seed_topics()
         self.stdout.write(self.style.SUCCESS("Database seeding complete."))
 
@@ -143,6 +144,19 @@ class Command(BaseCommand):
                 self.stdout.write(f"  Created user: {email}")
             else:
                 self.stdout.write(f"  User already exists: {email}")
+
+    def _seed_moderator(self):
+        from django.contrib.auth.models import Group
+
+        try:
+            moderator_group = Group.objects.get(name='Moderator')
+        except Group.DoesNotExist:
+            self.stdout.write(self.style.WARNING("  Moderator group not found – skipping."))
+            return
+        alice = User.objects.filter(email="alice@staging.local").first()
+        if alice:
+            alice.groups.add(moderator_group)
+            self.stdout.write("  Assigned alice@staging.local to Moderator group.")
 
     def _seed_topics(self):
         admin_user = User.objects.get(email="admin@staging.local")
