@@ -27,3 +27,9 @@ class UserAdmin(BaseUserAdmin):
 
     # BaseUserAdmin expects a `username_field`; map it to email
     readonly_fields = ['last_login', 'date_joined']
+
+    def get_readonly_fields(self, request, obj=None):
+        readonly = list(super().get_readonly_fields(request, obj))
+        if not request.user.is_superuser:
+            readonly.extend(['groups', 'user_permissions'])
+        return readonly
