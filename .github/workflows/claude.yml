@@ -11,52 +11,12 @@ on:
     types: [submitted]
 
 jobs:
-  claude-issue:
-    # Issue events, and @claude-mentioned comments on issues (not PRs).
+  claude:
     if: |
-      (github.event_name == 'issues' && (contains(github.event.issue.body, '@claude') || contains(github.event.issue.title, '@claude'))) ||
-      (github.event_name == 'issue_comment' && github.event.issue.pull_request == null && contains(github.event.comment.body, '@claude'))
-    runs-on: ubuntu-latest
-    permissions:
-      contents: write
-      pull-requests: write
-      issues: read
-      id-token: write
-      actions: read # Required for Claude to read CI results on PRs
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 1
-
-      - name: Run Claude Code
-        id: claude
-        uses: anthropics/claude-code-action@v1
-        with:
-          claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
-
-          additional_permissions: |
-            actions: read
-
-          # Implement the issue and open a pull request.
-          prompt: |
-            This run was triggered by a GitHub issue. Do the following:
-              1. Read the issue carefully and implement the requested change, following the guidelines in CLAUDE.md.
-              2. Create a new branch named `claude/issue-<issue-number>-<short-slug>` from `main`.
-              3. Commit your changes using conventional, fine-grained commit messages.
-              4. Push the branch to `origin`.
-              5. Open a pull request against `main` using `gh pr create` with a clear title, a summary of the change, a test plan, and `Closes #<issue-number>` in the body.
-              6. Post a short comment on the issue linking to the new PR.
-
-          # Allow Claude to run the git + gh commands needed to branch, commit, push, and open the PR.
-          claude_args: '--allowed-tools "Bash(git:*),Bash(gh pr:*),Bash(gh issue:*),Bash(gh api:*)"'
-
-  claude-pr:
-    # PR review events and @claude-mentioned comments on pull requests.
-    if: |
+      (github.event_name == 'issue_comment' && contains(github.event.comment.body, '@claude')) ||
       (github.event_name == 'pull_request_review_comment' && contains(github.event.comment.body, '@claude')) ||
       (github.event_name == 'pull_request_review' && contains(github.event.review.body, '@claude')) ||
-      (github.event_name == 'issue_comment' && github.event.issue.pull_request != null && contains(github.event.comment.body, '@claude'))
+      (github.event_name == 'issues' && (contains(github.event.issue.body, '@claude') || contains(github.event.issue.title, '@claude')))
     runs-on: ubuntu-latest
     permissions:
       contents: write
