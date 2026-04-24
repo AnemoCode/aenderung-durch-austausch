@@ -2,7 +2,7 @@ name: Update PR Description with Preview Deployment
 
 on:
   issue_comment:
-    types: [created]
+    types: [created, edited]
 
 jobs:
   update-pr-description:
