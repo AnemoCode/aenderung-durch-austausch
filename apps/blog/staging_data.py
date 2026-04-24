@@ -10,6 +10,7 @@ SEED_USERS = [
         "email": "alice@staging.local",
         "name": "Alice Müller",
         "password": "staging-alice",
+        "is_moderator": True,
     },
     {
         "email": "bob@staging.local",

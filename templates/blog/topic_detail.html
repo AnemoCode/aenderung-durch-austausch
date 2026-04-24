@@ -116,6 +116,16 @@
             <span class="text-sm font-medium text-forest/85">{{ comment.author.name }}</span>
             <span class="text-xs text-forest/30">·</span>
             <span class="text-xs text-forest/45">{{ comment.created_at|date:"d. F Y" }}</span>
+            {% if perms.blog.delete_comment %}
+            <form method="post" action="{% url 'blog:comment_delete' topic.slug comment.pk %}" class="ml-auto">
+                {% csrf_token %}
+                <button type="submit"
+                        class="flex items-center gap-1 text-xs text-forest/40 hover:text-rose-500 transition-colors"
+                        title="{% trans "Kommentar entfernen" %}">
+                    <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
+                </button>
+            </form>
+            {% endif %}
         </div>
         <p class="font-serif text-base text-forest/85 leading-relaxed">{{ comment.body }}</p>
     </div>

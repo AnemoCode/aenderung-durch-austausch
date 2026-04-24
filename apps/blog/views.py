@@ -1,16 +1,16 @@
 from django.contrib import messages
-from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
 from django.db import transaction
 from django.db.models import Count
 from django.http import JsonResponse
 from django.shortcuts import get_object_or_404, redirect
 from django.urls import reverse, reverse_lazy
 from django.utils.translation import gettext_lazy as _
-from django.views.generic import DetailView, FormView, ListView, RedirectView, TemplateView
+from django.views.generic import DetailView, FormView, ListView, RedirectView, TemplateView, View
 from taggit.models import Tag
 
 from .forms import CommentForm, TopicPartCreateForm
-from .models import Like, Topic, TopicPart
+from .models import Comment, Like, Topic, TopicPart
 
 
 GROUP_CHOICES = ('topic', 'author', 'none')
@@ -174,7 +174,9 @@ class TopicPartCreateView(LoginRequiredMixin, FormView):
     login_url = reverse_lazy('accounts:login')
 
     def dispatch(self, request, *args, **kwargs):
-        if request.user.is_authenticated and not request.user.is_staff:
+        if request.user.is_authenticated and not (
+            request.user.is_staff or request.user.has_perm('blog.add_topicpart')
+        ):
             return redirect('blog:index')
         return super().dispatch(request, *args, **kwargs)
 
@@ -209,6 +211,23 @@ class TopicPartCreateView(LoginRequiredMixin, FormView):
 
     def get_success_url(self):
         return self._created_topic.get_absolute_url()
+
+
+class CommentDeleteView(LoginRequiredMixin, PermissionRequiredMixin, View):
+    permission_required = 'blog.delete_comment'
+    login_url = reverse_lazy('accounts:login')
+    raise_exception = False
+
+    def post(self, request, slug, pk):
+        comment = get_object_or_404(Comment, pk=pk, topic__slug=slug)
+        comment.delete()
+        messages.success(request, _('Kommentar entfernt.'))
+        return redirect('blog:topic_detail', slug=slug)
+
+    def handle_no_permission(self):
+        if not self.request.user.is_authenticated:
+            return super().handle_no_permission()
+        return redirect('blog:index')
 
 
 def topic_like_toggle(request, slug):
