@@ -8,8 +8,8 @@ jobs:
   update-pr-description:
     if: >-
       github.event.issue.pull_request != null &&
-      github.event.comment.user.login == 'exploited-intern' &&
-      contains(github.event.comment.body, '<!-- preview-deployment -->')
+      github.event.comment.user.login == 'exploited-intern[bot]' &&
+      contains(github.event.comment.body, 'Dokploy Preview Deployment')
     runs-on: ubuntu-latest
     permissions:
       pull-requests: write
@@ -22,7 +22,6 @@ jobs:
           script: |
             const startMarker = '<!-- preview-deployment:start -->';
             const endMarker = '<!-- preview-deployment:end -->';
-            const triggerMarker = '<!-- preview-deployment -->';
 
             const commentBody = context.payload.comment.body;
             const prNumber = context.payload.issue.number;
