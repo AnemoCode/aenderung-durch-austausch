@@ -59,8 +59,6 @@ def reverse_noop(apps, schema_editor):
 
 class Migration(migrations.Migration):
 
-    atomic = False
-
     # This migration squashes the original 0002–0008 series. Listing them in
     # `replaces` lets Django recognise deployments whose history still records
     # the pre-squash names and skip re-applying identical CreateModel ops.
