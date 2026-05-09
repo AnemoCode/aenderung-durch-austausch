@@ -1,7 +1,27 @@
+import bleach
 from django import forms
+from django.utils.html import strip_tags
 from django.utils.translation import gettext_lazy as _
 
 from .models import Comment, Topic
+
+_BODY_ALLOWED_TAGS = [
+    'p', 'br',
+    'h2', 'h3',
+    'strong', 'em', 'u', 's',
+    'ul', 'ol', 'li',
+    'blockquote', 'pre', 'code',
+    'a', 'span',
+]
+_BODY_ALLOWED_ATTRS = {
+    'a': ['href', 'title', 'rel'],
+    'pre': ['class', 'spellcheck'],
+    'p': ['class'],
+    'li': ['class'],
+    'ol': ['class'],
+    'ul': ['class'],
+    'span': ['class'],
+}
 
 
 class CommentForm(forms.ModelForm):
@@ -47,6 +67,13 @@ class TopicPartCreateForm(forms.Form):
         label=_("Tags"),
         help_text=_('Kommagetrennt, z. B. "klima, mobilitaet"'),
     )
+
+    def clean_body(self):
+        raw = self.cleaned_data.get('body', '')
+        sanitized = bleach.clean(raw, tags=_BODY_ALLOWED_TAGS, attributes=_BODY_ALLOWED_ATTRS, strip=True)
+        if not strip_tags(sanitized).strip():
+            raise forms.ValidationError(_('Bitte gib einen Inhalt ein.'))
+        return sanitized
 
     def clean(self):
         cleaned = super().clean()

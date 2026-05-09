@@ -116,3 +116,33 @@ class PostCreateViewTests(TestCase):
         self.assertEqual(res.status_code, 200)
         # Only the one existing topic, no duplicate created
         self.assertEqual(Topic.objects.filter(title__iexact='mobilität').count(), 1)
+
+    def test_quill_submit_handler_targets_post_form_not_logout(self):
+        # The Quill JS copies the editor HTML into the hidden body input on
+        # form submit. The page contains a logout form in the header, so the
+        # handler must target the post form by id — not the first form on the
+        # page — otherwise the submit fires without copying the editor content.
+        self.client.force_login(self.staff)
+        res = self.client.get(self.url)
+        self.assertContains(res, 'id="post-form"')
+        self.assertContains(res, "getElementById('post-form').addEventListener")
+        self.assertNotContains(res, "querySelector('form').addEventListener")
+
+    def test_body_value_persists_on_validation_error(self):
+        self.client.force_login(self.staff)
+        body_html = '<p>Hello <strong>world</strong></p>'
+        res = self.client.post(self.url, {
+            'topic': '',
+            'new_topic_title': '',  # missing — triggers validation error
+            'heading': 'X',
+            'body': body_html,
+            'tags': '',
+        })
+        self.assertEqual(res.status_code, 200)
+        # The hidden input must carry the submitted HTML back so the editor
+        # can repopulate. Django auto-escapes the value attribute.
+        self.assertContains(res, 'name="body"')
+        self.assertContains(
+            res,
+            'value="&lt;p&gt;Hello &lt;strong&gt;world&lt;/strong&gt;&lt;/p&gt;"',
+        )

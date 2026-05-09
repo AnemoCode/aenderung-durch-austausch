@@ -1,0 +1,95 @@
+{% extends 'base.html' %}
+{% load i18n %}
+
+{% block content %}
+
+{# ─── Page header ─────────────────────────────────────────────────── #}
+<div class="max-w-3xl mb-12 md:mb-16">
+    <div class="meta-label text-forest/50 mb-5">{% trans "Blog" %}</div>
+    <h1 class="font-display text-4xl md:text-5xl lg:text-6xl text-forest tracking-tight leading-[1.05]">
+        Stimmen,
+        <span class="italic font-normal text-forest/75">Gedanken,</span>
+        Positionen.
+    </h1>
+    <p class="font-serif text-lg md:text-xl text-forest/70 mt-5 max-w-2xl leading-relaxed">
+        {% blocktrans count count=posts|length %}{{ count }} Beitrag{% plural %}{{ count }} Beiträge{% endblocktrans %}
+        — {% trans "akademisch fundiert, tagespolitisch relevant, persönlich und direkt." %}
+    </p>
+</div>
+
+{% if posts %}
+<div class="grid gap-5 md:gap-6 sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3">
+    {% for post in posts %}
+    <article class="lilac-card p-7 md:p-8 flex flex-col h-full group">
+
+        {# Meta: author + date #}
+        <div class="flex items-center gap-2.5 mb-5">
+            <div class="w-7 h-7 rounded-full bg-wheat flex items-center justify-center text-forest font-bold text-xs flex-shrink-0">
+                {{ post.author.initials }}
+            </div>
+            <div class="flex flex-col leading-none">
+                <span class="text-xs font-medium text-forest/80">{{ post.author.name }}</span>
+                <span class="text-xs text-forest/40 mt-0.5">{{ post.created_at|date:"d. F Y" }}</span>
+            </div>
+        </div>
+
+        {# Title & subtitle #}
+        <h2 class="font-display text-xl md:text-2xl text-forest tracking-tight leading-[1.2] mb-2">
+            <a href="{% url 'blog:post_detail' post.pk %}"
+               class="hover:text-forest/70 transition-colors">
+                {{ post.title }}
+            </a>
+        </h2>
+        {% if post.subtitle %}
+        <p class="font-serif italic text-base text-forest/65 mb-4">{{ post.subtitle }}</p>
+        {% endif %}
+
+        {# Excerpt #}
+        <p class="font-serif text-base leading-[1.65] text-forest/75 flex-1 mb-6">
+            {{ post.description|truncatechars:180 }}
+        </p>
+
+        {# Footer: stats + CTA #}
+        <div class="flex items-center justify-between pt-5 border-t border-forest/10">
+            <div class="flex items-center gap-4 text-xs text-forest/50">
+                <span class="flex items-center gap-1.5">
+                    <i data-lucide="heart"
+                       class="w-3.5 h-3.5 {% if post.pk in user_liked %}text-rose-400 fill-rose-400{% endif %}"></i>
+                    {{ post.likes.count }}
+                </span>
+                <span class="flex items-center gap-1.5">
+                    <i data-lucide="message-circle" class="w-3.5 h-3.5"></i>
+                    {{ post.comments.count }}
+                </span>
+            </div>
+
+            <a href="{% url 'blog:post_detail' post.pk %}"
+               class="meta-label text-forest/60 group-hover:text-forest flex items-center gap-1.5 transition-colors">
+                {% trans "Weiterlesen" %}
+                <i data-lucide="arrow-right" class="w-3.5 h-3.5"></i>
+            </a>
+        </div>
+    </article>
+    {% endfor %}
+</div>
+
+{% else %}
+{# Empty state #}
+<div class="lilac-card flex flex-col items-center justify-center py-20 md:py-28 text-center max-w-xl mx-auto">
+    <div class="w-14 h-14 rounded-full bg-white/60 flex items-center justify-center mb-5">
+        <i data-lucide="newspaper" class="w-6 h-6 text-forest/40"></i>
+    </div>
+    <h3 class="font-display text-2xl md:text-3xl text-forest tracking-tight mb-2">
+        {% trans "Noch keine Beiträge" %}
+    </h3>
+    <p class="font-serif text-base text-forest/60 max-w-sm px-6">
+        {% if request.user.is_staff %}
+        {% trans "Erstelle den ersten Beitrag über den Button oben rechts." %}
+        {% else %}
+        {% trans "Noch wurden keine Beiträge veröffentlicht." %}
+        {% endif %}
+    </p>
+</div>
+{% endif %}
+
+{% endblock %}

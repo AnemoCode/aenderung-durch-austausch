@@ -25,7 +25,7 @@
 
     <div class="lilac-card p-7 md:p-10"
          x-data="{ topicId: '{{ form.topic.value|default:'' }}' }">
-        <form method="post" novalidate>
+        <form method="post" id="post-form" novalidate>
             {% csrf_token %}
 
             {# Topic select #}
@@ -89,24 +89,66 @@
                 {% endfor %}
             </div>
 
-            {# Body #}
+            {# Body — Rich Text Editor (Quill.js) #}
             <div class="mb-6">
-                <label for="{{ form.body.id_for_label }}"
-                       class="block meta-label text-forest/60 mb-2">
+                <label class="block meta-label text-forest/60 mb-2">
                     {% trans "Inhalt" %} <span class="text-rose-400 tracking-normal">*</span>
                 </label>
-                <textarea
-                    name="{{ form.body.html_name }}"
-                    id="{{ form.body.id_for_label }}"
-                    rows="14"
-                    placeholder="{% trans "Schreibe deinen Beitrag in einfacher Sprache…" %}"
-                    class="lilac-input w-full px-4 py-3 font-serif text-base leading-relaxed resize-y
-                           {% if form.body.errors %}!border-rose-400 !bg-rose-50{% endif %}">{{ form.body.value|default:'' }}</textarea>
+
+                {% if form.body.errors %}
                 {% for e in form.body.errors %}
-                <p class="mt-1.5 text-xs text-rose-500">{{ e }}</p>
+                <p class="mb-2 text-xs text-rose-500">{{ e }}</p>
                 {% endfor %}
+                {% endif %}
+
+                <div id="quill-editor-wrapper"
+                     class="{% if form.body.errors %}ring-2 ring-rose-400{% endif %}"
+                     style="border: 1px solid rgba(52,73,69,0.18); border-radius: 0.5rem; overflow: hidden; background: #fff;">
+                    <div id="quill-toolbar">
+                        <span class="ql-formats">
+                            <select class="ql-header">
+                                <option value="2">{% trans "Überschrift 2" %}</option>
+                                <option value="3">{% trans "Überschrift 3" %}</option>
+                                <option selected>{% trans "Normal" %}</option>
+                            </select>
+                        </span>
+                        <span class="ql-formats">
+                            <button class="ql-bold"></button>
+                            <button class="ql-italic"></button>
+                            <button class="ql-underline"></button>
+                            <button class="ql-strike"></button>
+                        </span>
+                        <span class="ql-formats">
+                            <button class="ql-list" value="ordered"></button>
+                            <button class="ql-list" value="bullet"></button>
+                            <button class="ql-indent" value="-1"></button>
+                            <button class="ql-indent" value="+1"></button>
+                        </span>
+                        <span class="ql-formats">
+                            <button class="ql-blockquote"></button>
+                            <button class="ql-code-block"></button>
+                            <button class="ql-link"></button>
+                        </span>
+                        <span class="ql-formats">
+                            <select class="ql-align">
+                                <option selected></option>
+                                <option value="center"></option>
+                                <option value="right"></option>
+                                <option value="justify"></option>
+                            </select>
+                        </span>
+                        <span class="ql-formats">
+                            <button class="ql-clean"></button>
+                        </span>
+                    </div>
+                    <div id="quill-editor" style="min-height: 300px; font-family: 'Lora', Georgia, serif; font-size: 1rem; line-height: 1.7;"></div>
+                </div>
+
+                {# Hidden field populated by JS before submit #}
+                <input type="hidden" name="{{ form.body.html_name }}" id="id_body" value="{{ form.body.value|default:'' }}">
+
                 <p class="mt-2 text-xs text-forest/45 font-serif italic">
-                    {% trans "Schreibe klar und verständlich. Zeilenumbrüche werden übernommen." %}
+                    {% trans "Formatierter Text: Überschriften, fett, kursiv, unterstrichen, durchgestrichen, Listen, Einrückung, Ausrichtung, Codeblock, Links, Zitate." %}
                 </p>
             </div>
 
@@ -153,4 +195,37 @@
     </div>
 </div>
 
+{% endblock %}
+
+{% block extra_js %}
+{# Quill.js via CDN #}
+<link href="https://cdn.quilljs.com/1.3.7/quill.snow.css" rel="stylesheet">
+<script src="https://cdn.quilljs.com/1.3.7/quill.min.js"></script>
+
+<style>
+    #quill-editor .ql-editor { font-family: 'Lora', Georgia, 'Times New Roman', serif; color: #344945; }
+    #quill-editor .ql-editor h2 { font-family: 'Playfair Display', serif; font-size: 1.5rem; font-weight: 700; }
+    #quill-editor .ql-editor h3 { font-family: 'Playfair Display', serif; font-size: 1.2rem; font-weight: 600; }
+    #quill-toolbar { border-bottom: 1px solid rgba(52,73,69,0.12) !important; border-top: none !important; border-left: none !important; border-right: none !important; background: #f9f8fe; }
+    .ql-container.ql-snow { border: none !important; }
+    .ql-toolbar.ql-snow { border: none !important; }
+</style>
+
+<script>
+(function () {
+    var quill = new Quill('#quill-editor', {
+        modules: { toolbar: '#quill-toolbar' },
+        theme: 'snow',
+    });
+
+    var hiddenInput = document.getElementById('id_body');
+    if (hiddenInput && hiddenInput.value) {
+        quill.clipboard.dangerouslyPasteHTML(hiddenInput.value);
+    }
+
+    document.getElementById('post-form').addEventListener('submit', function () {
+        hiddenInput.value = quill.root.innerHTML;
+    });
+})();
+</script>
 {% endblock %}
