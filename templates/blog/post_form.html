@@ -25,7 +25,7 @@
 
     <div class="lilac-card p-7 md:p-10"
          x-data="{ topicId: '{{ form.topic.value|default:'' }}' }">
-        <form method="post" novalidate>
+        <form method="post" id="post-form" novalidate>
             {% csrf_token %}
 
             {# Topic select #}
@@ -223,7 +223,7 @@
         quill.clipboard.dangerouslyPasteHTML(hiddenInput.value);
     }
 
-    document.querySelector('form').addEventListener('submit', function () {
+    document.getElementById('post-form').addEventListener('submit', function () {
         hiddenInput.value = quill.root.innerHTML;
     });
 })();
