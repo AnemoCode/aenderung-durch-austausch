@@ -17,19 +17,36 @@ SEED_TOPICS = [
             {
                 "heading": "Aktuelle Herausforderungen",
                 "body": (
-                    "Der Klimawandel stellt Städte weltweit vor enorme Herausforderungen. "
-                    "Besonders der städtische Verkehr trägt erheblich zu CO₂-Emissionen bei. "
-                    "Laut aktuellen Studien ist der Transportsektor für etwa 24 % der globalen "
-                    "Treibhausgasemissionen verantwortlich."
+                    "<p>Der Klimawandel stellt Städte weltweit vor enorme Herausforderungen. "
+                    "Besonders der städtische Verkehr trägt erheblich zu CO₂-Emissionen bei.</p>"
+                    "<h2>Zahlen und Fakten</h2>"
+                    "<p>Laut aktuellen Studien ist der Transportsektor für etwa <strong>24&nbsp;% der globalen "
+                    "Treibhausgasemissionen</strong> verantwortlich. In deutschen Großstädten liegt der Anteil "
+                    "des Individualverkehrs noch deutlich höher.</p>"
+                    "<ul>"
+                    "<li>PKW-Verkehr: ca. 60&nbsp;% der städtischen Emissionen</li>"
+                    "<li>Öffentlicher Nahverkehr: ca. 15&nbsp;%</li>"
+                    "<li>Lieferverkehr &amp; Logistik: ca. 25&nbsp;%</li>"
+                    "</ul>"
+                    "<blockquote>&bdquo;St&auml;dte m&uuml;ssen ihre Mobilit&auml;tswende jetzt einleiten "
+                    "&ndash; nicht morgen.&ldquo; &ndash; Bundesumweltamt 2023</blockquote>"
                 ),
                 "order": 0,
             },
             {
                 "heading": "Lösungsansätze und Alternativen",
                 "body": (
-                    "Städte wie Amsterdam und Kopenhagen zeigen, wie eine konsequente Fahrradinfrastruktur "
-                    "den Autoverkehr deutlich reduzieren kann. Ergänzend bieten gut ausgebaute "
-                    "öffentliche Verkehrsmittel eine klimafreundliche Alternative für weitere Strecken."
+                    "<p>Städte wie <strong>Amsterdam</strong> und <strong>Kopenhagen</strong> zeigen, "
+                    "wie eine konsequente Fahrradinfrastruktur den Autoverkehr deutlich reduzieren kann.</p>"
+                    "<h3>Bewährte Maßnahmen</h3>"
+                    "<ol>"
+                    "<li><em>Ausbau des Radwegnetzes</em> – sichere, durchgängige Verbindungen</li>"
+                    "<li><em>Stärkung des ÖPNV</em> – Takt erhöhen, Preise senken</li>"
+                    "<li><em>Förderung von E-Mobilität</em> – Ladeinfrastruktur ausbauen</li>"
+                    "<li><em>Car-Sharing-Angebote</em> – Privat-PKW ersetzen</li>"
+                    "</ol>"
+                    "<p>Ergänzend bieten gut ausgebaute öffentliche Verkehrsmittel eine "
+                    "<strong>klimafreundliche Alternative</strong> für weitere Strecken.</p>"
                 ),
                 "order": 1,
             },
@@ -48,18 +65,40 @@ SEED_TOPICS = [
             {
                 "heading": "Stand der Digitalisierung",
                 "body": (
-                    "Die Digitalisierung des Bildungswesens schreitet voran, jedoch mit großen regionalen "
-                    "Unterschieden. Während einige Schulen bereits vollständig auf digitale Lernmittel "
-                    "setzen, fehlt es andernorts noch an grundlegender Infrastruktur wie stabiles WLAN."
+                    "<p>Die Digitalisierung des Bildungswesens schreitet voran, jedoch mit "
+                    "<strong>großen regionalen Unterschieden</strong>. Während einige Schulen bereits "
+                    "vollständig auf digitale Lernmittel setzen, fehlt es andernorts noch an "
+                    "grundlegender Infrastruktur.</p>"
+                    "<h2>Wo stehen wir?</h2>"
+                    "<ul>"
+                    "<li><strong>Gut aufgestellt:</strong> Gymnasien in Ballungszentren mit Tablet-Klassen</li>"
+                    "<li><strong>Aufholbedarf:</strong> Grundschulen im ländlichen Raum ohne stabiles WLAN</li>"
+                    "<li><strong>Kritisch:</strong> Fehlende Fortbildungen für Lehrkräfte</li>"
+                    "</ul>"
+                    "<blockquote>&bdquo;Digitalisierung ist kein Selbstzweck &ndash; sie muss "
+                    "p&auml;dagogisch sinnvoll eingesetzt werden.&ldquo; &ndash; KMK-Bericht 2024</blockquote>"
                 ),
                 "order": 0,
             },
             {
                 "heading": "Chancen und Risiken",
                 "body": (
-                    "Digitale Werkzeuge können individualisiertes Lernen fördern und Schülerinnen und "
-                    "Schülern ermöglichen, ihrem eigenen Tempo zu folgen. Gleichzeitig müssen Medienkompetenz "
-                    "und der verantwortungsvolle Umgang mit digitalen Inhalten aktiv gelehrt werden."
+                    "<p>Digitale Werkzeuge können <em>individualisiertes Lernen</em> fördern und "
+                    "Schülerinnen und Schülern ermöglichen, ihrem eigenen Tempo zu folgen.</p>"
+                    "<h3>Chancen</h3>"
+                    "<ol>"
+                    "<li>Personalisierte Lernpfade durch adaptive Software</li>"
+                    "<li>Barrierefreiheit – z.&nbsp;B. Vorlese-Tools für Legastheniker</li>"
+                    "<li>Globale Vernetzung und kollaboratives Arbeiten</li>"
+                    "</ol>"
+                    "<h3>Risiken</h3>"
+                    "<ol>"
+                    "<li>Bildungsungleichheit durch mangelnde Ausstattung zu Hause</li>"
+                    "<li>Ablenkung durch Social Media und Spiele</li>"
+                    "<li>Datenschutzprobleme bei kommerziellen Plattformen</li>"
+                    "</ol>"
+                    "<p>Gleichzeitig müssen <strong>Medienkompetenz</strong> und der verantwortungsvolle "
+                    "Umgang mit digitalen Inhalten aktiv gelehrt werden.</p>"
                 ),
                 "order": 1,
             },
@@ -77,18 +116,38 @@ SEED_TOPICS = [
             {
                 "heading": "Wandel durch die Pandemie",
                 "body": (
-                    "Die COVID-19-Pandemie hat das Homeoffice in vielen Unternehmen von einer Ausnahme "
-                    "zur Normalität gemacht. Viele Arbeitnehmerinnen und Arbeitnehmer schätzen die "
-                    "gewonnene Flexibilität und möchten nicht mehr vollständig in Büros zurückkehren."
+                    "<p>Die COVID-19-Pandemie hat das Homeoffice in vielen Unternehmen von einer Ausnahme "
+                    "zur <strong>Normalität</strong> gemacht. Viele Arbeitnehmerinnen und Arbeitnehmer "
+                    "schätzen die gewonnene Flexibilität und möchten nicht mehr vollständig in Büros "
+                    "zurückkehren.</p>"
+                    "<h2>Was hat sich verändert?</h2>"
+                    "<ul>"
+                    "<li>Anteil der Homeoffice-Tage stieg von <strong>4&nbsp;% (2019)</strong> auf "
+                    "<strong>27&nbsp;% (2022)</strong></li>"
+                    "<li>Investitionen in digitale Collaboration-Tools verdreifacht</li>"
+                    "<li>Flächenbedarf für Büros in vielen Unternehmen deutlich gesunken</li>"
+                    "</ul>"
+                    "<blockquote>&bdquo;Wir gehen nicht zur&uuml;ck zu 9-to-5 im B&uuml;ro &ndash; "
+                    "die Arbeitswelt hat sich unwiderruflich ver&auml;ndert.&ldquo; &ndash; HR-Studie Deloitte 2023</blockquote>"
                 ),
                 "order": 0,
             },
             {
                 "heading": "Hybride Arbeitsmodelle als Kompromiss",
                 "body": (
-                    "Hybride Modelle, bei denen Beschäftigte einen Teil der Woche im Büro und den Rest "
-                    "remote arbeiten, scheinen sich als bevorzugtes Format herauszukristallisieren. "
-                    "Sie verbinden die Vorteile beider Welten: persönlicher Austausch und flexible Zeiteinteilung."
+                    "<p>Hybride Modelle, bei denen Beschäftigte einen Teil der Woche im Büro und den "
+                    "Rest remote arbeiten, scheinen sich als bevorzugtes Format herauszukristallisieren.</p>"
+                    "<h3>Vorteile hybrider Arbeit</h3>"
+                    "<ol>"
+                    "<li><em>Flexibilität</em> – individuelle Zeiteinteilung nach persönlichen Bedürfnissen</li>"
+                    "<li><em>Kollaboration</em> – persönlicher Austausch bleibt möglich</li>"
+                    "<li><em>Produktivität</em> – konzentriertes Arbeiten ohne Bürolärm</li>"
+                    "<li><em>Work-Life-Balance</em> – weniger Pendelzeit, mehr Freizeit</li>"
+                    "</ol>"
+                    "<p>Sie verbinden die Vorteile beider Welten: <strong>persönlicher Austausch</strong> "
+                    "und <strong>flexible Zeiteinteilung</strong>. Wichtig ist dabei eine klare "
+                    "<em>Kommunikationskultur</em>, die Remote- und Präsenzmitarbeitende gleichwertig "
+                    "einbindet.</p>"
                 ),
                 "order": 1,
             },
