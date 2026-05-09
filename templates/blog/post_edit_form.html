@@ -1,0 +1,187 @@
+{% extends 'base.html' %}
+{% load i18n %}
+
+{% block content %}
+
+<div class="max-w-3xl mx-auto">
+
+    <div class="mb-8">
+        <a href="{{ part.topic.get_absolute_url }}"
+           class="inline-flex items-center gap-1.5 meta-label text-forest/60 hover:text-forest transition-colors">
+            <i data-lucide="arrow-left" class="w-4 h-4"></i>
+            {% trans "Zurück" %}
+        </a>
+    </div>
+
+    <div class="mb-10">
+        <div class="meta-label text-forest/50 mb-4">{% trans "Bearbeiten" %}</div>
+        <h1 class="font-display text-4xl md:text-5xl text-forest tracking-tight leading-[1.1]">
+            {% trans "Beitrag bearbeiten" %}
+        </h1>
+        <p class="font-serif text-lg text-forest/65 mt-4 leading-relaxed">
+            {{ part.topic.title }}
+        </p>
+    </div>
+
+    <div class="lilac-card p-7 md:p-10">
+        <form method="post" id="edit-form" novalidate>
+            {% csrf_token %}
+
+            {# Heading #}
+            <div class="mb-6">
+                <label for="{{ form.heading.id_for_label }}"
+                       class="block meta-label text-forest/60 mb-2">
+                    {% trans "Unterüberschrift" %} <span class="text-rose-400 tracking-normal">*</span>
+                </label>
+                <input type="text"
+                       name="{{ form.heading.html_name }}"
+                       id="{{ form.heading.id_for_label }}"
+                       value="{{ form.heading.value|default:'' }}"
+                       placeholder="{% trans "Ein präziser, prägnanter Satz" %}"
+                       class="lilac-input w-full px-4 py-3 font-serif italic text-base
+                              {% if form.heading.errors %}!border-rose-400 !bg-rose-50{% endif %}">
+                {% for e in form.heading.errors %}
+                <p class="mt-1.5 text-xs text-rose-500">{{ e }}</p>
+                {% endfor %}
+            </div>
+
+            {# Body — Rich Text Editor (Quill.js) #}
+            <div class="mb-6">
+                <label class="block meta-label text-forest/60 mb-2">
+                    {% trans "Inhalt" %} <span class="text-rose-400 tracking-normal">*</span>
+                </label>
+
+                {% if form.body.errors %}
+                {% for e in form.body.errors %}
+                <p class="mb-2 text-xs text-rose-500">{{ e }}</p>
+                {% endfor %}
+                {% endif %}
+
+                <div id="quill-editor-wrapper"
+                     class="{% if form.body.errors %}ring-2 ring-rose-400{% endif %}"
+                     style="border: 1px solid rgba(52,73,69,0.18); border-radius: 0.5rem; overflow: hidden; background: #fff;">
+                    <div id="quill-toolbar">
+                        <span class="ql-formats">
+                            <select class="ql-header">
+                                <option value="2">{% trans "Überschrift 2" %}</option>
+                                <option value="3">{% trans "Überschrift 3" %}</option>
+                                <option selected>{% trans "Normal" %}</option>
+                            </select>
+                        </span>
+                        <span class="ql-formats">
+                            <button class="ql-bold"></button>
+                            <button class="ql-italic"></button>
+                            <button class="ql-underline"></button>
+                            <button class="ql-strike"></button>
+                        </span>
+                        <span class="ql-formats">
+                            <button class="ql-list" value="ordered"></button>
+                            <button class="ql-list" value="bullet"></button>
+                            <button class="ql-indent" value="-1"></button>
+                            <button class="ql-indent" value="+1"></button>
+                        </span>
+                        <span class="ql-formats">
+                            <button class="ql-blockquote"></button>
+                            <button class="ql-code-block"></button>
+                            <button class="ql-link"></button>
+                        </span>
+                        <span class="ql-formats">
+                            <select class="ql-align">
+                                <option selected></option>
+                                <option value="center"></option>
+                                <option value="right"></option>
+                                <option value="justify"></option>
+                            </select>
+                        </span>
+                        <span class="ql-formats">
+                            <button class="ql-clean"></button>
+                        </span>
+                    </div>
+                    <div id="quill-editor" style="min-height: 300px; font-family: 'Lora', Georgia, serif; font-size: 1rem; line-height: 1.7;"></div>
+                </div>
+
+                {# Hidden field populated by JS before submit #}
+                <input type="hidden" name="{{ form.body.html_name }}" id="id_body" value="{{ form.body.value|default:'' }}">
+
+                <p class="mt-2 text-xs text-forest/45 font-serif italic">
+                    {% trans "Formatierter Text: Überschriften, fett, kursiv, unterstrichen, durchgestrichen, Listen, Einrückung, Ausrichtung, Codeblock, Links, Zitate." %}
+                </p>
+            </div>
+
+            {# Tags #}
+            <div class="mb-8">
+                <label for="{{ form.tags.id_for_label }}"
+                       class="block meta-label text-forest/60 mb-2">
+                    {% trans "Tags" %}
+                    <span class="text-forest/40 tracking-normal normal-case font-normal">— {% trans "optional" %}</span>
+                </label>
+                <input type="text"
+                       name="{{ form.tags.html_name }}"
+                       id="{{ form.tags.id_for_label }}"
+                       value="{{ form.tags.value|default:'' }}"
+                       placeholder="{% trans "klima, mobilitaet, energie" %}"
+                       class="lilac-input w-full px-4 py-3 font-serif text-base
+                              {% if form.tags.errors %}!border-rose-400 !bg-rose-50{% endif %}">
+                {% if form.tags.help_text %}
+                <p class="mt-1.5 text-xs text-forest/45 font-serif italic">{{ form.tags.help_text }}</p>
+                {% endif %}
+                {% for e in form.tags.errors %}
+                <p class="mt-1.5 text-xs text-rose-500">{{ e }}</p>
+                {% endfor %}
+            </div>
+
+            {% if form.non_field_errors %}
+            <div class="mb-6 px-4 py-3 rounded-lg border border-rose-200 bg-rose-50 text-sm text-rose-600">
+                {% for e in form.non_field_errors %}<p>{{ e }}</p>{% endfor %}
+            </div>
+            {% endif %}
+
+            <div class="flex items-center gap-3">
+                <button type="submit"
+                        class="bg-forest hover:bg-forest-700 text-cream px-6 py-3 rounded-md text-sm font-semibold transition-colors shadow-sm inline-flex items-center gap-2">
+                    <i data-lucide="save" class="w-4 h-4"></i>
+                    {% trans "Änderungen speichern" %}
+                </button>
+                <a href="{{ part.topic.get_absolute_url }}"
+                   class="px-5 py-3 rounded-md text-sm font-semibold text-forest/65 hover:text-forest border border-forest/15 hover:border-forest/35 transition-colors">
+                    {% trans "Abbrechen" %}
+                </a>
+            </div>
+        </form>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block extra_js %}
+{# Quill.js via CDN #}
+<link href="https://cdn.quilljs.com/1.3.7/quill.snow.css" rel="stylesheet">
+<script src="https://cdn.quilljs.com/1.3.7/quill.min.js"></script>
+
+<style>
+    #quill-editor .ql-editor { font-family: 'Lora', Georgia, 'Times New Roman', serif; color: #344945; }
+    #quill-editor .ql-editor h2 { font-family: 'Playfair Display', serif; font-size: 1.5rem; font-weight: 700; }
+    #quill-editor .ql-editor h3 { font-family: 'Playfair Display', serif; font-size: 1.2rem; font-weight: 600; }
+    #quill-toolbar { border-bottom: 1px solid rgba(52,73,69,0.12) !important; border-top: none !important; border-left: none !important; border-right: none !important; background: #f9f8fe; }
+    .ql-container.ql-snow { border: none !important; }
+    .ql-toolbar.ql-snow { border: none !important; }
+</style>
+
+<script>
+(function () {
+    var quill = new Quill('#quill-editor', {
+        modules: { toolbar: '#quill-toolbar' },
+        theme: 'snow',
+    });
+
+    var hiddenInput = document.getElementById('id_body');
+    if (hiddenInput && hiddenInput.value) {
+        quill.clipboard.dangerouslyPasteHTML(hiddenInput.value);
+    }
+
+    document.getElementById('edit-form').addEventListener('submit', function () {
+        hiddenInput.value = quill.root.innerHTML;
+    });
+})();
+</script>
+{% endblock %}

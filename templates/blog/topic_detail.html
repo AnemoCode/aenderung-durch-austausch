@@ -51,9 +51,18 @@
     {# ─── Topic parts ───────────────────────────────────────────────── #}
     {% for part in parts %}
     <section class="mb-12">
-        <h2 class="font-display text-2xl md:text-3xl text-forest tracking-tight leading-[1.15] mb-5">
-            {{ part.heading }}
-        </h2>
+        <div class="flex items-start justify-between gap-4 mb-5">
+            <h2 class="font-display text-2xl md:text-3xl text-forest tracking-tight leading-[1.15]">
+                {{ part.heading }}
+            </h2>
+            {% if request.user.is_staff or perms.blog.change_topicpart %}
+            <a href="{% url 'blog:post_edit' part.pk %}"
+               class="flex-shrink-0 inline-flex items-center gap-1.5 meta-label text-forest/50 hover:text-forest transition-colors">
+                <i data-lucide="pencil" class="w-4 h-4"></i>
+                {% trans "Bearbeiten" %}
+            </a>
+            {% endif %}
+        </div>
         <div class="font-serif text-lg md:text-xl leading-[1.75] text-forest/85 rich-text">{{ part.body|safe }}</div>
         {% if part.tags.all %}
         <div class="flex flex-wrap gap-1.5 mt-5">

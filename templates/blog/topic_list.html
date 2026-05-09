@@ -13,6 +13,17 @@
         {% blocktrans count count=total_parts %}{{ count }} Beitrag{% plural %}{{ count }} Beiträge{% endblocktrans %}
         — {% trans "akademisch fundiert, tagespolitisch relevant, persönlich und direkt." %}
     </p>
+    {% if request.user.is_authenticated %}
+        {% if request.user.is_staff or perms.blog.add_topicpart %}
+        <div class="mt-6">
+            <a href="{% url 'blog:post_create' %}"
+               class="inline-flex bg-forest text-cream px-5 py-2.5 rounded-md text-sm font-semibold hover:bg-forest-700 transition-colors shadow-sm items-center gap-2">
+                <i data-lucide="plus" class="w-4 h-4"></i>
+                {% trans "Neuer Beitrag" %}
+            </a>
+        </div>
+        {% endif %}
+    {% endif %}
 </div>
 
 {# ─── Controls: grouping + sorting ─────────────────────────────────── #}
