@@ -1,0 +1,82 @@
+{% extends 'base.html' %}
+{% load i18n %}
+
+{% block content %}
+<div class="max-w-3xl mx-auto">
+
+    <div class="mb-8">
+        <a href="{% url 'topics:topic_list' %}"
+           class="inline-flex items-center gap-1.5 meta-label text-forest/60 hover:text-forest transition-colors">
+            <i data-lucide="arrow-left" class="w-4 h-4"></i>
+            {% trans "Alle Themen" %}
+        </a>
+    </div>
+
+    <div class="mb-10">
+        <div class="meta-label text-forest/50 mb-4">{% trans "Thema" %}</div>
+        <h1 class="font-display text-4xl md:text-5xl text-forest tracking-tight leading-[1.1]">
+            {{ topic.title }}
+        </h1>
+        {% if topic.description %}
+        <p class="font-serif text-lg text-forest/65 mt-4 leading-relaxed">{{ topic.description }}</p>
+        {% endif %}
+    </div>
+
+    {% if request.user.is_staff %}
+    <div class="mb-8">
+        <a href="{% url 'topics:topicpart_create' topic.pk %}"
+           class="inline-flex items-center gap-2 bg-forest text-cream px-5 py-2.5 rounded-md text-sm font-semibold hover:bg-forest-700 transition-colors shadow-sm">
+            <i data-lucide="plus" class="w-4 h-4"></i>
+            {% trans "Neuer Themanteil" %}
+        </a>
+    </div>
+    {% endif %}
+
+    {% if topic.parts.all %}
+    <div class="space-y-10">
+        {% for part in topic.parts.all %}
+        <article class="lilac-card p-7 md:p-10">
+            <div class="flex items-start justify-between gap-4 mb-5">
+                <h2 class="font-display text-2xl text-forest font-bold">{{ part.title }}</h2>
+                {% if request.user.is_staff %}
+                <a href="{% url 'topics:topicpart_edit' part.pk %}"
+                   class="flex-shrink-0 inline-flex items-center gap-1.5 meta-label text-forest/50 hover:text-forest border border-forest/15 hover:border-forest/40 px-3 py-1.5 rounded-md transition-colors">
+                    <i data-lucide="pencil" class="w-3.5 h-3.5"></i>
+                    {% trans "Bearbeiten" %}
+                </a>
+                {% endif %}
+            </div>
+
+            {# Render sanitized HTML from Quill editor #}
+            <div class="prose-topics font-serif text-forest/80 leading-relaxed">
+                {{ part.body|safe }}
+            </div>
+        </article>
+        {% endfor %}
+    </div>
+    {% else %}
+    <p class="font-serif text-forest/50 italic">{% trans "Noch keine Teile vorhanden." %}</p>
+    {% endif %}
+
+</div>
+
+<style>
+    .prose-topics h2 { font-family: 'Playfair Display', serif; font-size: 1.5rem; font-weight: 700; color: #344945; margin: 1.5rem 0 0.75rem; }
+    .prose-topics h3 { font-family: 'Playfair Display', serif; font-size: 1.2rem; font-weight: 600; color: #344945; margin: 1.25rem 0 0.5rem; }
+    .prose-topics p  { margin: 0.75rem 0; }
+    .prose-topics ul, .prose-topics ol { padding-left: 1.5rem; margin: 0.75rem 0; }
+    .prose-topics li { margin: 0.25rem 0; }
+    .prose-topics ul { list-style-type: disc; }
+    .prose-topics ol { list-style-type: decimal; }
+    .prose-topics a  { color: #4c3778; text-decoration: underline; }
+    .prose-topics strong { font-weight: 600; color: #344945; }
+    .prose-topics em { font-style: italic; }
+    .prose-topics blockquote {
+        border-left: 3px solid rgba(76, 55, 120, 0.4);
+        margin: 1rem 0;
+        padding: 0.5rem 1rem;
+        color: rgba(52, 73, 69, 0.7);
+        font-style: italic;
+    }
+</style>
+{% endblock %}

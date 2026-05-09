@@ -51,10 +51,19 @@
     {# ─── Topic parts ───────────────────────────────────────────────── #}
     {% for part in parts %}
     <section class="mb-12">
-        <h2 class="font-display text-2xl md:text-3xl text-forest tracking-tight leading-[1.15] mb-5">
-            {{ part.heading }}
-        </h2>
-        <div class="font-serif text-lg md:text-xl leading-[1.75] text-forest/85 whitespace-pre-wrap">{{ part.body }}</div>
+        <div class="flex items-start justify-between gap-4 mb-5">
+            <h2 class="font-display text-2xl md:text-3xl text-forest tracking-tight leading-[1.15]">
+                {{ part.heading }}
+            </h2>
+            {% if request.user.is_staff or perms.blog.change_topicpart %}
+            <a href="{% url 'blog:post_edit' part.pk %}"
+               class="flex-shrink-0 inline-flex items-center gap-1.5 meta-label text-forest/50 hover:text-forest transition-colors">
+                <i data-lucide="pencil" class="w-4 h-4"></i>
+                {% trans "Bearbeiten" %}
+            </a>
+            {% endif %}
+        </div>
+        <div class="font-serif text-lg md:text-xl leading-[1.75] text-forest/85 rich-text">{{ part.body|safe }}</div>
         {% if part.tags.all %}
         <div class="flex flex-wrap gap-1.5 mt-5">
             {% for tag in part.tags.all %}
@@ -116,6 +125,16 @@
             <span class="text-sm font-medium text-forest/85">{{ comment.author.name }}</span>
             <span class="text-xs text-forest/30">·</span>
             <span class="text-xs text-forest/45">{{ comment.created_at|date:"d. F Y" }}</span>
+            {% if perms.blog.delete_comment %}
+            <form method="post" action="{% url 'blog:comment_delete' topic.slug comment.pk %}" class="ml-auto">
+                {% csrf_token %}
+                <button type="submit"
+                        class="flex items-center gap-1 text-xs text-forest/40 hover:text-rose-500 transition-colors"
+                        title="{% trans "Kommentar entfernen" %}">
+                    <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
+                </button>
+            </form>
+            {% endif %}
         </div>
         <p class="font-serif text-base text-forest/85 leading-relaxed">{{ comment.body }}</p>
     </div>
@@ -168,6 +187,25 @@
 {% endblock %}
 
 {% block extra_js %}
+<style>
+    .rich-text p { margin-bottom: 1em; }
+    .rich-text h2 { font-family: 'Playfair Display', serif; font-size: 1.5rem; font-weight: 700; margin-top: 1.5em; margin-bottom: 0.5em; color: #344945; }
+    .rich-text h3 { font-family: 'Playfair Display', serif; font-size: 1.2rem; font-weight: 600; margin-top: 1.25em; margin-bottom: 0.4em; color: #344945; }
+    .rich-text ul { list-style-type: disc; padding-left: 1.5rem; margin-bottom: 1em; }
+    .rich-text ol { list-style-type: decimal; padding-left: 1.5rem; margin-bottom: 1em; }
+    .rich-text li { margin-bottom: 0.25em; }
+    .rich-text blockquote { border-left: 3px solid rgba(52,73,69,0.25); padding-left: 1rem; margin: 1em 0; font-style: italic; color: rgba(52,73,69,0.7); }
+    .rich-text pre.ql-syntax { background: #1e1e2e; color: #cdd6f4; padding: 1rem 1.25rem; border-radius: 0.5rem; overflow-x: auto; font-family: 'Courier New', Courier, monospace; font-size: 0.875rem; line-height: 1.6; margin-bottom: 1em; }
+    .rich-text code { background: rgba(52,73,69,0.08); padding: 0.15em 0.4em; border-radius: 0.25rem; font-family: 'Courier New', Courier, monospace; font-size: 0.875em; }
+    .rich-text a { color: #4a7c59; text-decoration: underline; }
+    .rich-text a:hover { color: #344945; }
+    .rich-text .ql-align-center { text-align: center; }
+    .rich-text .ql-align-right { text-align: right; }
+    .rich-text .ql-align-justify { text-align: justify; }
+    .rich-text .ql-indent-1 { padding-left: 2em; }
+    .rich-text .ql-indent-2 { padding-left: 4em; }
+    .rich-text .ql-indent-3 { padding-left: 6em; }
+</style>
 <script>
 (function () {
     const btn = document.getElementById('like-btn');

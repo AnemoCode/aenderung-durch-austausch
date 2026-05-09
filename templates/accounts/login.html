@@ -165,7 +165,7 @@
                     <tbody>
                         {% for user in staging_credentials %}
                         <tr class="border-t" style="border-color: rgba(52,73,69,0.08);">
-                            <td class="px-4 py-2.5 text-forest/80">{{ user.name }}{% if user.is_superuser %} <span class="meta-label text-forest/40" style="font-size:0.55rem;">Admin</span>{% endif %}</td>
+                            <td class="px-4 py-2.5 text-forest/80">{{ user.name }}{% if user.is_superuser %} <span class="meta-label text-forest/40" style="font-size:0.55rem;">Admin</span>{% elif user.is_moderator %} <span class="meta-label text-forest/40" style="font-size:0.55rem;">Moderator</span>{% endif %}</td>
                             <td class="px-4 py-2.5 font-medium text-forest cursor-pointer select-all">{{ user.email }}</td>
                             <td class="px-4 py-2.5 font-medium text-forest cursor-pointer select-all">{{ user.password }}</td>
                         </tr>
@@ -177,7 +177,7 @@
         {% endif %}
 
         <p class="text-center text-xs text-forest/30 mt-6 font-serif">
-            &copy; {% now "Y" %} ÄdA — Ändern durch Austausch
+            &copy; {% now "Y" %} ÄdA — Änderung durch Austausch
         </p>
     </div>
 
