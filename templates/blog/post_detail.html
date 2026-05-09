@@ -8,7 +8,7 @@
     <a href="{% url 'blog:index' %}"
        class="inline-flex items-center gap-1.5 meta-label text-forest/60 hover:text-forest transition-colors">
         <i data-lucide="arrow-left" class="w-4 h-4"></i>
-        {% trans "Alle Themen" %}
+        {% trans "Alle Beiträge" %}
     </a>
 </div>
 
@@ -17,86 +17,51 @@
     {# Meta: author + date #}
     <div class="flex items-center gap-3 mb-8">
         <div class="w-10 h-10 rounded-full bg-wheat flex items-center justify-center text-forest font-bold text-sm flex-shrink-0">
-            {{ topic.author.initials }}
+            {{ post.author.initials }}
         </div>
         <div>
-            <p class="text-sm font-medium text-forest">{{ topic.author.name }}</p>
-            {% with date=topic.created_at|date:"d. F Y" time=topic.created_at|date:"H:i" %}
+            <p class="text-sm font-medium text-forest">{{ post.author.name }}</p>
+            {% with date=post.created_at|date:"d. F Y" time=post.created_at|date:"H:i" %}
             <p class="text-xs text-forest/45">{% blocktrans %}{{ date }}, {{ time }} Uhr{% endblocktrans %}</p>
             {% endwith %}
         </div>
     </div>
 
     {# Title #}
-    <h1 class="font-display text-4xl md:text-5xl lg:text-6xl text-forest tracking-tight leading-[1.05] text-balance mb-6">
-        {{ topic.title }}
+    <h1 class="font-display text-4xl md:text-5xl lg:text-6xl text-forest tracking-tight leading-[1.05] text-balance mb-4">
+        {{ post.title }}
     </h1>
-
-    {# Topic-level tag chips #}
-    {% if topic.tags.all %}
-    <div class="flex flex-wrap gap-2 mb-10">
-        {% for tag in topic.tags.all %}
-        <a href="{% url 'tag_detail' tag.slug %}"
-           class="meta-label text-xs px-3 py-1.5 rounded-full bg-white/70 border border-forest/15 text-forest/75 hover:bg-white hover:border-forest/40 hover:text-forest transition-colors">
-            #{{ tag.name }}
-        </a>
-        {% endfor %}
-    </div>
+    {% if post.subtitle %}
+    <p class="font-serif italic text-xl md:text-2xl text-forest/65 leading-[1.5] mb-10">
+        {{ post.subtitle }}
+    </p>
     {% else %}
     <div class="mb-10"></div>
     {% endif %}
 
     <div class="border-t border-forest/15 mb-10"></div>
 
-    {# ─── Topic parts ───────────────────────────────────────────────── #}
-    {% for part in parts %}
-    <section class="mb-12">
-        <h2 class="font-display text-2xl md:text-3xl text-forest tracking-tight leading-[1.15] mb-5">
-            {{ part.heading }}
-        </h2>
-        <div class="font-serif text-lg md:text-xl leading-[1.75] text-forest/85 rich-text">{{ part.body|safe }}</div>
-        {% if part.tags.all %}
-        <div class="flex flex-wrap gap-1.5 mt-5">
-            {% for tag in part.tags.all %}
-            <a href="{% url 'tag_detail' tag.slug %}"
-               class="meta-label text-xs px-2.5 py-1 rounded-full bg-white/60 border border-forest/15 text-forest/70 hover:bg-white hover:border-forest/40 hover:text-forest transition-colors">
-                #{{ tag.name }}
-            </a>
-            {% endfor %}
-        </div>
-        {% endif %}
-    </section>
-    {% empty %}
-    <div class="font-serif text-lg md:text-xl leading-[1.75] text-forest/60 italic mb-12">
-        {% trans "Inhalte folgen in Kürze." %}
-    </div>
-    {% endfor %}
+    {# Body #}
+    <div class="font-serif text-lg md:text-xl leading-[1.75] text-forest/85 whitespace-pre-wrap">{{ post.description }}</div>
 
     {# Like + comment stats #}
     <div class="flex items-center gap-4 mt-14 pt-8 border-t border-forest/15">
-        {% if request.user.is_authenticated %}
         <button id="like-btn"
+                data-post-id="{{ post.pk }}"
                 data-liked="{{ user_liked|yesno:'true,false' }}"
-                data-url="{% url 'blog:topic_like_toggle' topic.slug %}"
+                data-url="{% url 'blog:like_toggle' post.pk %}"
                 class="flex items-center gap-2 px-5 py-2.5 rounded-full border text-sm font-medium transition-all
                        {% if user_liked %}bg-rose-50 border-rose-200 text-rose-600{% else %}bg-white border-forest/15 text-forest/70 hover:border-forest/40 hover:text-forest{% endif %}">
             <i data-lucide="heart"
                id="like-icon"
                class="w-4 h-4 {% if user_liked %}fill-rose-400 text-rose-400{% endif %}"></i>
-            <span id="like-count">{{ topic.likes_count }}</span>
+            <span id="like-count">{{ post.likes.count }}</span>
             <span>{% trans "Gefällt mir" %}</span>
         </button>
-        {% else %}
-        <span class="flex items-center gap-2 px-5 py-2.5 rounded-full border bg-white border-forest/15 text-sm font-medium text-forest/60">
-            <i data-lucide="heart" class="w-4 h-4"></i>
-            <span>{{ topic.likes_count }}</span>
-            <span>{% trans "Gefällt mir" %}</span>
-        </span>
-        {% endif %}
 
         <span class="flex items-center gap-1.5 text-sm text-forest/50">
             <i data-lucide="message-circle" class="w-4 h-4"></i>
-            {% blocktrans count count=topic.comments_count %}{{ count }} Kommentar{% plural %}{{ count }} Kommentare{% endblocktrans %}
+            {% blocktrans count count=post.comments.count %}{{ count }} Kommentar{% plural %}{{ count }} Kommentare{% endblocktrans %}
         </span>
     </div>
 </article>
@@ -104,10 +69,10 @@
 {# ─── Comments ────────────────────────────────────────────────────── #}
 <section class="max-w-3xl mx-auto mt-16">
     <div class="meta-label text-forest/50 mb-6">
-        {% trans "Kommentare" %} · {{ topic.comments_count }}
+        {% trans "Kommentare" %} · {{ post.comments.count }}
     </div>
 
-    {% for comment in topic.comments.all %}
+    {% for comment in post.comments.all %}
     <div class="lilac-card px-6 py-5 mb-3">
         <div class="flex items-center gap-2.5 mb-3">
             <div class="w-7 h-7 rounded-full bg-white/70 flex items-center justify-center text-forest font-bold text-xs flex-shrink-0">
@@ -116,16 +81,6 @@
             <span class="text-sm font-medium text-forest/85">{{ comment.author.name }}</span>
             <span class="text-xs text-forest/30">·</span>
             <span class="text-xs text-forest/45">{{ comment.created_at|date:"d. F Y" }}</span>
-            {% if perms.blog.delete_comment %}
-            <form method="post" action="{% url 'blog:comment_delete' topic.slug comment.pk %}" class="ml-auto">
-                {% csrf_token %}
-                <button type="submit"
-                        class="flex items-center gap-1 text-xs text-forest/40 hover:text-rose-500 transition-colors"
-                        title="{% trans "Kommentar entfernen" %}">
-                    <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
-                </button>
-            </form>
-            {% endif %}
         </div>
         <p class="font-serif text-base text-forest/85 leading-relaxed">{{ comment.body }}</p>
     </div>
@@ -136,7 +91,6 @@
     {% endfor %}
 
     {# Add comment #}
-    {% if request.user.is_authenticated %}
     <div class="lilac-card p-6 md:p-7 mt-6">
         <h3 class="font-display text-xl text-forest tracking-tight mb-4">
             {% trans "Kommentar schreiben" %}
@@ -162,41 +116,11 @@
             </button>
         </form>
     </div>
-    {% else %}
-    <div class="lilac-card p-6 md:p-7 mt-6 text-center">
-        <p class="font-serif text-base text-forest/70 mb-3">
-            {% trans "Melde dich an, um zu kommentieren." %}
-        </p>
-        <a href="{% url 'accounts:login' %}?next={{ request.path }}"
-           class="inline-flex items-center gap-2 bg-forest hover:bg-forest-700 text-cream px-5 py-2 rounded-md text-sm font-semibold transition-colors">
-            {% trans "Anmelden" %}
-        </a>
-    </div>
-    {% endif %}
 </section>
 
 {% endblock %}
 
 {% block extra_js %}
-<style>
-    .rich-text p { margin-bottom: 1em; }
-    .rich-text h2 { font-family: 'Playfair Display', serif; font-size: 1.5rem; font-weight: 700; margin-top: 1.5em; margin-bottom: 0.5em; color: #344945; }
-    .rich-text h3 { font-family: 'Playfair Display', serif; font-size: 1.2rem; font-weight: 600; margin-top: 1.25em; margin-bottom: 0.4em; color: #344945; }
-    .rich-text ul { list-style-type: disc; padding-left: 1.5rem; margin-bottom: 1em; }
-    .rich-text ol { list-style-type: decimal; padding-left: 1.5rem; margin-bottom: 1em; }
-    .rich-text li { margin-bottom: 0.25em; }
-    .rich-text blockquote { border-left: 3px solid rgba(52,73,69,0.25); padding-left: 1rem; margin: 1em 0; font-style: italic; color: rgba(52,73,69,0.7); }
-    .rich-text pre.ql-syntax { background: #1e1e2e; color: #cdd6f4; padding: 1rem 1.25rem; border-radius: 0.5rem; overflow-x: auto; font-family: 'Courier New', Courier, monospace; font-size: 0.875rem; line-height: 1.6; margin-bottom: 1em; }
-    .rich-text code { background: rgba(52,73,69,0.08); padding: 0.15em 0.4em; border-radius: 0.25rem; font-family: 'Courier New', Courier, monospace; font-size: 0.875em; }
-    .rich-text a { color: #4a7c59; text-decoration: underline; }
-    .rich-text a:hover { color: #344945; }
-    .rich-text .ql-align-center { text-align: center; }
-    .rich-text .ql-align-right { text-align: right; }
-    .rich-text .ql-align-justify { text-align: justify; }
-    .rich-text .ql-indent-1 { padding-left: 2em; }
-    .rich-text .ql-indent-2 { padding-left: 4em; }
-    .rich-text .ql-indent-3 { padding-left: 6em; }
-</style>
 <script>
 (function () {
     const btn = document.getElementById('like-btn');

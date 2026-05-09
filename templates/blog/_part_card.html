@@ -36,7 +36,7 @@
 
     {# Body excerpt #}
     <p class="font-serif text-sm text-forest/70 leading-relaxed mb-4 flex-1">
-        {{ part.body|truncatewords:28 }}
+        {{ part.body|striptags|truncatewords:28 }}
     </p>
 
     {# Tag chips #}
