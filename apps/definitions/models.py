@@ -32,6 +32,12 @@ class Definition(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     is_published = models.BooleanField(default=True, verbose_name=_('Veröffentlicht'))
+    references = models.TextField(
+        blank=True,
+        default='',
+        verbose_name=_('Quellenangaben & Verweise'),
+        help_text=_('Literatur, Links und Quellenangaben zu dieser Definition.'),
+    )
     tags = TaggableManager(blank=True, verbose_name=_('Tags'))
 
     class Meta:

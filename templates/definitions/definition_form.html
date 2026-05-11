@@ -26,7 +26,7 @@
     </div>
 
     <div class="lilac-card p-7 md:p-10">
-        <form method="post" novalidate>
+        <form method="post" id="definition-form" novalidate>
             {% csrf_token %}
 
             {# Begriff (term) #}
@@ -47,50 +47,103 @@
                 {% endfor %}
             </div>
 
-            {# Einfache Erklärung #}
+            {# Einfache Erklärung — Quill rich text editor #}
             <div class="mb-6">
-                <label for="{{ form.simple_explanation.id_for_label }}"
-                       class="block meta-label text-forest/60 mb-2">
+                <label class="block meta-label text-forest/60 mb-2">
                     {% trans "Erklärung in einfacher Sprache" %} <span class="text-rose-400 tracking-normal">*</span>
                 </label>
-                <textarea
-                    name="{{ form.simple_explanation.html_name }}"
-                    id="{{ form.simple_explanation.id_for_label }}"
-                    rows="10"
-                    placeholder="{% trans 'Kurze Sätze, Alltagssprache, für alle verständlich …' %}"
-                    class="lilac-input w-full px-4 py-3 font-serif text-base leading-relaxed resize-y
-                           {% if form.simple_explanation.errors %}!border-rose-400 !bg-rose-50{% endif %}">{{ form.simple_explanation.value|default:'' }}</textarea>
                 {% for e in form.simple_explanation.errors %}
-                <p class="mt-1.5 text-xs text-rose-500">{{ e }}</p>
+                <p class="mb-2 text-xs text-rose-500">{{ e }}</p>
                 {% endfor %}
+                <div id="quill-simple-wrapper"
+                     class="{% if form.simple_explanation.errors %}ring-2 ring-rose-400{% endif %}"
+                     style="border: 1px solid rgba(52,73,69,0.18); border-radius: 0.5rem; overflow: hidden; background: #fff;">
+                    <div id="quill-simple-toolbar">
+                        <span class="ql-formats">
+                            <button class="ql-bold"></button>
+                            <button class="ql-italic"></button>
+                            <button class="ql-underline"></button>
+                        </span>
+                        <span class="ql-formats">
+                            <button class="ql-list" value="ordered"></button>
+                            <button class="ql-list" value="bullet"></button>
+                        </span>
+                        <span class="ql-formats">
+                            <button class="ql-blockquote"></button>
+                            <button class="ql-link"></button>
+                            <button class="ql-image"></button>
+                            <button class="ql-video"></button>
+                        </span>
+                        <span class="ql-formats">
+                            <button class="ql-clean"></button>
+                        </span>
+                    </div>
+                    <div id="quill-simple-editor" style="min-height: 220px;"></div>
+                </div>
+                <input type="hidden"
+                       name="{{ form.simple_explanation.html_name }}"
+                       id="{{ form.simple_explanation.id_for_label }}"
+                       value="{{ form.simple_explanation.value|default:'' }}">
                 <p class="mt-2 text-xs text-forest/45 font-serif italic">
-                    {% trans "Kurze Sätze, Alltagssprache, keine Fachbegriffe." %}
+                    {% trans "Kurze Sätze, Alltagssprache, keine Fachbegriffe. Bilder und Videos können eingebettet werden." %}
                 </p>
             </div>
 
-            {# Formale Definition #}
+            {# Formale Definition — Quill rich text editor #}
             <div class="mb-6">
-                <label for="{{ form.formal_explanation.id_for_label }}"
-                       class="block meta-label text-forest/60 mb-2">
+                <label class="block meta-label text-forest/60 mb-2">
                     {% trans "Formale Definition" %} <span class="text-rose-400 tracking-normal">*</span>
                 </label>
-                <textarea
-                    name="{{ form.formal_explanation.html_name }}"
-                    id="{{ form.formal_explanation.id_for_label }}"
-                    rows="10"
-                    placeholder="{% trans 'Präzise Formulierung, akademisch, mit Fachbegriffen wo nötig …' %}"
-                    class="lilac-input w-full px-4 py-3 font-serif text-base leading-relaxed resize-y
-                           {% if form.formal_explanation.errors %}!border-rose-400 !bg-rose-50{% endif %}">{{ form.formal_explanation.value|default:'' }}</textarea>
                 {% for e in form.formal_explanation.errors %}
-                <p class="mt-1.5 text-xs text-rose-500">{{ e }}</p>
+                <p class="mb-2 text-xs text-rose-500">{{ e }}</p>
                 {% endfor %}
+                <div id="quill-formal-wrapper"
+                     class="{% if form.formal_explanation.errors %}ring-2 ring-rose-400{% endif %}"
+                     style="border: 1px solid rgba(52,73,69,0.18); border-radius: 0.5rem; overflow: hidden; background: #fff;">
+                    <div id="quill-formal-toolbar">
+                        <span class="ql-formats">
+                            <select class="ql-header">
+                                <option value="2">{% trans "Überschrift 2" %}</option>
+                                <option value="3">{% trans "Überschrift 3" %}</option>
+                                <option selected>{% trans "Normal" %}</option>
+                            </select>
+                        </span>
+                        <span class="ql-formats">
+                            <button class="ql-bold"></button>
+                            <button class="ql-italic"></button>
+                            <button class="ql-underline"></button>
+                            <button class="ql-strike"></button>
+                        </span>
+                        <span class="ql-formats">
+                            <button class="ql-list" value="ordered"></button>
+                            <button class="ql-list" value="bullet"></button>
+                            <button class="ql-indent" value="-1"></button>
+                            <button class="ql-indent" value="+1"></button>
+                        </span>
+                        <span class="ql-formats">
+                            <button class="ql-blockquote"></button>
+                            <button class="ql-code-block"></button>
+                            <button class="ql-link"></button>
+                            <button class="ql-image"></button>
+                            <button class="ql-video"></button>
+                        </span>
+                        <span class="ql-formats">
+                            <button class="ql-clean"></button>
+                        </span>
+                    </div>
+                    <div id="quill-formal-editor" style="min-height: 280px;"></div>
+                </div>
+                <input type="hidden"
+                       name="{{ form.formal_explanation.html_name }}"
+                       id="{{ form.formal_explanation.id_for_label }}"
+                       value="{{ form.formal_explanation.value|default:'' }}">
                 <p class="mt-2 text-xs text-forest/45 font-serif italic">
-                    {% trans "Präzise, gerne akademisch; Fachbegriffe erlaubt." %}
+                    {% trans "Präzise, gerne akademisch; Fachbegriffe erlaubt. Bilder und Videos können eingebettet werden." %}
                 </p>
             </div>
 
             {# Tags #}
-            <div class="mb-8">
+            <div class="mb-6">
                 <label for="{{ form.tags.id_for_label }}"
                        class="block meta-label text-forest/60 mb-2">
                     {% trans "Tags" %}
@@ -109,6 +162,45 @@
                 {% for e in form.tags.errors %}
                 <p class="mt-1.5 text-xs text-rose-500">{{ e }}</p>
                 {% endfor %}
+            </div>
+
+            {# Quellenangaben & Verweise — Quill rich text editor #}
+            <div class="mb-8">
+                <label class="block meta-label text-forest/60 mb-2">
+                    {% trans "Quellenangaben & Verweise" %}
+                    <span class="text-forest/40 tracking-normal normal-case font-normal">— {% trans "optional" %}</span>
+                </label>
+                {% for e in form.references.errors %}
+                <p class="mb-2 text-xs text-rose-500">{{ e }}</p>
+                {% endfor %}
+                <div id="quill-refs-wrapper"
+                     class="{% if form.references.errors %}ring-2 ring-rose-400{% endif %}"
+                     style="border: 1px solid rgba(52,73,69,0.18); border-radius: 0.5rem; overflow: hidden; background: #fff;">
+                    <div id="quill-refs-toolbar">
+                        <span class="ql-formats">
+                            <button class="ql-bold"></button>
+                            <button class="ql-italic"></button>
+                        </span>
+                        <span class="ql-formats">
+                            <button class="ql-list" value="bullet"></button>
+                            <button class="ql-list" value="ordered"></button>
+                        </span>
+                        <span class="ql-formats">
+                            <button class="ql-link"></button>
+                        </span>
+                        <span class="ql-formats">
+                            <button class="ql-clean"></button>
+                        </span>
+                    </div>
+                    <div id="quill-refs-editor" style="min-height: 140px;"></div>
+                </div>
+                <input type="hidden"
+                       name="{{ form.references.html_name }}"
+                       id="{{ form.references.id_for_label }}"
+                       value="{{ form.references.value|default:'' }}">
+                <p class="mt-2 text-xs text-forest/45 font-serif italic">
+                    {% trans "Literatur, Weblinks und weiterführende Quellen zu diesem Begriff." %}
+                </p>
             </div>
 
             {% if form.non_field_errors %}
@@ -132,4 +224,48 @@
     </div>
 </div>
 
+{% endblock %}
+
+{% block extra_js %}
+<link href="https://cdn.quilljs.com/1.3.7/quill.snow.css" rel="stylesheet">
+<script src="https://cdn.quilljs.com/1.3.7/quill.min.js"></script>
+
+<style>
+    .ql-container.ql-snow { border: none !important; }
+    .ql-toolbar.ql-snow { border: none !important; border-bottom: 1px solid rgba(52,73,69,0.12) !important; background: #f9f8fe; }
+    #quill-simple-editor .ql-editor,
+    #quill-formal-editor .ql-editor,
+    #quill-refs-editor .ql-editor { font-family: 'Lora', Georgia, 'Times New Roman', serif; color: #344945; font-size: 1rem; line-height: 1.75; }
+    #quill-formal-editor .ql-editor h2 { font-family: 'Playfair Display', serif; font-size: 1.5rem; font-weight: 700; }
+    #quill-formal-editor .ql-editor h3 { font-family: 'Playfair Display', serif; font-size: 1.2rem; font-weight: 600; }
+    #quill-simple-editor .ql-editor img,
+    #quill-formal-editor .ql-editor img { max-width: 100%; height: auto; border-radius: 0.375rem; margin: 0.5em 0; }
+    .ql-editor iframe.ql-video { width: 100%; aspect-ratio: 16/9; border: none; border-radius: 0.375rem; margin: 0.5em 0; }
+</style>
+
+<script>
+(function () {
+    function initQuill(editorId, toolbarId, hiddenId, minHeight) {
+        var quill = new Quill('#' + editorId, {
+            modules: { toolbar: '#' + toolbarId },
+            theme: 'snow',
+        });
+        var hidden = document.getElementById(hiddenId);
+        if (hidden && hidden.value) {
+            quill.clipboard.dangerouslyPasteHTML(hidden.value);
+        }
+        return { quill: quill, hidden: hidden };
+    }
+
+    var simple = initQuill('quill-simple-editor', 'quill-simple-toolbar', 'id_simple_explanation');
+    var formal = initQuill('quill-formal-editor', 'quill-formal-toolbar', 'id_formal_explanation');
+    var refs   = initQuill('quill-refs-editor',   'quill-refs-toolbar',   'id_references');
+
+    document.getElementById('definition-form').addEventListener('submit', function () {
+        simple.hidden.value = simple.quill.root.innerHTML;
+        formal.hidden.value = formal.quill.root.innerHTML;
+        refs.hidden.value   = refs.quill.root.innerHTML;
+    });
+})();
+</script>
 {% endblock %}

@@ -49,6 +49,7 @@ class DefinitionListView(ListView):
                 Q(term__icontains=q)
                 | Q(simple_explanation__icontains=q)
                 | Q(formal_explanation__icontains=q)
+                | Q(references__icontains=q)
             )
         return qs
 
