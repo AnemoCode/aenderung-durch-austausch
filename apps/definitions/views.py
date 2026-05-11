@@ -16,13 +16,24 @@ LETTERS = list(string.ascii_uppercase) + ['#']
 
 
 class _StaffRequiredMixin(LoginRequiredMixin):
-    """Require login + is_staff. Non-staff are bounced to the list view."""
+    """Require login + is_staff or a specific model permission.
+
+    Subclasses set ``permission_required`` to the dotted permission string
+    (e.g. ``'definitions.add_definition'``).  Users who are neither staff nor
+    hold that permission are bounced back to the list view.
+    """
 
     login_url = reverse_lazy('accounts:login')
+    permission_required: str | None = None
 
     def dispatch(self, request, *args, **kwargs):
-        if request.user.is_authenticated and not request.user.is_staff:
-            return redirect('definitions:index')
+        if request.user.is_authenticated:
+            allowed = request.user.is_staff or (
+                self.permission_required
+                and request.user.has_perm(self.permission_required)
+            )
+            if not allowed:
+                return redirect('definitions:index')
         return super().dispatch(request, *args, **kwargs)
 
 
@@ -111,6 +122,7 @@ class DefinitionCreateView(_StaffRequiredMixin, CreateView):
     model = Definition
     form_class = DefinitionForm
     template_name = 'definitions/definition_form.html'
+    permission_required = 'definitions.add_definition'
 
     def get_context_data(self, **kwargs):
         ctx = super().get_context_data(**kwargs)
@@ -132,6 +144,7 @@ class DefinitionUpdateView(_StaffRequiredMixin, UpdateView):
     model = Definition
     form_class = DefinitionForm
     template_name = 'definitions/definition_form.html'
+    permission_required = 'definitions.change_definition'
 
     def get_initial(self):
         initial = super().get_initial()

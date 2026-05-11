@@ -43,7 +43,7 @@
                 </div>
             </form>
 
-            {% if request.user.is_staff %}
+            {% if request.user.is_staff or perms.definitions.add_definition %}
             <a href="{% url 'definitions:create' %}"
                class="bg-forest hover:bg-forest-700 text-cream px-5 py-2.5 rounded-md text-sm font-semibold transition-colors shadow-sm inline-flex items-center gap-2 flex-shrink-0">
                 <i data-lucide="plus" class="w-4 h-4"></i>
@@ -93,7 +93,7 @@
                 <p class="font-serif text-base text-forest/60 max-w-sm px-6 mb-6">
                     {% trans "Das Wörterbuch ist gerade noch leer. Der erste Eintrag wartet darauf, geschrieben zu werden." %}
                 </p>
-                {% if request.user.is_staff %}
+                {% if request.user.is_staff or perms.definitions.add_definition %}
                 <a href="{% url 'definitions:create' %}"
                    class="bg-forest hover:bg-forest-700 text-cream px-5 py-2.5 rounded-md text-sm font-semibold transition-colors shadow-sm inline-flex items-center gap-2">
                     <i data-lucide="plus" class="w-4 h-4"></i>

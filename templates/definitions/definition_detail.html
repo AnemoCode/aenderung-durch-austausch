@@ -100,19 +100,21 @@
     </div>
     {% endif %}
 
-    {# Staff-only footer #}
-    {% if request.user.is_staff %}
+    {# Moderator/staff footer #}
+    {% if request.user.is_staff or perms.definitions.change_definition %}
     <div class="mt-16 pt-8 border-t border-forest/15 flex flex-wrap items-center gap-3">
         <a href="{% url 'definitions:edit' definition.slug %}"
            class="inline-flex items-center gap-2 px-5 py-2.5 rounded-md text-sm font-semibold text-forest/70 hover:text-forest border border-forest/15 hover:border-forest/35 transition-colors">
             <i data-lucide="pencil" class="w-4 h-4"></i>
             {% trans "Bearbeiten" %}
         </a>
+        {% if request.user.is_staff %}
         <a href="{% url 'admin:definitions_definition_change' definition.pk %}"
            class="inline-flex items-center gap-2 px-5 py-2.5 rounded-md text-sm font-semibold text-forest/55 hover:text-forest transition-colors">
             <i data-lucide="settings" class="w-4 h-4"></i>
             {% trans "Im Admin öffnen" %}
         </a>
+        {% endif %}
     </div>
     {% endif %}
 </article>
