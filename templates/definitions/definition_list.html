@@ -131,7 +131,7 @@
                 <div class="grid gap-5 md:gap-6 sm:grid-cols-2 lg:grid-cols-3">
                     {% for d in defs %}
                     <article class="lilac-card p-7 md:p-8 flex flex-col h-full group"
-                             x-data="{ mode: 'simple' }"
+                             x-data="{ mode: 'formal' }"
                              x-show="match('{{ d.term|escapejs }}')">
 
                         {# Term #}
@@ -145,26 +145,26 @@
                         {# Mode toggle pill #}
                         <div role="group" aria-label="{% trans 'Sprachregister auswählen' %}"
                              class="inline-flex self-start rounded-full bg-white/60 border border-forest/15 p-0.5 mb-4">
-                            <button type="button" @click="mode = 'simple'" :aria-pressed="mode === 'simple'"
-                                    class="meta-label text-[0.65rem] px-3 py-1 rounded-full transition-colors"
-                                    :class="mode === 'simple' ? 'bg-forest text-cream' : 'text-forest/60 hover:text-forest'">
-                                {% trans "Einfach" %}
-                            </button>
                             <button type="button" @click="mode = 'formal'" :aria-pressed="mode === 'formal'"
                                     class="meta-label text-[0.65rem] px-3 py-1 rounded-full transition-colors"
                                     :class="mode === 'formal' ? 'bg-forest text-cream' : 'text-forest/60 hover:text-forest'">
                                 {% trans "Formal" %}
                             </button>
+                            <button type="button" @click="mode = 'simple'" :aria-pressed="mode === 'simple'"
+                                    class="meta-label text-[0.65rem] px-3 py-1 rounded-full transition-colors"
+                                    :class="mode === 'simple' ? 'bg-forest text-cream' : 'text-forest/60 hover:text-forest'">
+                                {% trans "Einfach" %}
+                            </button>
                         </div>
 
                         {# Explanations #}
-                        <p x-show="mode === 'simple'" x-transition.opacity.duration.150ms
-                           class="font-serif text-sm text-forest/75 leading-relaxed whitespace-pre-wrap mb-4 flex-1">
-                            {{ d.simple_explanation|truncatewords:40 }}
-                        </p>
-                        <p x-show="mode === 'formal'" x-transition.opacity.duration.150ms x-cloak
+                        <p x-show="mode === 'formal'" x-transition.opacity.duration.150ms
                            class="font-serif text-sm text-forest/75 leading-relaxed whitespace-pre-wrap mb-4 flex-1">
                             {{ d.formal_explanation|truncatewords:40 }}
+                        </p>
+                        <p x-show="mode === 'simple'" x-transition.opacity.duration.150ms x-cloak
+                           class="font-serif text-sm text-forest/75 leading-relaxed whitespace-pre-wrap mb-4 flex-1">
+                            {{ d.simple_explanation|truncatewords:40 }}
                         </p>
 
                         {# Tag chips #}
