@@ -55,6 +55,7 @@ INSTALLED_APPS = [
     'taggit',
     'apps.accounts',
     'apps.blog',
+    'apps.definitions',
 ]
 
 AUTH_USER_MODEL = 'accounts.User'

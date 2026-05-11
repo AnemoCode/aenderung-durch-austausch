@@ -153,6 +153,12 @@ class TagDetailView(TemplateView):
     template_name = "blog/tag_detail.html"
 
     def get_context_data(self, **kwargs):
+        # Inline import: apps.definitions imports nothing from blog, but
+        # keeping the dependency local to this method documents that blog
+        # does not require definitions to load — the two apps remain
+        # independent at import time.
+        from apps.definitions.models import Definition
+
         ctx = super().get_context_data(**kwargs)
         slug = kwargs["slug"]
         tag = get_object_or_404(Tag, slug=slug)
@@ -166,6 +172,11 @@ class TagDetailView(TemplateView):
         ctx["parts"] = (
             TopicPart.objects.filter(tags__slug=slug, topic__is_published=True)
             .select_related("topic")
+            .prefetch_related("tags")
+            .distinct()
+        )
+        ctx["definitions"] = (
+            Definition.objects.filter(tags__slug=slug, is_published=True)
             .prefetch_related("tags")
             .distinct()
         )

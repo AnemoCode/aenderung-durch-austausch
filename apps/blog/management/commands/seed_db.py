@@ -5,8 +5,48 @@ from django.core.management.base import BaseCommand
 
 from apps.blog.models import Comment, Like, Topic, TopicPart
 from apps.blog.staging_data import SEED_USERS
+from apps.definitions.models import Definition
 
 User = get_user_model()
+
+SEED_DEFINITIONS = [
+    {
+        "term": "Verschwörungstheorie",
+        "tags": ["Rechtsextremismus", "Desinformation"],
+        "is_published": True,
+        "formal_explanation": (
+            "<p>Eine <strong>Verschwörungstheorie</strong> ist eine Erklärung für Ereignisse oder Zustände, "
+            "die das koordinierte Handeln einer mächtigen, im Verborgenen agierenden Gruppe als ursächlich "
+            "annimmt. Verschwörungstheorien zeichnen sich durch charakteristische Merkmale aus:</p>"
+            "<ul>"
+            "<li><em>Immunisierung gegen Widerlegung</em> – Gegenbeweise werden als Teil der Verschwörung gedeutet</li>"
+            "<li><em>Überintentionalismus</em> – zufällige Ereignisse werden als geplant interpretiert</li>"
+            "<li><em>Monologische Überzeugungsstruktur</em> – eine einzige Theorie erklärt viele verschiedene Phänomene</li>"
+            "</ul>"
+            "<p>In der sozialwissenschaftlichen Forschung (vgl. Sunstein &amp; Vermeule 2009; Butter 2018) "
+            "wird zwischen epistemisch illegitimen Verschwörungstheorien und faktisch zutreffenden "
+            "Verschwörungsnarrativen unterschieden. Erstere sind durch zirkuläre Argumentationsmuster "
+            "und mangelnde Falsifizierbarkeit gekennzeichnet.</p>"
+        ),
+        "simple_explanation": (
+            "<p>Eine Verschwörungstheorie ist eine Erklärung, bei der eine geheime Gruppe von Menschen "
+            "für schlechte Dinge in der Welt verantwortlich gemacht wird – ohne dafür echte Beweise zu haben.</p>"
+            "<p>Beispiele: <em>&bdquo;Die Mondlandung war gefälscht&rdquo;</em> oder <em>&bdquo;Eine geheime Elite "
+            "steuert die Welt.&rdquo;</em></p>"
+            "<p>Das Besondere: Wer daran glaubt, sieht in jedem Gegenargument nur einen weiteren "
+            "Beweis für die Verschwörung. Das macht es sehr schwer, darüber zu diskutieren.</p>"
+        ),
+        "references": (
+            "<ul>"
+            "<li>Butter, M. (2018). <em>&bdquo;Nichts ist, wie es scheint&rdquo; – Über Verschwörungstheorien.</em> Suhrkamp.</li>"
+            "<li>Sunstein, C. R., &amp; Vermeule, A. (2009). Conspiracy Theories: Causes and Cures. "
+            "<em>Journal of Political Philosophy</em>, 17(2), 202–227.</li>"
+            "<li>Bundeszentrale für politische Bildung: "
+            "<a href=\"https://www.bpb.de/themen/rechtsextremismus/verschwoerungs-theorien/\">bpb.de – Verschwörungstheorien</a></li>"
+            "</ul>"
+        ),
+    },
+]
 
 SEED_TOPICS = [
     {
@@ -178,12 +218,14 @@ class Command(BaseCommand):
             Comment.objects.all().delete()
             TopicPart.objects.all().delete()
             Topic.objects.all().delete()
+            Definition.objects.all().delete()
             User.objects.all().delete()
             self.stdout.write(self.style.WARNING("All data flushed."))
 
         self._seed_users()
         self._seed_moderator()
         self._seed_topics()
+        self._seed_definitions()
         self.stdout.write(self.style.SUCCESS("Database seeding complete."))
 
     def _seed_users(self):
@@ -259,3 +301,23 @@ class Command(BaseCommand):
                 liker = users_by_email.get(liker_email)
                 if liker:
                     Like.objects.get_or_create(topic=topic, user=liker)
+
+    def _seed_definitions(self):
+        admin_user = User.objects.get(email="admin@staging.local")
+
+        for data in SEED_DEFINITIONS:
+            definition, created = Definition.objects.get_or_create(
+                term=data["term"],
+                defaults={
+                    "author": admin_user,
+                    "formal_explanation": data["formal_explanation"],
+                    "simple_explanation": data["simple_explanation"],
+                    "references": data.get("references", ""),
+                    "is_published": data.get("is_published", False),
+                },
+            )
+            if created:
+                definition.tags.set(data.get("tags", []))
+                self.stdout.write(f"  Created definition: {definition.term}")
+            else:
+                self.stdout.write(f"  Definition already exists: {definition.term}")

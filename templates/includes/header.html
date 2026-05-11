@@ -17,7 +17,7 @@
 
         {# Five pillars — hidden below lg; replaced by burger menu #}
         <nav class="hidden lg:flex items-center gap-7 xl:gap-9">
-            <a href="{% url 'definitionen' %}"
+            <a href="{% url 'definitions:index' %}"
                class="meta-label transition-colors
                       {% if active_nav == 'definitionen' %}text-forest{% else %}text-forest/60 hover:text-forest{% endif %}">
                 {% trans "Definitionen" %}
@@ -110,7 +110,7 @@
          style="background-color: rgba(242, 238, 249, 0.96); backdrop-filter: blur(10px);"
          x-cloak>
         <nav class="max-w-7xl mx-auto px-6 py-4 flex flex-col gap-1">
-            <a href="{% url 'definitionen' %}"
+            <a href="{% url 'definitions:index' %}"
                class="meta-label py-3 border-b border-forest/5
                       {% if active_nav == 'definitionen' %}text-forest{% else %}text-forest/70 hover:text-forest{% endif %}">
                 {% trans "Definitionen" %}
