@@ -31,14 +31,14 @@ SEED_DEFINITIONS = [
         "simple_explanation": (
             "<p>Eine Verschwörungstheorie ist eine Erklärung, bei der eine geheime Gruppe von Menschen "
             "für schlechte Dinge in der Welt verantwortlich gemacht wird – ohne dafür echte Beweise zu haben.</p>"
-            "<p>Beispiele: <em>„Die Mondlandung war gefälscht"</em> oder <em>„Eine geheime Elite "
-            "steuert die Welt."</em></p>"
+            "<p>Beispiele: <em>&bdquo;Die Mondlandung war gefälscht&rdquo;</em> oder <em>&bdquo;Eine geheime Elite "
+            "steuert die Welt.&rdquo;</em></p>"
             "<p>Das Besondere: Wer daran glaubt, sieht in jedem Gegenargument nur einen weiteren "
             "Beweis für die Verschwörung. Das macht es sehr schwer, darüber zu diskutieren.</p>"
         ),
         "references": (
             "<ul>"
-            "<li>Butter, M. (2018). <em>„Nichts ist, wie es scheint" – Über Verschwörungstheorien.</em> Suhrkamp.</li>"
+            "<li>Butter, M. (2018). <em>&bdquo;Nichts ist, wie es scheint&rdquo; – Über Verschwörungstheorien.</em> Suhrkamp.</li>"
             "<li>Sunstein, C. R., &amp; Vermeule, A. (2009). Conspiracy Theories: Causes and Cures. "
             "<em>Journal of Political Philosophy</em>, 17(2), 202–227.</li>"
             "<li>Bundeszentrale für politische Bildung: "
