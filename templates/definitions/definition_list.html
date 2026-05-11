@@ -160,11 +160,11 @@
                         {# Explanations #}
                         <p x-show="mode === 'formal'" x-transition.opacity.duration.150ms
                            class="font-serif text-sm text-forest/75 leading-relaxed mb-4 flex-1">
-                            {{ d.formal_explanation|striptags|truncatewords:40 }}
+                            {{ d.formal_explanation|striptags|truncatewords:20 }}
                         </p>
                         <p x-show="mode === 'simple'" x-transition.opacity.duration.150ms x-cloak
                            class="font-serif text-sm text-forest/75 leading-relaxed mb-4 flex-1">
-                            {{ d.simple_explanation|striptags|truncatewords:40 }}
+                            {{ d.simple_explanation|striptags|truncatewords:20 }}
                         </p>
 
                         {# Tag chips #}
