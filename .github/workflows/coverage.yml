@@ -1,0 +1,53 @@
+name: Coverage
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  coverage:
+    runs-on: ubuntu-latest
+
+    services:
+      postgres:
+        image: postgres:17-alpine
+        env:
+          POSTGRES_DB: aenderung-durch-austausch
+          POSTGRES_USER: aenderung-durch-austausch
+          POSTGRES_PASSWORD: aenderung-durch-austausch
+        ports: ["5432:5432"]
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    env:
+      DJANGO_SECRET_KEY: ci-placeholder-not-used-in-production
+      DEBUG: "True"
+      POSTGRES_DB: aenderung-durch-austausch
+      POSTGRES_USER: aenderung-durch-austausch
+      POSTGRES_PASSWORD: aenderung-durch-austausch
+      POSTGRES_HOST: localhost
+      POSTGRES_PORT: "5432"
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: astral-sh/setup-uv@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install dependencies
+        run: uv sync --locked --all-groups
+
+      - name: Run tests with coverage
+        run: uv run coverage run --source='.' manage.py test
+
+      - name: Coverage report
+        run: uv run coverage report --show-missing
+
+      - name: Enforce minimum coverage
+        run: uv run coverage report --fail-under=95
