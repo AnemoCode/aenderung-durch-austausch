@@ -56,6 +56,7 @@ INSTALLED_APPS = [
     'apps.accounts',
     'apps.blog',
     'apps.definitions',
+    'apps.medienkompetenz',
 ]
 
 AUTH_USER_MODEL = 'accounts.User'
@@ -158,10 +159,26 @@ STATIC_URL = 'static/'
 STATIC_ROOT = BASE_DIR / 'staticfiles'
 STATICFILES_DIRS = [BASE_DIR / 'static']
 STORAGES = {
+    # Without an explicit "default" the framework's FileField/ImageField raise
+    # InvalidStorageError, since overriding STORAGES drops Django's defaults.
+    "default": {
+        "BACKEND": "django.core.files.storage.FileSystemStorage",
+    },
     "staticfiles": {
         "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage",
     },
 }
+
+# User-uploaded media (Medienkompetenz article images, etc.)
+# MEDIA_ROOT is the filesystem path inside the container/host where files are
+# written; MEDIA_URL is the URL prefix at which they're served.  In docker, the
+# host path is bind-mounted into MEDIA_ROOT (see MEDIA_HOST_PATH in .env).
+MEDIA_ROOT = env('MEDIA_ROOT', default=str(BASE_DIR / 'data' / 'media'))
+MEDIA_URL = env('MEDIA_URL', default='/media/')
+
+# Max upload size for inline image uploads (bytes).  Keeps a single
+# accidental drop of a huge file from filling the disk.
+MEDIA_UPLOAD_MAX_BYTES = env.int('MEDIA_UPLOAD_MAX_BYTES', default=8 * 1024 * 1024)
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field

@@ -1,4 +1,6 @@
 """URL configuration for aenderung-durch-austausch project."""
+from django.conf import settings
+from django.conf.urls.static import static
 from django.contrib import admin
 from django.http import HttpResponse
 from django.urls import path, include, re_path
@@ -21,20 +23,6 @@ PILLAR_PAGES = [
             "Innere Widersprüche, die sich aufzeigen lassen.",
             "Positionen zu Geschlecht, Freiheit, Sexualität und Demokratie.",
             "Jedes Argument und Gegenargument – in einfacher und formaler Sprache.",
-        ],
-    },
-    {
-        "slug": "medienkompetenz",
-        "name": "medienkompetenz",
-        "active_nav": "medienkompetenz",
-        "numeral": "03",
-        "title": "Digitale Medienkompetenz",
-        "tagline": "KI-Inhalte, Bots und manipulative Kommentare erkennen.",
-        "points": [
-            "Woran erkennt man KI-generierte Inhalte und Bot-Accounts?",
-            "Wie findet man vertrauenswürdige Quellen im Internet?",
-            "Die grundlegenden Regeln des Journalismus – verständlich erklärt.",
-            "Was ist Framing? Was ist Nudging? – Begriffe aus der Medienpraxis.",
         ],
     },
     {
@@ -80,5 +68,14 @@ urlpatterns = [
     path("", include("apps.accounts.urls", namespace="accounts")),
     path("blog/", include("apps.blog.urls", namespace="blog")),
     path("definitionen/", include("apps.definitions.urls", namespace="definitions")),
+    path(
+        "medienkompetenz/",
+        include("apps.medienkompetenz.urls", namespace="medienkompetenz"),
+    ),
     *pillar_urls,
 ]
+
+# In DEBUG, serve MEDIA_ROOT through Django.  In production, the web server
+# (or a reverse-proxy bind mount) serves /media/ directly.
+if settings.DEBUG:
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
