@@ -1,0 +1,391 @@
+{% extends 'base.html' %}
+{% load i18n %}
+
+{% block content %}
+
+<div class="max-w-3xl mx-auto">
+
+    <div class="mb-8">
+        <a href="{% if is_edit %}{{ article.get_absolute_url }}{% else %}{% url 'medienkompetenz:index' %}{% endif %}"
+           class="inline-flex items-center gap-1.5 meta-label text-forest/60 hover:text-forest transition-colors">
+            <i data-lucide="arrow-left" class="w-4 h-4"></i>
+            {% trans "Zurück" %}
+        </a>
+    </div>
+
+    <div class="mb-10">
+        <div class="meta-label text-forest/50 mb-4">
+            {% if is_edit %}{% trans "Bearbeiten" %}{% else %}{% trans "Neu" %}{% endif %}
+        </div>
+        <h1 class="font-display text-4xl md:text-5xl text-forest tracking-tight leading-[1.1]">
+            {% if is_edit %}{% trans "Beitrag bearbeiten" %}{% else %}{% trans "Neuer Beitrag" %}{% endif %}
+        </h1>
+        <p class="font-serif italic text-lg text-forest/65 mt-4 leading-relaxed">
+            {% trans "Reichtext, Bilder und Videos. Interaktive Abschnitte fügst du nach dem Speichern hinzu." %}
+        </p>
+    </div>
+
+    <div class="lilac-card p-7 md:p-10">
+        <form method="post" id="article-form" enctype="multipart/form-data" novalidate>
+            {% csrf_token %}
+
+            {# Titel #}
+            <div class="mb-6">
+                <label for="{{ form.title.id_for_label }}"
+                       class="block meta-label text-forest/60 mb-2">
+                    {% trans "Titel" %} <span class="text-rose-400 tracking-normal">*</span>
+                </label>
+                <input type="text"
+                       name="{{ form.title.html_name }}"
+                       id="{{ form.title.id_for_label }}"
+                       value="{{ form.title.value|default:'' }}"
+                       placeholder="{% trans 'Worum geht es?' %}"
+                       class="lilac-input w-full px-4 py-3 font-display text-xl
+                              {% if form.title.errors %}!border-rose-400 !bg-rose-50{% endif %}">
+                {% for e in form.title.errors %}
+                <p class="mt-1.5 text-xs text-rose-500">{{ e }}</p>
+                {% endfor %}
+            </div>
+
+            {# Lead #}
+            <div class="mb-6">
+                <label for="{{ form.lead.id_for_label }}"
+                       class="block meta-label text-forest/60 mb-2">
+                    {% trans "Einleitung" %}
+                    <span class="text-forest/40 tracking-normal normal-case font-normal">— {% trans "optional" %}</span>
+                </label>
+                <textarea name="{{ form.lead.html_name }}"
+                          id="{{ form.lead.id_for_label }}"
+                          rows="2"
+                          placeholder="{% trans 'Ein kurzer Lead-Text.' %}"
+                          class="lilac-input w-full px-4 py-3 font-serif italic text-base
+                                 {% if form.lead.errors %}!border-rose-400 !bg-rose-50{% endif %}">{{ form.lead.value|default:'' }}</textarea>
+                {% for e in form.lead.errors %}
+                <p class="mt-1.5 text-xs text-rose-500">{{ e }}</p>
+                {% endfor %}
+            </div>
+
+            {# Hero image #}
+            <div class="mb-6">
+                <label for="{{ form.hero_image.id_for_label }}"
+                       class="block meta-label text-forest/60 mb-2">
+                    {% trans "Titelbild" %}
+                    <span class="text-forest/40 tracking-normal normal-case font-normal">— {% trans "optional" %}</span>
+                </label>
+                {% if is_edit and article.hero_image %}
+                <div class="mb-2 rounded-md overflow-hidden border border-forest/10 bg-white/50 max-w-md">
+                    <img src="{{ article.hero_image.url }}" alt="" class="w-full h-auto">
+                </div>
+                {% endif %}
+                <input type="file"
+                       name="{{ form.hero_image.html_name }}"
+                       id="{{ form.hero_image.id_for_label }}"
+                       accept="image/*"
+                       class="lilac-input w-full px-4 py-3 font-serif text-sm">
+                {% for e in form.hero_image.errors %}
+                <p class="mt-1.5 text-xs text-rose-500">{{ e }}</p>
+                {% endfor %}
+            </div>
+
+            {# Body — Quill #}
+            <div class="mb-6">
+                <label class="block meta-label text-forest/60 mb-2">
+                    {% trans "Inhalt" %} <span class="text-rose-400 tracking-normal">*</span>
+                </label>
+                {% for e in form.body.errors %}
+                <p class="mb-2 text-xs text-rose-500">{{ e }}</p>
+                {% endfor %}
+                <div id="quill-body-wrapper"
+                     class="{% if form.body.errors %}ring-2 ring-rose-400{% endif %}"
+                     style="border: 1px solid rgba(52,73,69,0.18); border-radius: 0.5rem; overflow: hidden; background: #fff;">
+                    <div id="quill-body-toolbar">
+                        <span class="ql-formats">
+                            <select class="ql-header">
+                                <option value="2">{% trans "Überschrift 2" %}</option>
+                                <option value="3">{% trans "Überschrift 3" %}</option>
+                                <option selected>{% trans "Normal" %}</option>
+                            </select>
+                        </span>
+                        <span class="ql-formats">
+                            <button class="ql-bold"></button>
+                            <button class="ql-italic"></button>
+                            <button class="ql-underline"></button>
+                            <button class="ql-strike"></button>
+                        </span>
+                        <span class="ql-formats">
+                            <button class="ql-list" value="ordered"></button>
+                            <button class="ql-list" value="bullet"></button>
+                            <button class="ql-indent" value="-1"></button>
+                            <button class="ql-indent" value="+1"></button>
+                        </span>
+                        <span class="ql-formats">
+                            <button class="ql-blockquote"></button>
+                            <button class="ql-code-block"></button>
+                            <button class="ql-link"></button>
+                            <button class="ql-image"></button>
+                            <button class="ql-video"></button>
+                        </span>
+                        <span class="ql-formats">
+                            <select class="ql-align">
+                                <option selected></option>
+                                <option value="center"></option>
+                                <option value="right"></option>
+                                <option value="justify"></option>
+                            </select>
+                        </span>
+                        <span class="ql-formats">
+                            <button class="ql-clean"></button>
+                        </span>
+                    </div>
+                    <div id="quill-body-editor" style="min-height: 320px;"></div>
+                </div>
+                <input type="hidden"
+                       name="{{ form.body.html_name }}"
+                       id="{{ form.body.id_for_label }}"
+                       value="{{ form.body.value|default:'' }}">
+                <p class="mt-2 text-xs text-forest/45 font-serif italic">
+                    {% trans "Bilder werden auf den Server hochgeladen, Videos werden eingebettet (YouTube, Vimeo). Maximal 8 MiB pro Bild." %}
+                </p>
+            </div>
+
+            {# Tags #}
+            <div class="mb-6">
+                <label for="{{ form.tags.id_for_label }}"
+                       class="block meta-label text-forest/60 mb-2">
+                    {% trans "Tags" %}
+                    <span class="text-forest/40 tracking-normal normal-case font-normal">— {% trans "optional" %}</span>
+                </label>
+                <input type="text"
+                       name="{{ form.tags.html_name }}"
+                       id="{{ form.tags.id_for_label }}"
+                       value="{{ form.tags.value|default:'' }}"
+                       placeholder="{% trans 'ki-bilder, deepfake, framing' %}"
+                       class="lilac-input w-full px-4 py-3 font-serif text-base
+                              {% if form.tags.errors %}!border-rose-400 !bg-rose-50{% endif %}">
+                {% if form.tags.help_text %}
+                <p class="mt-1.5 text-xs text-forest/45 font-serif italic">{{ form.tags.help_text }}</p>
+                {% endif %}
+                {% for e in form.tags.errors %}
+                <p class="mt-1.5 text-xs text-rose-500">{{ e }}</p>
+                {% endfor %}
+            </div>
+
+            {# References — Quill #}
+            <div class="mb-6">
+                <label class="block meta-label text-forest/60 mb-2">
+                    {% trans "Quellenangaben & Verweise" %}
+                    <span class="text-forest/40 tracking-normal normal-case font-normal">— {% trans "optional" %}</span>
+                </label>
+                {% for e in form.references.errors %}
+                <p class="mb-2 text-xs text-rose-500">{{ e }}</p>
+                {% endfor %}
+                <div id="quill-refs-wrapper"
+                     class="{% if form.references.errors %}ring-2 ring-rose-400{% endif %}"
+                     style="border: 1px solid rgba(52,73,69,0.18); border-radius: 0.5rem; overflow: hidden; background: #fff;">
+                    <div id="quill-refs-toolbar">
+                        <span class="ql-formats">
+                            <button class="ql-bold"></button>
+                            <button class="ql-italic"></button>
+                        </span>
+                        <span class="ql-formats">
+                            <button class="ql-list" value="bullet"></button>
+                            <button class="ql-list" value="ordered"></button>
+                        </span>
+                        <span class="ql-formats">
+                            <button class="ql-link"></button>
+                        </span>
+                        <span class="ql-formats">
+                            <button class="ql-clean"></button>
+                        </span>
+                    </div>
+                    <div id="quill-refs-editor" style="min-height: 140px;"></div>
+                </div>
+                <input type="hidden"
+                       name="{{ form.references.html_name }}"
+                       id="{{ form.references.id_for_label }}"
+                       value="{{ form.references.value|default:'' }}">
+            </div>
+
+            {# Published toggle #}
+            <div class="mb-8">
+                <label class="inline-flex items-center gap-2 cursor-pointer">
+                    <input type="checkbox"
+                           name="{{ form.is_published.html_name }}"
+                           id="{{ form.is_published.id_for_label }}"
+                           {% if form.is_published.value %}checked{% endif %}
+                           class="w-4 h-4">
+                    <span class="meta-label text-forest/70">{% trans "Veröffentlicht" %}</span>
+                </label>
+            </div>
+
+            {% if form.non_field_errors %}
+            <div class="mb-6 px-4 py-3 rounded-lg border border-rose-200 bg-rose-50 text-sm text-rose-600">
+                {% for e in form.non_field_errors %}<p>{{ e }}</p>{% endfor %}
+            </div>
+            {% endif %}
+
+            <div class="flex items-center gap-3">
+                <button type="submit"
+                        class="bg-forest hover:bg-forest-700 text-cream px-6 py-3 rounded-md text-sm font-semibold transition-colors shadow-sm inline-flex items-center gap-2">
+                    <i data-lucide="send" class="w-4 h-4"></i>
+                    {% if is_edit %}{% trans "Änderungen speichern" %}{% else %}{% trans "Beitrag veröffentlichen" %}{% endif %}
+                </button>
+                <a href="{% if is_edit %}{{ article.get_absolute_url }}{% else %}{% url 'medienkompetenz:index' %}{% endif %}"
+                   class="px-5 py-3 rounded-md text-sm font-semibold text-forest/65 hover:text-forest border border-forest/15 hover:border-forest/35 transition-colors">
+                    {% trans "Abbrechen" %}
+                </a>
+            </div>
+        </form>
+    </div>
+
+    {# ─── Interactive blocks management (edit mode only) ──────── #}
+    {% if is_edit %}
+    <div class="mt-12">
+        <div class="flex items-end justify-between flex-wrap gap-3 mb-6">
+            <div>
+                <h2 class="font-display text-2xl md:text-3xl text-forest tracking-tight">
+                    {% trans "Interaktive Abschnitte" %}
+                </h2>
+                <p class="font-serif italic text-sm text-forest/60 mt-1">
+                    {% trans "Quizze, Framing-Übungen und Hervorhebungen, die in den Beitrag eingebettet werden." %}
+                </p>
+            </div>
+            <div x-data="{ open: false }" class="relative">
+                <button type="button" @click="open = !open" @click.outside="open = false"
+                        class="bg-forest hover:bg-forest-700 text-cream px-5 py-2.5 rounded-md text-sm font-semibold transition-colors shadow-sm inline-flex items-center gap-2">
+                    <i data-lucide="plus" class="w-4 h-4"></i>
+                    {% trans "Abschnitt hinzufügen" %}
+                </button>
+                <div x-show="open" x-transition x-cloak
+                     class="absolute right-0 mt-2 w-64 rounded-xl border border-forest/10 shadow-lg py-2 z-20"
+                     style="background-color: #FDFBFF;">
+                    {% for value, label in block_choices %}
+                    <a href="{% url 'medienkompetenz:block_create' article.slug value %}"
+                       class="flex items-center gap-2 px-4 py-2 text-sm font-medium text-forest/75 hover:bg-white/60 hover:text-forest transition-colors">
+                        {{ label }}
+                    </a>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+
+        {% if not blocks %}
+        <div class="lilac-card p-7 text-center font-serif italic text-forest/55">
+            {% trans "Noch keine interaktiven Abschnitte." %}
+        </div>
+        {% else %}
+        <ul class="space-y-3">
+            {% for block in blocks %}
+            <li class="lilac-card p-5 flex items-center justify-between gap-4">
+                <div class="flex-1 min-w-0">
+                    <div class="meta-label text-forest/55 mb-1">{{ block.get_block_type_display }}</div>
+                    <div class="font-display text-lg text-forest truncate">
+                        {{ block.title|default:_("(Ohne Titel)") }}
+                    </div>
+                </div>
+                <div class="flex items-center gap-2 flex-shrink-0">
+                    <a href="{% url 'medienkompetenz:block_edit' article.slug block.pk %}"
+                       class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md text-xs font-semibold text-forest/65 hover:text-forest border border-forest/15 hover:border-forest/35 transition-colors">
+                        <i data-lucide="pencil" class="w-3.5 h-3.5"></i>
+                        {% trans "Bearbeiten" %}
+                    </a>
+                    <form method="post" action="{% url 'medienkompetenz:block_delete' article.slug block.pk %}"
+                          onsubmit="return confirm('{% trans "Abschnitt wirklich entfernen?" %}');">
+                        {% csrf_token %}
+                        <button type="submit"
+                                class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md text-xs font-semibold text-rose-500/80 hover:text-rose-600 border border-rose-300/40 hover:border-rose-400/70 transition-colors">
+                            <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
+                        </button>
+                    </form>
+                </div>
+            </li>
+            {% endfor %}
+        </ul>
+        {% endif %}
+    </div>
+    {% endif %}
+</div>
+
+{% endblock %}
+
+{% block extra_js %}
+<link href="https://cdn.quilljs.com/1.3.7/quill.snow.css" rel="stylesheet">
+<script src="https://cdn.quilljs.com/1.3.7/quill.min.js"></script>
+
+<style>
+    .ql-container.ql-snow { border: none !important; }
+    .ql-toolbar.ql-snow { border: none !important; border-bottom: 1px solid rgba(52,73,69,0.12) !important; background: #f9f8fe; }
+    #quill-body-editor .ql-editor,
+    #quill-refs-editor .ql-editor { font-family: 'Lora', Georgia, 'Times New Roman', serif; color: #344945; font-size: 1rem; line-height: 1.75; }
+    #quill-body-editor .ql-editor h2 { font-family: 'Playfair Display', serif; font-size: 1.5rem; font-weight: 700; }
+    #quill-body-editor .ql-editor h3 { font-family: 'Playfair Display', serif; font-size: 1.2rem; font-weight: 600; }
+    #quill-body-editor .ql-editor img { max-width: 100%; height: auto; border-radius: 0.375rem; margin: 0.5em 0; }
+    .ql-editor iframe.ql-video { width: 100%; aspect-ratio: 16/9; border: none; border-radius: 0.375rem; margin: 0.5em 0; }
+</style>
+
+<script>
+(function () {
+    const uploadUrl = "{% url 'medienkompetenz:image_upload' %}";
+    const csrfToken = document.querySelector('input[name=csrfmiddlewaretoken]').value;
+
+    function uploadImage(file) {
+        const data = new FormData();
+        data.append('image', file);
+        return fetch(uploadUrl, {
+            method: 'POST',
+            headers: { 'X-CSRFToken': csrfToken },
+            body: data,
+        }).then(function (resp) {
+            if (!resp.ok) {
+                return resp.json().then(function (j) {
+                    throw new Error(j.error || resp.statusText);
+                });
+            }
+            return resp.json();
+        });
+    }
+
+    function initQuill(editorId, toolbarId, hiddenId, withImage) {
+        const quill = new Quill('#' + editorId, {
+            modules: { toolbar: '#' + toolbarId },
+            theme: 'snow',
+        });
+
+        if (withImage) {
+            const toolbar = quill.getModule('toolbar');
+            toolbar.addHandler('image', function () {
+                const input = document.createElement('input');
+                input.type = 'file';
+                input.accept = 'image/*';
+                input.onchange = function () {
+                    const file = input.files && input.files[0];
+                    if (!file) return;
+                    uploadImage(file).then(function (json) {
+                        const range = quill.getSelection(true);
+                        quill.insertEmbed(range.index, 'image', json.url, 'user');
+                        quill.setSelection(range.index + 1);
+                    }).catch(function (err) {
+                        alert(err.message || 'Upload fehlgeschlagen');
+                    });
+                };
+                input.click();
+            });
+        }
+
+        const hidden = document.getElementById(hiddenId);
+        if (hidden && hidden.value) {
+            quill.clipboard.dangerouslyPasteHTML(hidden.value);
+        }
+        return { quill: quill, hidden: hidden };
+    }
+
+    const body = initQuill('quill-body-editor', 'quill-body-toolbar', '{{ form.body.id_for_label }}', true);
+    const refs = initQuill('quill-refs-editor', 'quill-refs-toolbar', '{{ form.references.id_for_label }}', false);
+
+    document.getElementById('article-form').addEventListener('submit', function () {
+        body.hidden.value = body.quill.root.innerHTML;
+        refs.hidden.value = refs.quill.root.innerHTML;
+    });
+})();
+</script>
+{% endblock %}
