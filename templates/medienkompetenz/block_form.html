@@ -1,0 +1,120 @@
+{% extends 'base.html' %}
+{% load i18n %}
+
+{% block content %}
+<div class="max-w-3xl mx-auto">
+
+    <div class="mb-8">
+        <a href="{% url 'medienkompetenz:edit' article.slug %}"
+           class="inline-flex items-center gap-1.5 meta-label text-forest/60 hover:text-forest transition-colors">
+            <i data-lucide="arrow-left" class="w-4 h-4"></i>
+            {% trans "Zurück zum Beitrag" %}
+        </a>
+    </div>
+
+    <div class="mb-10">
+        <div class="meta-label text-forest/50 mb-4">
+            {% if is_edit %}{% trans "Bearbeiten" %}{% else %}{% trans "Neu" %}{% endif %} — {{ block_type_label }}
+        </div>
+        <h1 class="font-display text-3xl md:text-4xl text-forest tracking-tight leading-[1.1]">
+            {% if is_edit %}{% trans "Abschnitt bearbeiten" %}{% else %}{% trans "Abschnitt hinzufügen" %}{% endif %}
+        </h1>
+        <p class="font-serif italic text-base text-forest/65 mt-3 leading-relaxed">
+            {{ article.title }}
+        </p>
+    </div>
+
+    <div class="lilac-card p-7 md:p-10">
+        <form method="post" novalidate>
+            {% csrf_token %}
+
+            {% for field in form %}
+            <div class="mb-6">
+                <label for="{{ field.id_for_label }}"
+                       class="block meta-label text-forest/60 mb-2">
+                    {{ field.label }}
+                    {% if field.field.required %}<span class="text-rose-400 tracking-normal">*</span>{% endif %}
+                </label>
+
+                {% if field.field.widget.input_type == 'textarea' or field.name == 'instructions' or field.name == 'items_raw' or field.name == 'scenarios_raw' or field.name == 'body' %}
+                <textarea name="{{ field.html_name }}"
+                          id="{{ field.id_for_label }}"
+                          rows="{{ field.field.widget.attrs.rows|default:6 }}"
+                          class="lilac-input w-full px-4 py-3 font-mono text-sm
+                                 {% if field.errors %}!border-rose-400 !bg-rose-50{% endif %}"
+                          {% if field.field.required %}required{% endif %}>{{ field.value|default:'' }}</textarea>
+
+                {% elif field.field.widget.input_type == 'select' or field.name == 'tone' %}
+                <select name="{{ field.html_name }}"
+                        id="{{ field.id_for_label }}"
+                        class="lilac-input w-full px-4 py-3 font-serif text-base
+                               {% if field.errors %}!border-rose-400 !bg-rose-50{% endif %}">
+                    {% for value, label in field.field.choices %}
+                    <option value="{{ value }}" {% if field.value|stringformat:"s" == value|stringformat:"s" %}selected{% endif %}>{{ label }}</option>
+                    {% endfor %}
+                </select>
+
+                {% else %}
+                <input type="text"
+                       name="{{ field.html_name }}"
+                       id="{{ field.id_for_label }}"
+                       value="{{ field.value|default:'' }}"
+                       class="lilac-input w-full px-4 py-3 font-serif text-base
+                              {% if field.errors %}!border-rose-400 !bg-rose-50{% endif %}"
+                       {% if field.field.required %}required{% endif %}>
+                {% endif %}
+
+                {% if field.help_text %}
+                <p class="mt-1.5 text-xs text-forest/45 font-serif italic">{{ field.help_text }}</p>
+                {% endif %}
+                {% for e in field.errors %}
+                <p class="mt-1.5 text-xs text-rose-500">{{ e }}</p>
+                {% endfor %}
+            </div>
+            {% endfor %}
+
+            {% if form.non_field_errors %}
+            <div class="mb-6 px-4 py-3 rounded-lg border border-rose-200 bg-rose-50 text-sm text-rose-600">
+                {% for e in form.non_field_errors %}<p>{{ e }}</p>{% endfor %}
+            </div>
+            {% endif %}
+
+            <div class="flex items-center gap-3">
+                <button type="submit"
+                        class="bg-forest hover:bg-forest-700 text-cream px-6 py-3 rounded-md text-sm font-semibold transition-colors shadow-sm inline-flex items-center gap-2">
+                    <i data-lucide="save" class="w-4 h-4"></i>
+                    {% if is_edit %}{% trans "Änderungen speichern" %}{% else %}{% trans "Abschnitt anlegen" %}{% endif %}
+                </button>
+                <a href="{% url 'medienkompetenz:edit' article.slug %}"
+                   class="px-5 py-3 rounded-md text-sm font-semibold text-forest/65 hover:text-forest border border-forest/15 hover:border-forest/35 transition-colors">
+                    {% trans "Abbrechen" %}
+                </a>
+            </div>
+        </form>
+    </div>
+
+    {# Quick-help: short reference for block-specific syntax. Keeps the form
+       page self-contained so a moderator doesn't need to dig through docs. #}
+    <details class="mt-8 lilac-card p-6">
+        <summary class="meta-label text-forest/70 cursor-pointer">{% trans "Hinweise zum Format" %}</summary>
+        <div class="mt-4 font-serif text-sm text-forest/75 space-y-3 leading-relaxed">
+            {% if block_type == 'ai_image_quiz' %}
+            <p>{% trans "Eine Zeile pro Bild. Format:" %}</p>
+            <pre class="bg-white/70 p-3 rounded text-xs overflow-x-auto">{% trans "BILD-URL | ki | Erklärung warum es KI ist" %}
+{% trans "BILD-URL | echt | Erklärung warum es echt ist" %}</pre>
+            <p>{% trans "Bilder zuerst über den Quill-Editor im Beitrag hochladen — die generierte URL kannst du dann hier einfügen." %}</p>
+            {% elif block_type == 'framing_exercise' %}
+            <p>{% trans "Szenarien werden durch eine Zeile mit nur '---' getrennt. Pro Szenario:" %}</p>
+            <pre class="bg-white/70 p-3 rounded text-xs overflow-x-auto">{% trans "Aussage oder Schlagzeile" %}
+{% trans "Option ohne Stern (falsch)" %}
+{% trans "*Option mit Stern (korrekt)" %}
+{% trans "> Erklärung zur vorherigen Option" %}
+---
+{% trans "Nächstes Szenario …" %}</pre>
+            {% elif block_type == 'text_callout' %}
+            <p>{% trans "Wähle einen Ton (Hinweis/Achtung/Tipp) und gib den Text ein. Reine Textauszeichnung ist erlaubt." %}</p>
+            {% endif %}
+        </div>
+    </details>
+</div>
+{% endblock %}

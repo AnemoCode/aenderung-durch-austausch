@@ -1,0 +1,63 @@
+{% load i18n %}
+{# AI image quiz: reader inspects each image, decides KI vs Echt, reveals the answer.
+   Uses Alpine for per-item local state so multiple quizzes can co-exist on one page. #}
+<div class="lilac-card p-6 md:p-8 border-l-4 border-forest/40">
+    <div class="meta-label text-forest/55 mb-1">{% trans "Interaktiv: KI-Bild-Quiz" %}</div>
+    {% if block.title %}
+    <h3 class="font-display text-2xl text-forest mb-2">{{ block.title }}</h3>
+    {% endif %}
+    {% if block.instructions %}
+    <div class="rich-text font-serif text-base text-forest/75 mb-6 leading-relaxed">
+        {{ block.instructions|safe }}
+    </div>
+    {% endif %}
+
+    <div class="grid sm:grid-cols-2 gap-5">
+        {% for item in block.data.items %}
+        <div x-data="{ guess: null }" class="bg-white/60 rounded-lg overflow-hidden border border-forest/10 flex flex-col">
+            <div class="aspect-[4/3] bg-white/40 overflow-hidden">
+                {% if item.image %}
+                <img src="{{ item.image }}" alt="" class="w-full h-full object-cover">
+                {% endif %}
+            </div>
+            <div class="p-4 flex flex-col gap-3 flex-1">
+                <div class="flex items-center gap-2" x-show="guess === null">
+                    <button type="button" @click="guess = 'ki'"
+                            class="flex-1 px-3 py-2 rounded-md text-xs font-semibold text-forest/75 hover:text-forest border border-forest/15 hover:border-forest/35 transition-colors">
+                        {% trans "KI" %}
+                    </button>
+                    <button type="button" @click="guess = 'echt'"
+                            class="flex-1 px-3 py-2 rounded-md text-xs font-semibold text-forest/75 hover:text-forest border border-forest/15 hover:border-forest/35 transition-colors">
+                        {% trans "Echt" %}
+                    </button>
+                </div>
+                <div x-show="guess !== null" x-cloak class="space-y-2">
+                    {% if item.is_ai %}
+                    <div :class="guess === 'ki' ? 'text-emerald-600' : 'text-rose-500'"
+                         class="meta-label text-xs flex items-center gap-1.5">
+                        <i :data-lucide="guess === 'ki' ? 'check-circle-2' : 'x-circle'" class="w-3.5 h-3.5"></i>
+                        <span x-text="guess === 'ki' ? '{% trans "Richtig — KI-generiert" %}' : '{% trans "Falsch — das Bild ist KI-generiert" %}'"></span>
+                    </div>
+                    {% else %}
+                    <div :class="guess === 'echt' ? 'text-emerald-600' : 'text-rose-500'"
+                         class="meta-label text-xs flex items-center gap-1.5">
+                        <i :data-lucide="guess === 'echt' ? 'check-circle-2' : 'x-circle'" class="w-3.5 h-3.5"></i>
+                        <span x-text="guess === 'echt' ? '{% trans "Richtig — echtes Bild" %}' : '{% trans "Falsch — das Bild ist echt" %}'"></span>
+                    </div>
+                    {% endif %}
+                    {% if item.explanation %}
+                    <p class="font-serif italic text-sm text-forest/70 leading-relaxed">
+                        {{ item.explanation|safe }}
+                    </p>
+                    {% endif %}
+                    <button type="button" @click="guess = null"
+                            class="meta-label text-xs text-forest/55 hover:text-forest transition-colors inline-flex items-center gap-1">
+                        <i data-lucide="rotate-ccw" class="w-3 h-3"></i>
+                        {% trans "Nochmal" %}
+                    </button>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>

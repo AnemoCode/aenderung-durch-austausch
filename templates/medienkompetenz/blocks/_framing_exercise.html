@@ -1,0 +1,46 @@
+{% load i18n %}
+{# Framing exercise: prompt + multiple-choice. Each scenario manages its own
+   local Alpine state (selected option, whether answer revealed). #}
+<div class="lilac-card p-6 md:p-8 border-l-4 border-forest/40">
+    <div class="meta-label text-forest/55 mb-1">{% trans "Interaktiv: Framing-Übung" %}</div>
+    {% if block.title %}
+    <h3 class="font-display text-2xl text-forest mb-2">{{ block.title }}</h3>
+    {% endif %}
+    {% if block.instructions %}
+    <div class="rich-text font-serif text-base text-forest/75 mb-6 leading-relaxed">
+        {{ block.instructions|safe }}
+    </div>
+    {% endif %}
+
+    <div class="space-y-6">
+        {% for scenario in block.data.scenarios %}
+        <div x-data="{ picked: null }" class="bg-white/60 rounded-lg p-5 border border-forest/10">
+            <p class="font-display italic text-lg text-forest mb-4 leading-snug">
+                "{{ scenario.prompt }}"
+            </p>
+            <div class="space-y-2">
+                {% for option in scenario.options %}
+                <button type="button"
+                        @click="picked = {{ forloop.counter0 }}"
+                        :class="picked === {{ forloop.counter0 }} ? ({% if option.is_correct %}'bg-emerald-50 border-emerald-300 text-emerald-800'{% else %}'bg-rose-50 border-rose-300 text-rose-800'{% endif %}) : 'bg-white/70 border-forest/15 text-forest/75 hover:border-forest/35'"
+                        class="w-full text-left px-4 py-3 rounded-md border text-sm font-serif transition-colors">
+                    {{ option.label }}
+                </button>
+                <div x-show="picked === {{ forloop.counter0 }}" x-cloak
+                     class="px-4 py-3 text-sm font-serif italic
+                            {% if option.is_correct %}text-emerald-700{% else %}text-rose-600{% endif %}">
+                    {% if option.is_correct %}
+                    <i data-lucide="check-circle-2" class="w-3.5 h-3.5 inline mr-1"></i>{% trans "Richtig." %}
+                    {% else %}
+                    <i data-lucide="x-circle" class="w-3.5 h-3.5 inline mr-1"></i>{% trans "Nicht ganz." %}
+                    {% endif %}
+                    {% if option.explanation %}
+                    <div class="mt-1 text-forest/70 not-italic">{{ option.explanation|safe }}</div>
+                    {% endif %}
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
