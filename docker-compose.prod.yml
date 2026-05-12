@@ -18,6 +18,8 @@ services:
   web:
     image: ghcr.io/${GHCR_OWNER}/aenderung-durch-austausch:${IMAGE_TAG:-latest}
     env_file: .env
+    volumes:
+      - ${MEDIA_HOST_PATH:-/opt/aenderung-durch-austausch/media}:/app/data/media
     ports:
       - "7777:8000"
     depends_on:
