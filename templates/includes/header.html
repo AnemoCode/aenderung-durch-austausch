@@ -27,7 +27,7 @@
                       {% if active_nav == 'argumentation' %}text-forest{% else %}text-forest/60 hover:text-forest{% endif %}">
                 {% trans "Argumentationsweisen" %}
             </a>
-            <a href="{% url 'medienkompetenz' %}"
+            <a href="{% url 'medienkompetenz:index' %}"
                class="meta-label transition-colors
                       {% if active_nav == 'medienkompetenz' %}text-forest{% else %}text-forest/60 hover:text-forest{% endif %}">
                 {% trans "Medienkompetenz" %}
@@ -120,7 +120,7 @@
                       {% if active_nav == 'argumentation' %}text-forest{% else %}text-forest/70 hover:text-forest{% endif %}">
                 {% trans "Argumentationsweisen" %}
             </a>
-            <a href="{% url 'medienkompetenz' %}"
+            <a href="{% url 'medienkompetenz:index' %}"
                class="meta-label py-3 border-b border-forest/5
                       {% if active_nav == 'medienkompetenz' %}text-forest{% else %}text-forest/70 hover:text-forest{% endif %}">
                 {% trans "Medienkompetenz" %}
