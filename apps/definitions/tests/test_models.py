@@ -76,3 +76,12 @@ class DefinitionModelTests(TestCase):
                     formal_explanation='y',
                     author=self.author,
                 )
+
+    def test_initial_letter_empty_term_returns_hash(self):
+        d = Definition(
+            term='',
+            simple_explanation='x',
+            formal_explanation='y',
+            author=self.author,
+        )
+        self.assertEqual(d.initial_letter, '#')
