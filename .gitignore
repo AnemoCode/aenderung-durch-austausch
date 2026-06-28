@@ -11,3 +11,4 @@ media/
 .mypy_cache/
 data/
 backups/
+.DS_Store

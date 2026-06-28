@@ -43,7 +43,7 @@ _ALLOWED_ATTRS = {
     'ol': ['class', 'start'],
     'ul': ['class'],
     'span': ['class'],
-    'img': ['src', 'alt', 'width', 'height', 'class', 'style'],
+    'img': ['src', 'alt', 'width', 'height', 'class'],
     'iframe': [
         'src', 'class', 'width', 'height',
         'frameborder', 'allowfullscreen', 'allow',
