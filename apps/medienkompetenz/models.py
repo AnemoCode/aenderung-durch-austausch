@@ -47,6 +47,11 @@ class Article(models.Model):
         blank=True,
         null=True,
         verbose_name=_('Titelbild'),
+        help_text=_(
+            'Wird als Banner über dem Titel angezeigt. Empfohlenes '
+            'Seitenverhältnis 21:9 (z. B. 2100×900 px). Andere Formate '
+            'werden nicht beschnitten – freie Ränder erscheinen weiß.'
+        ),
     )
     author = models.ForeignKey(
         settings.AUTH_USER_MODEL,
