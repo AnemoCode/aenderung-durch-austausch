@@ -1,0 +1,26 @@
+{% load i18n %}
+{# Text callout — formatted aside; tone drives the icon + accent color. #}
+{% with tone=block.data.tone|default:'info' %}
+<div class="rounded-xl p-5 md:p-6 border-l-4 flex gap-4
+            {% if tone == 'warning' %}bg-amber-50/70 border-amber-400 text-amber-900
+            {% elif tone == 'tip' %}bg-emerald-50/70 border-emerald-400 text-emerald-900
+            {% else %}bg-white/70 border-forest/40 text-forest{% endif %}">
+    <div class="flex-shrink-0 pt-1">
+        {% if tone == 'warning' %}
+        <i data-lucide="alert-triangle" class="w-5 h-5"></i>
+        {% elif tone == 'tip' %}
+        <i data-lucide="lightbulb" class="w-5 h-5"></i>
+        {% else %}
+        <i data-lucide="info" class="w-5 h-5"></i>
+        {% endif %}
+    </div>
+    <div class="flex-1 min-w-0">
+        {% if block.title %}
+        <h3 class="font-display text-lg mb-1">{{ block.title }}</h3>
+        {% endif %}
+        <div class="rich-text font-serif text-base leading-relaxed">
+            {{ block.data.body|safe }}
+        </div>
+    </div>
+</div>
+{% endwith %}

@@ -6,6 +6,28 @@ This file documents how to work with this Django codebase. Follow these guidelin
 
 **Änderung durch Austausch** is a Django 5.2 digital handbook for managing conversations about far-right opinions and conspiracy theories. It uses PostgreSQL, is fully containerized with Docker, and supports German/English via i18n.
 
+## End-of-Session Requirement (MUST DO)
+
+Before finishing any session that changes code, run the full CI command set and confirm **every one passes**. Do not consider a session complete — and do not open a PR — until all of these are green. Run them inside the Docker stack (`docker compose exec -T web ...`) so the environment matches CI:
+
+```bash
+# 1. Django system check (the `deploy.yml` CI job runs this)
+uv run python manage.py check
+
+# 2. Full test suite with coverage (the `coverage.yml` CI job runs these)
+uv run coverage run --source='.' manage.py test
+uv run coverage report --fail-under=95   # CI FAILS if total coverage < 95%
+
+# 3. Migrations are in sync with the models (catch un-generated migrations early)
+uv run python manage.py makemigrations --check --dry-run
+```
+
+Key points:
+
+- **Coverage gate:** CI enforces `--fail-under=95` on *total* coverage. New code without tests can drop the total below 95% and fail the build even when every test passes.
+- **Merge result is what CI tests:** the PR CI runs against the **merge with `main`**, so merge or rebase the latest `main` into the branch first. Tests that live only on `main` (and reference code your branch changed) must also pass — a green local branch is not enough.
+- **Linting/formatting** is not enforced in CI but is recommended locally: `ruff check .` and `ruff format --check .` (install with `uv add --dev ruff`; run via `uv run ruff ...`).
+
 ## Commands
 
 ### Running Tests

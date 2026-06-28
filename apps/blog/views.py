@@ -153,11 +153,11 @@ class TagDetailView(TemplateView):
     template_name = "blog/tag_detail.html"
 
     def get_context_data(self, **kwargs):
-        # Inline import: apps.definitions imports nothing from blog, but
-        # keeping the dependency local to this method documents that blog
-        # does not require definitions to load — the two apps remain
-        # independent at import time.
+        # Inline imports: keep cross-app references local so the blog app
+        # doesn't pay the import cost of definitions / medienkompetenz on
+        # every request that doesn't hit this view.
         from apps.definitions.models import Definition
+        from apps.medienkompetenz.models import Article as MedienkompetenzArticle
 
         ctx = super().get_context_data(**kwargs)
         slug = kwargs["slug"]
@@ -177,6 +177,12 @@ class TagDetailView(TemplateView):
         )
         ctx["definitions"] = (
             Definition.objects.filter(tags__slug=slug, is_published=True)
+            .prefetch_related("tags")
+            .distinct()
+        )
+        ctx["medienkompetenz_articles"] = (
+            MedienkompetenzArticle.objects.filter(tags__slug=slug, is_published=True)
+            .select_related("author")
             .prefetch_related("tags")
             .distinct()
         )

@@ -22,6 +22,7 @@
         {% blocktrans count count=topics|length %}{{ count }} Thema{% plural %}{{ count }} Themen{% endblocktrans %}
         · {% blocktrans count count=parts|length %}{{ count }} Thementeil{% plural %}{{ count }} Thementeile{% endblocktrans %}
         · {% blocktrans count count=definitions|length %}{{ count }} Definition{% plural %}{{ count }} Definitionen{% endblocktrans %}
+        · {% blocktrans count count=medienkompetenz_articles|length %}{{ count }} Medienkompetenz-Beitrag{% plural %}{{ count }} Medienkompetenz-Beiträge{% endblocktrans %}
     </p>
 </div>
 
@@ -97,7 +98,32 @@
 </section>
 {% endif %}
 
-{% if not topics and not parts and not definitions %}
+{# ─── Medienkompetenz articles with this tag ─────────────────────── #}
+{% if medienkompetenz_articles %}
+<section class="mb-16">
+    <h2 class="meta-label text-forest/60 mb-5">{% trans "Medienkompetenz-Beiträge mit diesem Tag" %}</h2>
+    <div class="space-y-4">
+        {% for article in medienkompetenz_articles %}
+        <article class="lilac-card p-6">
+            <div class="meta-label text-xs text-forest/45 mb-2">{% trans "Medienkompetenz" %}</div>
+            <h3 class="font-display text-lg md:text-xl text-forest tracking-tight leading-[1.25]">
+                <a href="{{ article.get_absolute_url }}"
+                   class="hover:text-forest/70 transition-colors">
+                    {{ article.title }}
+                </a>
+            </h3>
+            {% if article.lead %}
+            <p class="font-serif text-sm text-forest/65 mt-2 leading-relaxed">
+                {{ article.lead|truncatewords:24 }}
+            </p>
+            {% endif %}
+        </article>
+        {% endfor %}
+    </div>
+</section>
+{% endif %}
+
+{% if not topics and not parts and not definitions and not medienkompetenz_articles %}
 <div class="lilac-card flex flex-col items-center justify-center py-20 md:py-28 text-center max-w-xl mx-auto">
     <div class="w-14 h-14 rounded-full bg-white/60 flex items-center justify-center mb-5">
         <i data-lucide="search-x" class="w-6 h-6 text-forest/40"></i>

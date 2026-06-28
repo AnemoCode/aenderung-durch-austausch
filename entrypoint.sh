@@ -11,6 +11,11 @@ if command -v uv &>/dev/null; then
     fi
 fi
 
+# Ensure the user-uploaded media directory exists.  In docker the host bind-mount
+# usually creates this, but when MEDIA_ROOT points somewhere unmounted (or in
+# non-docker setups) the dir may be missing and uploads would 500.
+mkdir -p "${MEDIA_ROOT:-/app/data/media}"
+
 # Run migrations and collect static files only from the web process (first
 # argument is not "celery").  Celery containers declare a depends_on condition
 # on the web healthcheck so they only start after migrations are confirmed

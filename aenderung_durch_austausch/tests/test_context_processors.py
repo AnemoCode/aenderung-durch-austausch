@@ -36,7 +36,7 @@ class PillarPageTests(TestCase):
         self.assertEqual(response.status_code, 200)
 
     def test_medienkompetenz_page_returns_200(self):
-        response = self.client.get(reverse('medienkompetenz'))
+        response = self.client.get(reverse('medienkompetenz:index'))
         self.assertEqual(response.status_code, 200)
 
     def test_kommunikation_page_returns_200(self):
