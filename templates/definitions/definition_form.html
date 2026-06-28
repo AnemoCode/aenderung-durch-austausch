@@ -20,9 +20,6 @@
         <h1 class="font-display text-4xl md:text-5xl text-forest tracking-tight leading-[1.1]">
             {% if is_edit %}{% trans "Definition bearbeiten" %}{% else %}{% trans "Neue Definition" %}{% endif %}
         </h1>
-        <p class="font-serif italic text-lg text-forest/65 mt-4 leading-relaxed">
-            {% trans "Jeder Begriff wird zweimal erklärt — einmal in einfacher Sprache, einmal in formaler Sprache." %}
-        </p>
     </div>
 
     <div class="lilac-card p-7 md:p-10">
@@ -153,7 +150,7 @@
                        name="{{ form.tags.html_name }}"
                        id="{{ form.tags.id_for_label }}"
                        value="{{ form.tags.value|default:'' }}"
-                       placeholder="{% trans 'rassismus, geschichte, antisemitismus' %}"
+                       placeholder="{% trans 'Rassismus, Geschichte, Antisemitismus' %}"
                        class="lilac-input w-full px-4 py-3 font-serif text-base
                               {% if form.tags.errors %}!border-rose-400 !bg-rose-50{% endif %}">
                 {% if form.tags.help_text %}

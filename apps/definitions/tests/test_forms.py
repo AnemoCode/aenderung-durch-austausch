@@ -76,3 +76,55 @@ class DefinitionFormTests(TestCase):
         })
         self.assertTrue(form.is_valid(), form.errors)
         self.assertEqual(form.parsed_tags(), [])
+
+    def test_empty_simple_explanation_rejected(self):
+        form = DefinitionForm(data={
+            'term': 'Begriff',
+            'simple_explanation': '',
+            'formal_explanation': 'Formale Erklärung.',
+            'tags': '',
+        })
+        self.assertFalse(form.is_valid())
+        self.assertIn('simple_explanation', form.errors)
+
+    def test_empty_formal_explanation_rejected(self):
+        form = DefinitionForm(data={
+            'term': 'Begriff2',
+            'simple_explanation': 'Einfache Erklärung.',
+            'formal_explanation': '',
+            'tags': '',
+        })
+        self.assertFalse(form.is_valid())
+        self.assertIn('formal_explanation', form.errors)
+
+    def test_whitespace_only_explanation_rejected(self):
+        form = DefinitionForm(data={
+            'term': 'Begriff3',
+            'simple_explanation': '   ',
+            'formal_explanation': 'Formale Erklärung.',
+            'tags': '',
+        })
+        self.assertFalse(form.is_valid())
+        self.assertIn('simple_explanation', form.errors)
+
+    def test_html_only_simple_explanation_rejected(self):
+        # Empty tags that sanitize to no visible text hit the clean_simple_explanation raise path
+        form = DefinitionForm(data={
+            'term': 'Begriff4',
+            'simple_explanation': '<p></p>',
+            'formal_explanation': 'Formale Erklärung.',
+            'tags': '',
+        })
+        self.assertFalse(form.is_valid())
+        self.assertIn('simple_explanation', form.errors)
+
+    def test_html_only_formal_explanation_rejected(self):
+        # Empty tags that sanitize to no visible text hit the clean_formal_explanation raise path
+        form = DefinitionForm(data={
+            'term': 'Begriff5',
+            'simple_explanation': 'Einfache Erklärung.',
+            'formal_explanation': '<p></p>',
+            'tags': '',
+        })
+        self.assertFalse(form.is_valid())
+        self.assertIn('formal_explanation', form.errors)

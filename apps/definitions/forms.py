@@ -37,7 +37,7 @@ class DefinitionForm(forms.ModelForm):
     tags = forms.CharField(
         required=False,
         label=_('Tags'),
-        help_text=_('Kommagetrennt, z. B. "rassismus, geschichte"'),
+        help_text=_('Kommagetrennt, z. B. "Rassismus, Geschichte"'),
     )
 
     class Meta:

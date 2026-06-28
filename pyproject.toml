@@ -15,5 +15,27 @@ dependencies = [
 
 [dependency-groups]
 dev = [
+    "coverage>=7.14.0",
     "django-debug-toolbar>=4.4",
+]
+
+[tool.coverage.run]
+source = ["."]
+omit = [
+    "*/migrations/*",
+    "*/wsgi.py",
+    "*/asgi.py",
+    "*/celery.py",
+    "*/staging_data.py",
+    "manage.py",
+    ".venv/*",
+    "staticfiles/*",
+    "apps/topics/*",
+]
+
+[tool.coverage.report]
+exclude_lines = [
+    "pragma: no cover",
+    "if TYPE_CHECKING:",
+    "raise NotImplementedError",
 ]
