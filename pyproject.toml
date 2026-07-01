@@ -9,7 +9,7 @@ dependencies = [
     "gunicorn>=23.0",
     "whitenoise>=6.8",
     "django-taggit>=6.0",
-    "bleach>=6.0",
+    "bleach[css]>=6.0",
     "pillow>=12.2.0",
 ]
 
