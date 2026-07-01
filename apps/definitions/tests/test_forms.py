@@ -24,6 +24,21 @@ class DefinitionFormTests(TestCase):
         self.assertTrue(form.is_valid(), form.errors)
         self.assertEqual(form.parsed_tags(), ['geschichte', 'antisemitismus'])
 
+    def test_image_style_is_css_sanitized(self):
+        # Allowed sizing props survive; disallowed props are stripped without a
+        # NoCssSanitizerWarning.
+        form = DefinitionForm(data={
+            'term': 'Bildbegriff',
+            'simple_explanation': '<p>Text</p><img src="/media/x.png" '
+                                  'style="width: 200px; position: fixed;">',
+            'formal_explanation': 'Formale Erklärung.',
+            'tags': '',
+        })
+        self.assertTrue(form.is_valid(), form.errors)
+        cleaned = form.cleaned_data['simple_explanation']
+        self.assertIn('width: 200px', cleaned)
+        self.assertNotIn('position', cleaned)
+
     def test_both_explanations_required(self):
         form = DefinitionForm(data={
             'term': 'Begriff',

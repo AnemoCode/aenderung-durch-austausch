@@ -1,4 +1,5 @@
 import bleach
+from bleach.css_sanitizer import CSSSanitizer
 from django import forms
 from django.utils.html import strip_tags
 from django.utils.translation import gettext_lazy as _
@@ -30,6 +31,15 @@ _ALLOWED_ATTRS = {
     'figcaption': ['class'],
 }
 
+# Allowlist for the img `style` attribute so bleach actually sanitizes inline
+# CSS (sizing) instead of dropping it and emitting a NoCssSanitizerWarning.
+_CSS_SANITIZER = CSSSanitizer(
+    allowed_css_properties=[
+        'width', 'height',
+        'float', 'margin', 'margin-left', 'margin-right',
+    ]
+)
+
 
 class DefinitionForm(forms.ModelForm):
     """Create/edit form for a Definition, with rich text explanations and free-text tags."""
@@ -60,6 +70,7 @@ class DefinitionForm(forms.ModelForm):
             raw or '',
             tags=_ALLOWED_TAGS,
             attributes=_ALLOWED_ATTRS,
+            css_sanitizer=_CSS_SANITIZER,
             strip=True,
         )
 

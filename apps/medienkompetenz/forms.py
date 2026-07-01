@@ -14,6 +14,7 @@ from __future__ import annotations
 from typing import Any
 
 import bleach
+from bleach.css_sanitizer import CSSSanitizer
 from django import forms
 from django.utils.html import strip_tags
 from django.utils.translation import gettext_lazy as _
@@ -43,7 +44,7 @@ _ALLOWED_ATTRS = {
     'ol': ['class', 'start'],
     'ul': ['class'],
     'span': ['class'],
-    'img': ['src', 'alt', 'width', 'height', 'class'],
+    'img': ['src', 'alt', 'width', 'height', 'class', 'style'],
     'iframe': [
         'src', 'class', 'width', 'height',
         'frameborder', 'allowfullscreen', 'allow',
@@ -54,11 +55,24 @@ _ALLOWED_ATTRS = {
 }
 
 
+# Sanitize the `style` attribute rather than dropping it: the Quill image-resize
+# module stores the dragged dimensions as inline `width`/`height`, so an
+# allowlisted CSS sanitizer is what lets editors resize images and have that
+# size survive save. Anything outside this property list is stripped.
+_CSS_SANITIZER = CSSSanitizer(
+    allowed_css_properties=[
+        'width', 'height',
+        'float', 'margin', 'margin-left', 'margin-right',
+    ]
+)
+
+
 def _sanitize(raw: str) -> str:
     return bleach.clean(
         raw or '',
         tags=_ALLOWED_TAGS,
         attributes=_ALLOWED_ATTRS,
+        css_sanitizer=_CSS_SANITIZER,
         strip=True,
     )
 

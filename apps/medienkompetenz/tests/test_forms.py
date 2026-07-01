@@ -34,6 +34,34 @@ class ArticleFormSanitizeTest(TestCase):
         self.assertFalse(form.is_valid())
         self.assertIn('body', form.errors)
 
+    def test_preserves_image_resize_width_style(self):
+        # The Quill image-resize module stores the dragged size as an inline
+        # width style; it must survive sanitization so editors can size images.
+        form = ArticleForm(data={
+            'title': 'Test',
+            'lead': '',
+            'body': '<p>Bild:</p><p><img src="/media/x.png" style="width: 320px;"></p>',
+            'references': '',
+            'is_published': True,
+            'tags': '',
+        })
+        self.assertTrue(form.is_valid(), form.errors)
+        self.assertIn('width: 320px', form.cleaned_data['body'])
+
+    def test_strips_disallowed_style_property_from_image(self):
+        form = ArticleForm(data={
+            'title': 'Test',
+            'lead': '',
+            'body': '<p>Bild:</p><p><img src="/media/x.png" style="position: fixed; width: 50px;"></p>',
+            'references': '',
+            'is_published': True,
+            'tags': '',
+        })
+        self.assertTrue(form.is_valid(), form.errors)
+        body = form.cleaned_data['body']
+        self.assertNotIn('position', body)
+        self.assertIn('width: 50px', body)
+
 
 class AiImageQuizFormTest(TestCase):
     def test_valid_items_produce_structured_data(self):

@@ -17,7 +17,7 @@
         <div x-data="{ guess: null }" class="bg-white/60 rounded-lg overflow-hidden border border-forest/10 flex flex-col">
             <div class="aspect-[4/3] bg-white/40 overflow-hidden">
                 {% if item.image %}
-                <img src="{{ item.image }}" alt="" class="w-full h-full object-cover">
+                <img src="{{ item.image }}" alt="" class="w-full h-full object-contain">
                 {% endif %}
             </div>
             <div class="p-4 flex flex-col gap-3 flex-1">

@@ -311,6 +311,9 @@
 {% block extra_js %}
 <link href="https://cdn.quilljs.com/1.3.7/quill.snow.css" rel="stylesheet">
 <script src="https://cdn.quilljs.com/1.3.7/quill.min.js"></script>
+{# Drag-to-resize handles for embedded images. Stores the chosen size as an
+   inline width/height style, which the server-side CSS sanitizer preserves. #}
+<script src="https://cdn.jsdelivr.net/npm/quill-image-resize-module@3.0.0/image-resize.min.js"></script>
 
 <style>
     .ql-container.ql-snow { border: none !important; }
@@ -345,9 +348,20 @@
         });
     }
 
+    // Register the image-resize module once, if the CDN script loaded. Guarded
+    // so the editor still works (minus resizing) should the CDN be unreachable.
+    const hasImageResize = typeof window.ImageResize !== 'undefined';
+    if (hasImageResize) {
+        Quill.register('modules/imageResize', window.ImageResize.default || window.ImageResize);
+    }
+
     function initQuill(editorId, toolbarId, hiddenId, withImage) {
+        const modules = { toolbar: '#' + toolbarId };
+        if (withImage && hasImageResize) {
+            modules.imageResize = { modules: ['Resize', 'DisplaySize'] };
+        }
         const quill = new Quill('#' + editorId, {
-            modules: { toolbar: '#' + toolbarId },
+            modules: modules,
             theme: 'snow',
         });
 
