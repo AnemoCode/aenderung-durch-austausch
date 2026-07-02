@@ -1,10 +1,10 @@
 """URL configuration for aenderung-durch-austausch project."""
 from django.conf import settings
-from django.conf.urls.static import static
 from django.contrib import admin
 from django.http import HttpResponse
 from django.urls import path, include, re_path
 from django.views.generic import TemplateView
+from django.views.static import serve
 
 from apps.blog.views import TagDetailView
 # Placeholder pillars — pages that are under development.
@@ -75,7 +75,15 @@ urlpatterns = [
     *pillar_urls,
 ]
 
-# In DEBUG, serve MEDIA_ROOT through Django.  In production, the web server
-# (or a reverse-proxy bind mount) serves /media/ directly.
-if settings.DEBUG:
-    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+# Serve user-uploaded media (MEDIA_ROOT) through Django in every environment.
+# WhiteNoise only handles collected static files, not runtime uploads, and the
+# Dokploy/Traefik deployment has no separate web server bound to /media/, so
+# without this route media 404s whenever DEBUG=False (i.e. in production).
+# The files live on the mounted media volume; Django just needs a route to them.
+urlpatterns += [
+    re_path(
+        r"^media/(?P<path>.*)$",
+        serve,
+        {"document_root": settings.MEDIA_ROOT},
+    ),
+]
