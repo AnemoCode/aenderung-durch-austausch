@@ -54,3 +54,15 @@ class RegistrationForm(forms.ModelForm):
         if commit:
             user.save()
         return user
+
+
+class ProfileForm(forms.ModelForm):
+    """Edits the display name and email of the logged-in user."""
+
+    class Meta:
+        model = User
+        fields = ['name', 'email']
+        labels = {
+            'name': _('Name'),
+            'email': _('E-Mail-Adresse'),
+        }

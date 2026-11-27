@@ -69,6 +69,11 @@
                             {% endif %}
                         </div>
                         <div class="border-t border-forest/10 my-1"></div>
+                        <a href="{% url 'accounts:profile' %}"
+                           class="flex items-center w-full px-4 py-2 text-sm font-medium text-forest/70 hover:bg-white/60 hover:text-forest transition-colors">
+                            <i data-lucide="user-round" class="w-4 h-4 mr-3"></i>
+                            {% trans "Mein Profil" %}
+                        </a>
                         <form method="post" action="{% url 'accounts:logout' %}">
                             {% csrf_token %}
                             <button type="submit"
