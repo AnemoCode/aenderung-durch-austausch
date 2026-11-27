@@ -80,10 +80,15 @@ urlpatterns = [
 # Dokploy/Traefik deployment has no separate web server bound to /media/, so
 # without this route media 404s whenever DEBUG=False (i.e. in production).
 # The files live on the mounted media volume; Django just needs a route to them.
+def serve_media(request, path):
+    """Serve a file from MEDIA_ROOT, read at request time.
+
+    Reading the setting here (not when this module is imported) means
+    ``override_settings(MEDIA_ROOT=...)`` in tests actually takes effect.
+    """
+    return serve(request, path, document_root=settings.MEDIA_ROOT)
+
+
 urlpatterns += [
-    re_path(
-        r"^media/(?P<path>.*)$",
-        serve,
-        {"document_root": settings.MEDIA_ROOT},
-    ),
+    re_path(r"^media/(?P<path>.*)$", serve_media, name="media"),
 ]
