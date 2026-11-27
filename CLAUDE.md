@@ -131,6 +131,20 @@ docker compose exec web python manage.py createsuperuser
 docker compose build
 ```
 
+### Tailwind CSS
+
+Styles come from `static/css/tailwind.css`, which is generated and not committed. `scripts/tailwind.sh` downloads the pinned Tailwind standalone CLI (no Node needed) and builds the file from the classes it finds in `templates/` and `apps/`.
+
+```bash
+# Build once (needed before running tests outside Docker)
+scripts/tailwind.sh
+
+# Rebuild on every template change
+scripts/tailwind.sh --watch
+```
+
+With `docker compose up` the `tailwind` service runs the watcher for you. Always write class names out in full. Tailwind can't see a class assembled at runtime, such as `'bg-' + colour`, so it won't be in the CSS.
+
 ### Dependency Management
 
 ```bash
@@ -348,13 +362,18 @@ Closes #<issue-number>
 
 ## CI/CD Overview
 
-### CI Jobs (`.github/workflows/deploy.yml`)
+### CI Jobs
 
-1. **CI** — Runs `python manage.py check` against a live PostgreSQL 17-alpine instance.
-2. **Build** — Multi-arch Docker image build pushed to GHCR (triggers on merge to `main`).
-3. **Deploy** — SSH to production server, pulls new image, restarts with `docker compose`.
+`coverage.yml` runs on every pull request. It builds the Tailwind CSS, checks that migrations match the models, and runs the full test suite with the 95% coverage gate. Branch protection requires it to pass.
 
-The CI job does **not** run the full test suite by default. Tests should be run locally before opening a PR.
+`deploy.yml` runs on every push to `main`:
+
+1. **CI** runs `python manage.py check` against PostgreSQL 17.
+2. **Tests** calls `coverage.yml`, so `main` is only deployed when the tests pass.
+3. **Build** builds the Docker image and pushes it to GHCR, with the Git SHA as Sentry release.
+4. **Deploy** copies `docker-compose.prod.yml` and the backup scripts to the server over SSH, pulls the new image and restarts the stack.
+
+Backups and restores are described in `docs/operations/backup-restore.md`.
 
 ### Environment Variables
 
