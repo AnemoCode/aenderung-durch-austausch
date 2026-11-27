@@ -1,0 +1,230 @@
+{% extends 'base.html' %}
+{% load i18n %}
+
+{% block content %}
+
+<div class="max-w-3xl mx-auto">
+
+    {# ─── Page heading ─────────────────────────────────────────────── #}
+    <div class="meta-label text-forest/50 mb-4">{% trans "Mein Konto" %}</div>
+    <h1 class="font-display text-4xl md:text-5xl text-forest tracking-tight leading-[1.05] mb-3">
+        {% trans "Profil" %} <span class="italic font-normal text-forest/70">&amp; {% trans "Einstellungen." %}</span>
+    </h1>
+    <p class="font-serif text-base text-forest/65 leading-relaxed mb-10 max-w-xl">
+        {% trans "Hier siehst du deine Angaben und kannst sie jederzeit anpassen." %}
+    </p>
+
+    {# ─── Identity card ────────────────────────────────────────────── #}
+    <div class="lilac-card p-6 md:p-7 flex items-center gap-5 mb-6">
+        <div class="w-16 h-16 rounded-full bg-wheat flex items-center justify-center text-forest font-bold text-xl flex-shrink-0">
+            {{ user.initials }}
+        </div>
+        <div class="min-w-0">
+            <p class="font-display text-2xl text-forest leading-tight truncate">{{ user.name }}</p>
+            <p class="font-serif text-sm text-forest/60 truncate">{{ user.email }}</p>
+            <div class="flex items-center gap-3 mt-2">
+                <span class="meta-label text-forest/45" style="font-size:0.62rem;">
+                    {% blocktrans with joined=user.date_joined|date:"M Y" %}Mitglied seit {{ joined }}{% endblocktrans %}
+                </span>
+            </div>
+        </div>
+    </div>
+
+    {# ─── Persönliche Angaben (view ⇄ edit) ────────────────────────── #}
+    <section x-data="{ edit: {{ profile_form.errors|yesno:'true,false' }} }"
+             class="lilac-card p-6 md:p-7 mb-6">
+        <div class="flex items-start justify-between gap-4 mb-5">
+            <div>
+                <h2 class="font-display text-xl text-forest leading-tight">{% trans "Persönliche Angaben" %}</h2>
+                <p class="font-serif text-sm text-forest/55 mt-1">{% trans "Name und E-Mail-Adresse." %}</p>
+            </div>
+            <button x-show="!edit" @click="edit = true"
+                    class="px-3.5 py-2 rounded-md text-sm font-semibold text-forest/65 hover:text-forest border border-forest/15 hover:border-forest/35 transition-colors flex items-center gap-2 flex-shrink-0">
+                <i data-lucide="pencil" class="w-3.5 h-3.5"></i> {% trans "Bearbeiten" %}
+            </button>
+        </div>
+
+        {# VIEW #}
+        <div x-show="!edit" class="divide-y divide-forest/10">
+            <div class="flex items-center justify-between gap-4 py-3.5">
+                <span class="meta-label text-forest/45">{% trans "Name" %}</span>
+                <span class="font-serif text-forest">{{ user.name }}</span>
+            </div>
+            <div class="flex items-center justify-between gap-4 py-3.5">
+                <span class="meta-label text-forest/45">{% trans "E-Mail" %}</span>
+                <span class="font-serif text-forest">{{ user.email }}</span>
+            </div>
+        </div>
+
+        {# EDIT #}
+        <form x-show="edit" x-cloak method="post" class="space-y-5">
+            {% csrf_token %}
+            <input type="hidden" name="form_type" value="profile">
+
+            <div>
+                <label for="{{ profile_form.name.id_for_label }}" class="block meta-label text-forest/60 mb-2">
+                    {% trans "Name" %}
+                </label>
+                <input type="text"
+                       name="{{ profile_form.name.html_name }}"
+                       id="{{ profile_form.name.id_for_label }}"
+                       value="{{ profile_form.name.value|default:'' }}"
+                       class="lilac-input w-full px-4 py-3 text-sm font-serif
+                              {% if profile_form.name.errors %}!border-rose-400 !bg-rose-50{% endif %}">
+                {% for e in profile_form.name.errors %}
+                <p class="mt-1.5 text-xs text-rose-500">{{ e }}</p>
+                {% endfor %}
+            </div>
+
+            <div>
+                <label for="{{ profile_form.email.id_for_label }}" class="block meta-label text-forest/60 mb-2">
+                    {% trans "E-Mail-Adresse" %}
+                </label>
+                <input type="email"
+                       name="{{ profile_form.email.html_name }}"
+                       id="{{ profile_form.email.id_for_label }}"
+                       value="{{ profile_form.email.value|default:'' }}"
+                       class="lilac-input w-full px-4 py-3 text-sm font-serif
+                              {% if profile_form.email.errors %}!border-rose-400 !bg-rose-50{% endif %}">
+                {% for e in profile_form.email.errors %}
+                <p class="mt-1.5 text-xs text-rose-500">{{ e }}</p>
+                {% endfor %}
+            </div>
+
+            {% if profile_form.non_field_errors %}
+            <div class="px-4 py-3 rounded-lg border border-rose-200 bg-rose-50 text-sm text-rose-600">
+                {% for e in profile_form.non_field_errors %}<p>{{ e }}</p>{% endfor %}
+            </div>
+            {% endif %}
+
+            <div class="flex items-center gap-3 pt-1">
+                <button type="submit"
+                        class="bg-forest hover:bg-forest-700 text-cream font-semibold text-sm px-5 py-2.5 rounded-md transition-colors inline-flex items-center gap-2">
+                    <i data-lucide="check" class="w-4 h-4"></i> {% trans "Speichern" %}
+                </button>
+                <button type="button" @click="edit = false"
+                        class="px-5 py-2.5 rounded-md text-sm font-semibold text-forest/65 hover:text-forest border border-forest/15 hover:border-forest/35 transition-colors">
+                    {% trans "Abbrechen" %}
+                </button>
+            </div>
+        </form>
+    </section>
+
+    {# ─── Sicherheit (Passwort) ────────────────────────────────────── #}
+    <section x-data="{ edit: {{ password_form.errors|yesno:'true,false' }} }"
+             class="lilac-card p-6 md:p-7 mb-6">
+        <div class="flex items-start justify-between gap-4 mb-5">
+            <div>
+                <h2 class="font-display text-xl text-forest leading-tight">{% trans "Sicherheit" %}</h2>
+                <p class="font-serif text-sm text-forest/55 mt-1">{% trans "Passwort verwalten." %}</p>
+            </div>
+            <button x-show="!edit" @click="edit = true"
+                    class="px-3.5 py-2 rounded-md text-sm font-semibold text-forest/65 hover:text-forest border border-forest/15 hover:border-forest/35 transition-colors flex items-center gap-2 flex-shrink-0">
+                <i data-lucide="key-round" class="w-3.5 h-3.5"></i> {% trans "Passwort ändern" %}
+            </button>
+        </div>
+
+        {# VIEW #}
+        <div x-show="!edit" class="flex items-center justify-between gap-4 py-1">
+            <span class="meta-label text-forest/45">{% trans "Passwort" %}</span>
+            <span class="font-serif text-forest tracking-[0.2em]">••••••••••</span>
+        </div>
+
+        {# EDIT #}
+        <form x-show="edit" x-cloak method="post" class="space-y-5">
+            {% csrf_token %}
+            <input type="hidden" name="form_type" value="password">
+
+            <div>
+                <label for="{{ password_form.old_password.id_for_label }}" class="block meta-label text-forest/60 mb-2">
+                    {% trans "Aktuelles Passwort" %}
+                </label>
+                <input type="password"
+                       name="{{ password_form.old_password.html_name }}"
+                       id="{{ password_form.old_password.id_for_label }}"
+                       autocomplete="current-password"
+                       class="lilac-input w-full px-4 py-3 text-sm font-serif
+                              {% if password_form.old_password.errors %}!border-rose-400 !bg-rose-50{% endif %}">
+                {% for e in password_form.old_password.errors %}
+                <p class="mt-1.5 text-xs text-rose-500">{{ e }}</p>
+                {% endfor %}
+            </div>
+
+            <div>
+                <label for="{{ password_form.new_password1.id_for_label }}" class="block meta-label text-forest/60 mb-2">
+                    {% trans "Neues Passwort" %}
+                </label>
+                <input type="password"
+                       name="{{ password_form.new_password1.html_name }}"
+                       id="{{ password_form.new_password1.id_for_label }}"
+                       autocomplete="new-password"
+                       class="lilac-input w-full px-4 py-3 text-sm font-serif
+                              {% if password_form.new_password1.errors %}!border-rose-400 !bg-rose-50{% endif %}">
+                <p class="mt-2 text-xs text-forest/45 font-serif italic">
+                    {% trans "Mindestens 8 Zeichen, nicht nur Ziffern." %}
+                </p>
+                {% for e in password_form.new_password1.errors %}
+                <p class="mt-1.5 text-xs text-rose-500">{{ e }}</p>
+                {% endfor %}
+            </div>
+
+            <div>
+                <label for="{{ password_form.new_password2.id_for_label }}" class="block meta-label text-forest/60 mb-2">
+                    {% trans "Neues Passwort bestätigen" %}
+                </label>
+                <input type="password"
+                       name="{{ password_form.new_password2.html_name }}"
+                       id="{{ password_form.new_password2.id_for_label }}"
+                       autocomplete="new-password"
+                       class="lilac-input w-full px-4 py-3 text-sm font-serif
+                              {% if password_form.new_password2.errors %}!border-rose-400 !bg-rose-50{% endif %}">
+                {% for e in password_form.new_password2.errors %}
+                <p class="mt-1.5 text-xs text-rose-500">{{ e }}</p>
+                {% endfor %}
+            </div>
+
+            {% if password_form.non_field_errors %}
+            <div class="px-4 py-3 rounded-lg border border-rose-200 bg-rose-50 text-sm text-rose-600">
+                {% for e in password_form.non_field_errors %}<p>{{ e }}</p>{% endfor %}
+            </div>
+            {% endif %}
+
+            <div class="flex items-center gap-3 pt-1">
+                <button type="submit"
+                        class="bg-forest hover:bg-forest-700 text-cream font-semibold text-sm px-5 py-2.5 rounded-md transition-colors inline-flex items-center gap-2">
+                    <i data-lucide="check" class="w-4 h-4"></i> {% trans "Passwort speichern" %}
+                </button>
+                <button type="button" @click="edit = false"
+                        class="px-5 py-2.5 rounded-md text-sm font-semibold text-forest/65 hover:text-forest border border-forest/15 hover:border-forest/35 transition-colors">
+                    {% trans "Abbrechen" %}
+                </button>
+            </div>
+        </form>
+    </section>
+
+    {# ─── Konto (Abmelden + Danger Zone) ───────────────────────────── #}
+    <section class="lilac-card p-6 md:p-7" style="border-color: rgba(190, 80, 90, 0.18);">
+        <h2 class="font-display text-xl text-forest leading-tight mb-1">{% trans "Konto" %}</h2>
+        <p class="font-serif text-sm text-forest/55 mb-5">
+            {% trans "Abmelden oder dein Konto dauerhaft entfernen." %}
+        </p>
+        <div class="flex flex-wrap items-center gap-3">
+            <form method="post" action="{% url 'accounts:logout' %}">
+                {% csrf_token %}
+                <button type="submit"
+                        class="px-5 py-2.5 rounded-md text-sm font-semibold text-forest hover:text-forest border border-forest/20 hover:border-forest/35 hover:bg-white/60 transition-colors flex items-center gap-2">
+                    <i data-lucide="log-out" class="w-4 h-4"></i> {% trans "Abmelden" %}
+                </button>
+            </form>
+            <button type="button" disabled
+                    title="{% trans 'Noch nicht verfügbar' %}"
+                    class="px-5 py-2.5 text-sm font-semibold rounded-md flex items-center gap-2 cursor-not-allowed opacity-60"
+                    style="color:#9f3a45; border:1px solid rgba(159,58,69,0.3);">
+                <i data-lucide="trash-2" class="w-4 h-4"></i> {% trans "Konto löschen" %}
+            </button>
+        </div>
+    </section>
+
+</div>
+
+{% endblock %}
