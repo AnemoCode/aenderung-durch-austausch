@@ -32,3 +32,23 @@ services:
       retries: 5
       start_period: 120s
     restart: unless-stopped
+
+  # Nightly database and media backup, see docs/operations/backup-restore.md.
+  # The deploy workflow copies scripts/ next to this file on the server.
+  backup:
+    image: postgres:17-alpine
+    command: ["sh", "/scripts/backup-scheduler.sh"]
+    env_file: .env
+    environment:
+      POSTGRES_HOST: db
+      POSTGRES_PORT: "5432"
+      BACKUP_DIR: /backups
+      BACKUP_MEDIA_DIR: /media
+    volumes:
+      - ./scripts:/scripts:ro
+      - ${BACKUP_HOST_PATH:-/opt/aenderung-durch-austausch/backups}:/backups
+      - ${MEDIA_HOST_PATH:-/opt/aenderung-durch-austausch/media}:/media:ro
+    depends_on:
+      db:
+        condition: service_healthy
+    restart: unless-stopped
