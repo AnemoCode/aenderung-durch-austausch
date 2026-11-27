@@ -1,10 +1,10 @@
 name: Coverage
 
 on:
-  push:
-    branches: [main]
   pull_request:
     branches: [main]
+  # Also called by deploy.yml, so a push to main only deploys when tests pass.
+  workflow_call:
 
 jobs:
   coverage:
@@ -42,6 +42,12 @@ jobs:
 
       - name: Install dependencies
         run: uv sync --locked --all-groups
+
+      - name: Build Tailwind CSS
+        run: scripts/tailwind.sh
+
+      - name: Migrations match the models
+        run: uv run python manage.py makemigrations --check --dry-run
 
       - name: Collect static files
         run: uv run python manage.py collectstatic --no-input -v 0
