@@ -185,6 +185,46 @@ MEDIA_UPLOAD_MAX_BYTES = env.int('MEDIA_UPLOAD_MAX_BYTES', default=8 * 1024 * 10
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
+# HTTPS hardening, production only.
+# TLS ends at the reverse proxy in front of gunicorn. The proxy also redirects
+# HTTP to HTTPS (308), so Django trusts its X-Forwarded-Proto header to know a
+# request was secure, and only redirects itself if SECURE_SSL_REDIRECT is set.
+if not DEBUG:
+    SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+    SECURE_SSL_REDIRECT = env.bool('SECURE_SSL_REDIRECT', default=False)
+    # The deploy workflow and the container healthcheck call /health/ over plain HTTP.
+    SECURE_REDIRECT_EXEMPT = [r'^health/$']
+    # Start with one hour. Raise to a year (31536000) once HTTPS has run without trouble.
+    SECURE_HSTS_SECONDS = env.int('SECURE_HSTS_SECONDS', default=3600)
+    SECURE_HSTS_INCLUDE_SUBDOMAINS = env.bool('SECURE_HSTS_INCLUDE_SUBDOMAINS', default=True)
+    SESSION_COOKIE_SECURE = True
+    CSRF_COOKIE_SECURE = True
+
+SECURE_CONTENT_TYPE_NOSNIFF = True
+SECURE_REFERRER_POLICY = 'same-origin'
+
+SILENCED_SYSTEM_CHECKS = [
+    # security.W008: the reverse proxy already redirects HTTP to HTTPS.
+    'security.W008',
+    # security.W021: no HSTS preload. Getting onto the browser preload list is
+    # hard to undo, so we leave it out until the team decides on it.
+    'security.W021',
+]
+
+# Error tracking. Sentry is only switched on when SENTRY_DSN is set, so local
+# development and CI never send anything.
+SENTRY_DSN = env('SENTRY_DSN', default='')
+if SENTRY_DSN:  # pragma: no cover - needs a real DSN
+    import sentry_sdk
+
+    sentry_sdk.init(
+        dsn=SENTRY_DSN,
+        environment=env('SENTRY_ENVIRONMENT', default='production'),
+        release=env('SENTRY_RELEASE', default='') or None,
+        send_default_pii=False,
+        traces_sample_rate=env.float('SENTRY_TRACES_SAMPLE_RATE', default=0.0),
+    )
+
 # Logging to stdout (Docker best practice)
 LOGGING = {
     "version": 1,
