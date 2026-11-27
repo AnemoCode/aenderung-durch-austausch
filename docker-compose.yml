@@ -39,5 +39,16 @@ services:
       retries: 10
       start_period: 30s
 
+  # Rebuilds static/css/tailwind.css whenever a template changes.
+  tailwind:
+    build:
+      context: .
+      target: builder
+    entrypoint: ["scripts/tailwind.sh", "--watch"]
+    volumes:
+      - .:/app
+    # The Tailwind CLI stops watching when stdin closes, so keep a TTY attached.
+    tty: true
+
 volumes:
   venv:

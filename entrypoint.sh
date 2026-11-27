@@ -9,6 +9,11 @@ if command -v uv &>/dev/null; then
         echo "Syncing virtual environment..."
         uv sync --locked
     fi
+    # In dev the bind mount hides the stylesheet built into the image, so build
+    # it once here. The tailwind service keeps it up to date afterwards.
+    if [ "$1" != "celery" ]; then
+        scripts/tailwind.sh
+    fi
 fi
 
 # Ensure the user-uploaded media directory exists.  In docker the host bind-mount

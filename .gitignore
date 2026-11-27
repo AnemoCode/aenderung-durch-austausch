@@ -18,3 +18,7 @@ htmlcov/
 # Local Claude Code skills
 .claude/skills/
 skills-lock.json
+
+# Tailwind: downloaded CLI binary and the generated stylesheet (built by scripts/tailwind.sh)
+.bin/
+static/css/tailwind.css

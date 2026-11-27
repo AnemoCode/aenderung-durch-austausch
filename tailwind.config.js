@@ -1,8 +1,10 @@
 /**
- * Overlytics — Tailwind CSS configuration
+ * Tailwind CSS configuration
  *
- * Loaded synchronously before the Tailwind Play CDN script so every custom
- * utility is available on first render.
+ * Used by scripts/tailwind.sh to build static/css/tailwind.css. Tailwind only
+ * generates the classes it finds in the files listed under `content`, so a
+ * class that is assembled at runtime (e.g. 'bg-' + colour) will be missing.
+ * Always write class names out in full.
  *
  * Design tokens
  * ─────────────
@@ -19,8 +21,11 @@
  * via `extend` so error/success colours remain available.
  */
 
-/* global tailwind */
-tailwind.config = {
+module.exports = {
+  content: [
+    './templates/**/*.html',
+    './apps/**/*.py',
+  ],
   theme: {
     extend: {
 
