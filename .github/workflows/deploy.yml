@@ -43,10 +43,13 @@ jobs:
           POSTGRES_PORT: "5432"
         run: uv run python manage.py check
 
+  tests:
+    uses: ./.github/workflows/coverage.yml
+
   # ── Build & push image ───────────────────────────────────────────────────────
   build:
     runs-on: ubuntu-24.04-arm
-    needs: ci
+    needs: [ci, tests]
     permissions:
       contents: read
       packages: write
@@ -77,6 +80,8 @@ jobs:
           context: .
           target: runtime
           push: true
+          build-args: |
+            GIT_SHA=${{ github.sha }}
           tags: |
             ghcr.io/${{ steps.image-tag.outputs.owner }}/aenderung-durch-austausch:${{ steps.image-tag.outputs.tag }}
             ghcr.io/${{ steps.image-tag.outputs.owner }}/aenderung-durch-austausch:latest
@@ -103,10 +108,14 @@ jobs:
           mkdir -p ~/.ssh
           ssh-keyscan -H ${{ secrets.SERVER_HOST }} >> ~/.ssh/known_hosts
 
-      - name: Copy compose file to server
+      - name: Copy compose file and backup scripts to server
         run: |
           scp docker-compose.prod.yml \
             ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_HOST }}:/opt/aenderung-durch-austausch/docker-compose.prod.yml
+          ssh ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_HOST }} \
+            mkdir -p /opt/aenderung-durch-austausch/scripts
+          scp scripts/backup.sh scripts/backup-scheduler.sh \
+            ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_HOST }}:/opt/aenderung-durch-austausch/scripts/
 
       - name: Deploy
         env:

@@ -12,7 +12,17 @@ ENV UV_COMPILE_BYTECODE=1 \
     UV_PYTHON_DOWNLOADS=never \
     PATH="/app/.venv/bin:$PATH" \
     PYTHONDONTWRITEBYTECODE=1 \
-    PYTHONUNBUFFERED=1
+    PYTHONUNBUFFERED=1 \
+    TAILWIND_BIN_DIR=/opt/tailwind
+
+RUN apt-get update && apt-get install -y --no-install-recommends curl \
+    && rm -rf /var/lib/apt/lists/*
+
+# Download the Tailwind binary in its own layer so it stays cached until the
+# script (and with it the pinned version) changes. It lives outside /app, so
+# the dev bind mount doesn't hide it and the runtime image doesn't carry it.
+COPY scripts/tailwind.sh scripts/tailwind.sh
+RUN scripts/tailwind.sh --install
 
 COPY pyproject.toml uv.lock* ./
 RUN --mount=type=cache,target=/root/.cache/uv \
@@ -21,6 +31,8 @@ RUN --mount=type=cache,target=/root/.cache/uv \
 COPY . .
 RUN --mount=type=cache,target=/root/.cache/uv \
     uv sync --locked
+
+RUN scripts/tailwind.sh
 
 COPY entrypoint.sh /entrypoint.sh
 RUN chmod +x /entrypoint.sh
@@ -37,9 +49,12 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 
 WORKDIR /app
 
+# The deploy workflow passes the commit SHA so Sentry can tell releases apart.
+ARG GIT_SHA=""
 ENV PATH="/app/.venv/bin:$PATH" \
     PYTHONDONTWRITEBYTECODE=1 \
-    PYTHONUNBUFFERED=1
+    PYTHONUNBUFFERED=1 \
+    SENTRY_RELEASE=${GIT_SHA}
 
 COPY --from=builder /app /app
 COPY entrypoint.sh /entrypoint.sh

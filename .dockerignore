@@ -11,3 +11,7 @@ staticfiles/
 media/
 .idea/
 instructions/
+.bin/
+static/css/tailwind.css
+backups/
+data/
